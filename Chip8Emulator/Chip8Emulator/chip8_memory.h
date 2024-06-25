@@ -9,5 +9,9 @@ private:
 
 public:
 	Chip8Memory();
+
+public:
+	unsigned char Read(unsigned short address);
+	void Write(unsigned short address, unsigned char value);
 };
 
