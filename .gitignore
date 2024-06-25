@@ -398,4 +398,5 @@ FodyWeavers.xsd
 *.sln.iml
 
 # Other
-roms/
+roms/*
+!roms/test/
