@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "chip8_memory.h"
 
 class Chip8Cpu
@@ -45,10 +47,11 @@ public:
 	Chip8Cpu();
 
 public:
-	void Start();
+	void Start(std::string filename);
 
 private:
 	void LoadFont();
+	void LoadRom(std::string filename);
 	void Cycle();
 	void Fetch();
 	void Process();

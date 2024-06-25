@@ -1,7 +1,7 @@
-
 #include <iostream>
 
 #include "chip8_cpu.h"
+#include "chip8_rom.h"
 
 Chip8Cpu::Chip8Cpu()
 	: program_counter_(0)
@@ -16,13 +16,23 @@ Chip8Cpu::Chip8Cpu()
 	LoadFont();
 }
 
-void Chip8Cpu::Start()
+void Chip8Cpu::Start(std::string filename)
 {
+	LoadRom(filename);
 	this->program_counter_ = kRomAddress;
 
 	while (true)
 	{
 		Cycle();
+	}
+}
+
+void Chip8Cpu::LoadRom(std::string filename)
+{
+	Chip8Rom rom_(filename);
+	for (unsigned short i = 0; i < rom_.size_; i++)
+	{
+		this->memory_.Write(kRomAddress + i, rom_.content_[i]);
 	}
 }
 
@@ -56,7 +66,7 @@ void Chip8Cpu::Process()
 	{
 	default:
 		std::cout << "Not known opcode: ";
-		std::cout << this->opcode_;
+		std::cout << std::hex << this->opcode_;
 		std::cout << "\n";
 		break;
 	}
