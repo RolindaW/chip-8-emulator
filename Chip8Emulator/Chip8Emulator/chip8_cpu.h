@@ -18,6 +18,9 @@ private:
 
 	Chip8Memory memory_;
 
+private:
+	unsigned short opcode_;
+
 public:
 	Chip8Cpu();
 
@@ -26,5 +29,7 @@ public:
 
 private:
 	void Cycle();
+	void Fetch();
+	void Process();
 };
 
