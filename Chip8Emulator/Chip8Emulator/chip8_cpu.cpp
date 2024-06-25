@@ -12,15 +12,26 @@ Chip8Cpu::Chip8Cpu()
 	, sound_timer_(0)
 	, memory_()
 	, opcode_(0)
-{}
+{
+	LoadFont();
+}
 
 void Chip8Cpu::Start()
 {
-	this->program_counter_ = 0x200;
+	this->program_counter_ = kRomAddress;
 
 	while (true)
 	{
 		Cycle();
+	}
+}
+
+void Chip8Cpu::LoadFont()
+{
+	int foo = sizeof(kFont);
+	for (unsigned char i = 0; i < sizeof(kFont); i++)
+	{
+		this->memory_.Write(kFontAddress + i, kFont[i]);
 	}
 }
 
