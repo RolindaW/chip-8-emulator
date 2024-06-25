@@ -127,7 +127,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Chip8Emulator.cpp" />
+    <ClCompile Include="chip8_cpu.cpp" />
+    <ClCompile Include="chip8_emulator.cpp" />
+    <ClCompile Include="chip8_memory.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="chip8_cpu.h" />
+    <ClInclude Include="chip8_memory.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
