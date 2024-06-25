@@ -28,7 +28,6 @@ void Chip8Cpu::Start()
 
 void Chip8Cpu::LoadFont()
 {
-	int foo = sizeof(kFont);
 	for (unsigned char i = 0; i < sizeof(kFont); i++)
 	{
 		this->memory_.Write(kFontAddress + i, kFont[i]);
