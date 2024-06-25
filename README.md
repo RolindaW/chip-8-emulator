@@ -78,10 +78,13 @@ Available space: 0x0CA0 B == 3232 B
 Uppermost 256 B reserved for display refresh.
 256 B == 0x00FF B
 Memory location range: 0x0F00 (3840) - 0x0FFF (4095)
+Why 256 B? Because MONOCHROME (true/false value per px) display resolution is 64x32 px i.e. 2048 px, which can be tightly represented with 256 B (8 px encoded per byte)
+Warning! It is not a good idea to implement it this way; we will use a separate array of 64x32 - 2048 - elements.
 
 Below 96 B reserved for the call stack, internal use and other variables.
 96 B == 0x0060 B
 Memory location range: 0x0EA0 (3744) - 0x0EFF (3839)
+Warning! It is not a good idea to implement it this way; we will use a separate array of n (number of maximum nesting levels) elements.
 
 Summary:
 
