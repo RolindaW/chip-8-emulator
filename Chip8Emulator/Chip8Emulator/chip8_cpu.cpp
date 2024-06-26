@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 
 #include "chip8_cpu.h"
 #include "chip8_rom.h"
@@ -62,12 +63,81 @@ void Chip8Cpu::Fetch()
 
 void Chip8Cpu::Process()
 {
-	switch (this->opcode_)
+	LogFetchedOpcode();
+
+	switch (this->opcode_ & 0xF000)
 	{
-	default:
-		std::cout << "Not known opcode: ";
-		std::cout << std::hex << this->opcode_;
-		std::cout << "\n";
-		break;
+		case 0x1000: // 1NNN
+		{
+			LogDecodedInstruction("1NNN");
+			unsigned short address = DecodeNNN();
+			this->program_counter_ = address;
+			break;
+		}
+		case 0x6000: // 6XNN
+		{
+			LogDecodedInstruction("6XNN");
+			unsigned char gp_register_index = DecodeX();
+			unsigned char value = DecodeNN();
+			this->gp_register_[gp_register_index] = value;
+			break;
+		}
+		case 0x7000: // 7XNN
+		{
+			LogDecodedInstruction("7XNN");
+			unsigned char gp_register_index = DecodeX();
+			unsigned char value = DecodeNN();
+			this->gp_register_[gp_register_index] += value;
+			break;
+		}
+		case 0xA000: // ANNN
+		{
+			LogDecodedInstruction("ANNN");
+			unsigned short address = DecodeNNN();
+			this->index_register_ = address;
+			break;
+		}
+		default:
+			std::cout << "Warning! Unknown instruction.";
+			std::cout << "\n";
+			break;
 	}
+}
+
+unsigned char Chip8Cpu::DecodeX()
+{
+	return (this->opcode_ & (unsigned short)0x0F00) >> 8;
+}
+
+unsigned char Chip8Cpu::DecodeY()
+{
+	return (this->opcode_ & (unsigned short)0x00F0) >> 4;
+}
+
+unsigned char Chip8Cpu::DecodeN()
+{
+	return this->opcode_ & (unsigned short)0x000F;
+}
+
+unsigned char Chip8Cpu::DecodeNN()
+{
+	return this->opcode_ & (unsigned short)0x00FF;
+}
+
+unsigned short Chip8Cpu::DecodeNNN()
+{
+	return this->opcode_ & (unsigned short)0x0FFF;
+}
+
+void Chip8Cpu::LogFetchedOpcode()
+{
+	std::cout << "Opcode: ";
+	std::cout << std::hex << this->opcode_;
+	std::cout << " - ";
+}
+
+void Chip8Cpu::LogDecodedInstruction(std::string instruction)
+{
+	std::cout << "Instruction: " + instruction;
+	std::cout << "\n";
 }

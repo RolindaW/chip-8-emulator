@@ -55,5 +55,12 @@ private:
 	void Cycle();
 	void Fetch();
 	void Process();
+	unsigned char DecodeX();
+	unsigned char DecodeY();
+	unsigned char DecodeN();
+	unsigned char DecodeNN();
+	unsigned short DecodeNNN();
+	void LogFetchedOpcode();
+	void LogDecodedInstruction(std::string instruction);
 };
 
