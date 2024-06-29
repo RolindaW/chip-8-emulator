@@ -67,6 +67,29 @@ void Chip8Cpu::Process()
 
 	switch (this->opcode_ & 0xF000)
 	{
+		//case 0x0000:
+		//{
+		//	switch (this->opcode_)
+		//	{
+		//		case 0x00E0: // 00E0
+		//		{
+		//			//LogDecodedInstruction("00E0");
+		//			//SetOffAllFramebufferElementsOff();
+		//			//this->display_.Render(&framebuffer);
+		//			//break;
+		//		}
+		//		case 0x00EE: // 0x00EE
+		//		{
+		//			// TODO
+		//			//break;
+		//		}
+		//		default: // 0NNN
+		//		{
+		//			//LogDecodedInstruction("0NNN (NOT SUPPORTTED)");
+		//			//break;
+		//		}
+		//	}
+		//}
 		case 0x1000: // 1NNN
 		{
 			LogDecodedInstruction("1NNN");
@@ -97,6 +120,16 @@ void Chip8Cpu::Process()
 			this->index_register_ = address;
 			break;
 		}
+		//case 0xD000: // DXYN
+		//{
+		//	/*LogDecodedInstruction("DXYN");
+		//	unsigned char gp_register_x_index = DecodeX();
+		//	unsigned char gp_register_y_index = DecodeY();
+		//	unsigned char sprite_height = DecodeN();
+		//	UpdateFramebuffer(this->gp_register_[gp_register_x_index], this->gp_register_[gp_register_y_index], sprite_height);
+		//	this->display_.Render(&framebuffer);
+		//	break;*/
+		//}
 		default:
 			std::cout << "Warning! Unknown instruction.";
 			std::cout << "\n";
