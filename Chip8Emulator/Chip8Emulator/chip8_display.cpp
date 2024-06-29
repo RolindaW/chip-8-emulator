@@ -12,6 +12,12 @@ Chip8Display::~Chip8Display()
 	Terminate();
 }
 
+void Chip8Display::Render(unsigned char* data)
+{
+	SetFilteredTextureData(data);
+	Render();
+}
+
 void Chip8Display::Render()
 {
 	static const GLfloat color[] = { 1.0f, 1.0f, 0.0f, 1.0f };
@@ -26,10 +32,10 @@ void Chip8Display::Render()
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-    glfwSwapBuffers(this->window_);
-    // TODO: This must be executed periodically so events (such as key inputs) can be processed further than when rendering.
-    // or another approach is that this Redner method be called from CPU every opcode processing -  i.e. even when no drawing commmand issued so the screen content will no change at all.
-    glfwPollEvents();
+	glfwSwapBuffers(this->window_);
+	// TODO: This must be executed periodically so events (such as key inputs) can be processed further than when rendering.
+	// or another approach is that this Redner method be called from CPU every opcode processing -  i.e. even when no drawing commmand issued so the screen content will no change at all.
+	glfwPollEvents();
 }
 
 int Chip8Display::Initialize()
@@ -159,35 +165,26 @@ void Chip8Display::InitializeTexture()
 	glTextureStorage2D(this->texture2D_,
 		1,
 		GL_R8,
-		8, 4);
+		kDisplayResolution.width, kDisplayResolution.height);
 
 	// Define some data to upload into the texture
 	// Note: Data is laid out (this setup can be changed in OpenGL with a parameter) left to right, top to bottom.
-	static const GLubyte data[] =
+	// Ordering: first array element corresponds to lower row, first element; after a row is completed, jump to next row.
+	GLubyte data_bck[] =
 	{
 		0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0x00, 0x00,
 		0x80, 0x00, 0x80, 0x00, 0x80, 0x00, 0x00, 0x00,
 		0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0xFF, 0x00,
-		0xFF, 0x00, 0xFF, 0x00, 0x80, 0x00, 0x00, 0x00
+		0x00, 0xFF, 0xFF, 0x00, 0x80, 0x00, 0x00, 0x00
 	};
 
-	static GLubyte data2[2][2][1];
-	data2[0][0][0] = 0xFF;
-	data2[0][1][0] = 0x00;
-	data2[1][0][0] = 0x00;
-	data2[1][1][0] = 0xFF;
-
-	// Pixel store
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-	// Fill memory with image data
-	glTextureSubImage2D(this->texture2D_,
-		0,
-		0, 0,
-		8, 4,
-		GL_RED,
-		GL_UNSIGNED_BYTE,
-		data);
+	GLubyte* data = new GLubyte[kDisplayResolution.total];
+	for (int i = 0; i < kDisplayResolution.total; i++)
+	{
+		data[i] = (i % 2 == 0) ? 0xFF : 0x00;
+	}
+	SetTextureData(data_bck);
+	delete[] data;
 
 	// Wrapping
 	glTextureParameteri(this->texture2D_, GL_TEXTURE_WRAP_S, GL_REPEAT);  // GL_REPEAT - GL_MIRRORED_REPEAT - GL_CLAMP_TO_EDGE - GL_CLAMP_TO_BORDER
@@ -204,6 +201,41 @@ void Chip8Display::InitializeTexture()
 	// Swizzle
 	glTextureParameteri(this->texture2D_, GL_TEXTURE_SWIZZLE_G, GL_RED);
 	glTextureParameteri(this->texture2D_, GL_TEXTURE_SWIZZLE_B, GL_RED);
+}
+
+void Chip8Display::SetFilteredTextureData(unsigned char* data)
+{
+	unsigned char* filteredData;
+	FilterTextureData(data, &filteredData);
+	SetTextureData(filteredData);
+	delete[] filteredData;
+}
+
+void Chip8Display::SetTextureData(unsigned char* data)
+{
+	// Pixel store
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+	// Fill texture with data
+	glTextureSubImage2D(this->texture2D_,
+		0,
+		0, 0,
+		kDisplayResolution.width, kDisplayResolution.height,
+		GL_RED,
+		GL_UNSIGNED_BYTE,
+		data);
+}
+
+// Force monochrome texture data - Lock grayscale values
+void Chip8Display::FilterTextureData(unsigned char* rawData, unsigned char** filteredDataAdd)
+{
+	unsigned char* filter = new unsigned char[kDisplayResolution.total];
+	for (int i = 0; i < kDisplayResolution.total; i++)
+	{
+		filter[i] = rawData[i] ? 0xFF : 0x00;
+	}
+
+	*filteredDataAdd = filter;
 }
 
 void Chip8Display::ReleaseStuff()
