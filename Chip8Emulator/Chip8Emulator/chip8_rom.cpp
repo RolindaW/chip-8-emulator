@@ -1,5 +1,3 @@
-#include <cstdio>
-
 #include "chip8_rom.h"
 
 Chip8Rom::Chip8Rom(std::string filename)

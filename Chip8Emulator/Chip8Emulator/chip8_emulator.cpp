@@ -7,5 +7,7 @@ int main()
     std::cout << "CHIP-8 Interpreter - Initialization!\n";
 
     Chip8Cpu chip8_cpu;
-    chip8_cpu.Start("C://workspace/chip-8-emulator/roms/IBM Logo.ch8");
+    chip8_cpu.Start("C://workspace/chip-8-emulator/roms/test/IBM Logo.ch8");
+
+    std::cout << "CHIP-8 Interpreter - Finish!\n";
 }
