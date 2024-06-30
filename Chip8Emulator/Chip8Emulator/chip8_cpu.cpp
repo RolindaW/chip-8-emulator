@@ -18,18 +18,11 @@ void Chip8Cpu::Start(std::string filename)
 	LoadRom(filename);
 	this->program_counter_ = kRomAddress;
 
-	//// TODO: Test (manipular memoriaa) - remove on finish
-	//for (int i = 0; i < 64 * 32; i++)
-	//{
-	//	this->memory_.GetFramebuffer()[i] = 0x00;
-	//}
-	//// .... remove up the here
-
 	while (true)
 	{
 		Cycle();
+		// TODO this is called everytime to re-draw last issued data. Pero el motivo es para ejecutar el polliwg de los eventos. No me gusta, lo tendre que cambiar.
 		this->display_.Render();
-		//this->display_.Render(this->memory_.GetFramebuffer());  // TODO* remove on test finish
 	}
 }
 
@@ -69,6 +62,14 @@ void Chip8Cpu::Fetch()
 void Chip8Cpu::Process()
 {
 	LogFetchedOpcode();
+
+	if (this->opcode_ == 0x00E0) // 00E0
+	{
+		// TODO: Make decoding and execution clear (separation of concerns)
+		LogDecodedInstruction("00E0");
+		ClearDisplay();
+		return;
+	}
 
 	switch (this->opcode_ & 0xF000)
 	{
@@ -166,6 +167,17 @@ unsigned short Chip8Cpu::DecodeNNN()
 	return this->opcode_ & (unsigned short)0x0FFF;
 }
 
+void Chip8Cpu::ClearDisplay()
+{
+	unsigned char* p = this->memory_.GetFramebuffer();
+	for (unsigned short i = 0; i < 64*32; i++)
+	{
+		p[i] = 0x00;
+	}
+
+	this->display_.Render(p);
+}
+
 void Chip8Cpu::DrawSprite(unsigned char at_x, unsigned char at_y, unsigned char sprite_height)
 {
 	// Reset collision flag
@@ -174,6 +186,8 @@ void Chip8Cpu::DrawSprite(unsigned char at_x, unsigned char at_y, unsigned char 
 	// Wrap display coordinate
 	at_x %= 64;
 	at_y %= 32;
+
+	unsigned char* p = this->memory_.GetFramebuffer();
 
 	for (unsigned char i = 0; i < sprite_height; i++)
 	{
@@ -211,12 +225,16 @@ void Chip8Cpu::DrawSprite(unsigned char at_x, unsigned char at_y, unsigned char 
 			// Esta inversion se podria haber hecho despues en el Render, pero seria algo mas complicado (realmente tendria que darle una vuelta para saber de quien deberia ser realmente la responsabilidad de esta tarea)
 			// Tambien la podriamos haber hecho antes a la hora de definier la variable offset_at_y, pero me interesa dejar eso sin tocar - limpio- y hacer el cambio solo aqui a la hora de hacer el calculo de la posicion en el array de la memorya del display.
 			unsigned short framebuffer_index = 64 * (32 - offset_at_y) + offset_at_x;
-			this->gp_register_[0xF] |= this->memory_.GetFramebuffer()[framebuffer_index];  // Llegados a este punto, vamos a tener que modificar el pixel correspondiente. Si en cache hay algo, indicar colision (al usar el OR, si ya se hubiera puesta el flag antes no se borraria en los casos en que bo hubiera)
-			this->memory_.GetFramebuffer()[framebuffer_index] = !this->memory_.GetFramebuffer()[framebuffer_index];
+			this->gp_register_[0xF] |= p[framebuffer_index];  // Llegados a este punto, vamos a tener que modificar el pixel correspondiente. Si en cache hay algo, indicar colision (al usar el OR, si ya se hubiera puesta el flag antes no se borraria en los casos en que bo hubiera)
+			
+			// Me huele que esto puede no estar comportandose siempre como espero. pruebo a hacerlo hardcoded.
+			// Effectivamente, el problema esta aqui, pero no entiendo por que??? Revisarlo.
+			// ??FIN! EL problema era el puto operador NOT !, que lo que hacia era devolverme un 0x01 en lugar de 0xFF. Ahora con el operador ~ ya funciona.
+			p[framebuffer_index] = ~p[framebuffer_index];
 		}		
 	}
 
-	this->display_.Render(this->memory_.GetFramebuffer());
+	this->display_.Render(p);
 }
 
 void Chip8Cpu::LogFetchedOpcode()

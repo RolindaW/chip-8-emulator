@@ -64,6 +64,7 @@ private:
 	unsigned char DecodeN();
 	unsigned char DecodeNN();
 	unsigned short DecodeNNN();
+	void ClearDisplay();
 	void DrawSprite(unsigned char at_x, unsigned char at_y, unsigned char sprite_height);
 	void LogFetchedOpcode();
 	void LogDecodedInstruction(std::string instruction);

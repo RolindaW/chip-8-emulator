@@ -5,7 +5,7 @@ class Chip8Memory
 private:
 	unsigned char main_[4096];
 	unsigned short stack_[16];
-	unsigned char framebuffer_[64 * 32];
+	unsigned char framebuffer_[64*32];
 
 public:
 	Chip8Memory();

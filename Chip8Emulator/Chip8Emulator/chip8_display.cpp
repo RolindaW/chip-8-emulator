@@ -14,7 +14,6 @@ Chip8Display::~Chip8Display()
 
 void Chip8Display::Render(unsigned char* data)
 {
-	// TODO: Comprobar por que si llamo a SetTexturedData aqui en lugar del filtered, no funciona.
 	SetFilteredTextureData(data);
 	Render();
 }

@@ -5,12 +5,6 @@ Chip8Memory::Chip8Memory()
 	, stack_{0}
 	, framebuffer_{0}
 {
-	// TODO: test - remove on finish
-	for (int i = 0; i < 64 * 32; i++)
-	{
-		//framebuffer_[i] = i % 2 == 0 ? 0x00 : 0xFF;
-		framebuffer_[i] = 0x00;
-	}
 }
 
 unsigned char Chip8Memory::Read(unsigned short address)
