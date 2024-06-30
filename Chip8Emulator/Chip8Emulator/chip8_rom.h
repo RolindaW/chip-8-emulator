@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <cstdio>
 
 class Chip8Rom
 {

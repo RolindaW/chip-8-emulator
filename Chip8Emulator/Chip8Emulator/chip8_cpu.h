@@ -1,8 +1,11 @@
 #pragma once
 
+#include <iostream>
 #include <string>
 
 #include "chip8_memory.h"
+#include "chip8_rom.h"
+#include "chip8_display.h"
 
 class Chip8Cpu
 {
@@ -39,6 +42,7 @@ private:
 	unsigned char sound_timer_;
 
 	Chip8Memory memory_;
+	Chip8Display display_;
 
 private:
 	unsigned short opcode_;
@@ -60,6 +64,7 @@ private:
 	unsigned char DecodeN();
 	unsigned char DecodeNN();
 	unsigned short DecodeNNN();
+	void DrawSprite(unsigned char at_x, unsigned char at_y, unsigned char sprite_height);
 	void LogFetchedOpcode();
 	void LogDecodedInstruction(std::string instruction);
 };

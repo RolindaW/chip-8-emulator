@@ -183,6 +183,12 @@ Only by drawing...
 -Wide: 8 px (i.e. each of the bits of corresponding byte).
 -Height: 1-15 px (corresponding bytes).
 
+Warning! Ojo cuidado con intercambiar los ejes (X,Y)...
+...del display original (para el cual estan disenados los sprites; +Y es top to bottom) y...
+...los de una textura 2D en OpenGL (+Y es bottom to top).
+El eje +X tiene el mismo sentido en ambos casos: left to right.
+Si los calculos en memoria lo haces igual que luego lo pintas en la textura, el resultado va a estar invertido en el eje Y (o, lo que es lo mismi, mirrored en el eje X)
+
 Font:
 Built-in
 Characters: x16 (0-F; hexadecimal notation); sprites, each 5 B in 4x5 px format - Warning! Actually represented as 8x5 i.e. 1 B per row.

@@ -13,5 +13,6 @@ public:
 public:
 	unsigned char Read(unsigned short address);
 	void Write(unsigned short address, unsigned char value);
+	unsigned char* GetFramebuffer();
 };
 

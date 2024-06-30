@@ -18,7 +18,7 @@ class Chip8Display
 private:
 	const int kOpenGLVersionMajor = 4;
 	const int kOpenGLVersionMinor = 5;
-	const DisplayResolution kDisplayResolution = { 8, 4 };//{ 64, 32 };
+	const DisplayResolution kDisplayResolution = { 64, 32 };
 
 private:
 	GLFWwindow* window_;
