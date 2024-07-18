@@ -7,6 +7,15 @@
 #include "chip8_rom.h"
 #include "chip8_display.h"
 
+enum Instruction: unsigned char {
+	I00E0,
+	I1NNN,
+	I6XNN,
+	I7XNN,
+	IANNN,
+	IDXYN
+};
+
 class Chip8Cpu
 {
 private:
@@ -46,6 +55,7 @@ private:
 
 private:
 	unsigned short opcode_;
+	unsigned char instruction_;
 
 public:
 	Chip8Cpu();
@@ -58,7 +68,8 @@ private:
 	void LoadRom(std::string filename);
 	void Cycle();
 	void Fetch();
-	void Process();
+	void Decode();
+	void Execute();
 	unsigned char DecodeX();
 	unsigned char DecodeY();
 	unsigned char DecodeN();

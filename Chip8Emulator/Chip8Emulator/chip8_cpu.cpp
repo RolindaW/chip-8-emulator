@@ -46,28 +46,30 @@ void Chip8Cpu::LoadFont()
 void Chip8Cpu::Cycle()
 {
 	Fetch();
-	Process();
+	Decode();
+	Execute();
 }
 
+// TODO: Control not to go out of memory on fetching (i.e. try to fetch an opcode from a non-valid address)
 void Chip8Cpu::Fetch()
 {
 	unsigned char high_byte = this->memory_.Read(this->program_counter_);
 	unsigned char low_byte = this->memory_.Read(this->program_counter_ + (unsigned short)1);
 
 	this->opcode_ = high_byte << 8 | low_byte;
+	LogFetchedOpcode();
 
 	this->program_counter_ += 2;
 }
 
-void Chip8Cpu::Process()
+// TODO: Throw (and handle) error in case decoding fails.
+void Chip8Cpu::Decode()
 {
-	LogFetchedOpcode();
-
 	if (this->opcode_ == 0x00E0) // 00E0
 	{
 		// TODO: Make decoding and execution clear (separation of concerns)
 		LogDecodedInstruction("00E0");
-		ClearDisplay();
+		this->instruction_ = Instruction::I00E0;
 		return;
 	}
 
@@ -96,49 +98,87 @@ void Chip8Cpu::Process()
 		//		}
 		//	}
 		//}
-		case 0x1000: // 1NNN
+	case 0x1000: // 1NNN
+	{
+		LogDecodedInstruction("1NNN");
+		this->instruction_ = Instruction::I1NNN;
+		break;
+	}
+	case 0x6000: // 6XNN
+	{
+		LogDecodedInstruction("6XNN");
+		this->instruction_ = Instruction::I6XNN;
+		break;
+	}
+	case 0x7000: // 7XNN
+	{
+		LogDecodedInstruction("7XNN");
+		this->instruction_ = Instruction::I7XNN;
+		break;
+	}
+	case 0xA000: // ANNN
+	{
+		LogDecodedInstruction("ANNN");
+		this->instruction_ = Instruction::IANNN;
+		break;
+	}
+	case 0xD000: // DXYN
+	{
+		LogDecodedInstruction("DXYN");
+		this->instruction_ = Instruction::IDXYN;
+		break;
+	}
+	default:
+		LogDecodedInstruction("Unknown");
+		// TODO: Throw error! And handle it.
+		break;
+	}
+}
+
+// TODO: Ensure an instruction was actually decoded before try executing anything.
+void Chip8Cpu::Execute()
+{
+	switch (this->instruction_)
+	{
+		case Instruction::I00E0:
 		{
-			LogDecodedInstruction("1NNN");
+			ClearDisplay();
+			break;
+		}
+		case Instruction::I1NNN:
+		{
 			unsigned short address = DecodeNNN();
 			this->program_counter_ = address;
 			break;
 		}
-		case 0x6000: // 6XNN
+		case Instruction::I6XNN:
 		{
-			LogDecodedInstruction("6XNN");
 			unsigned char gp_register_index = DecodeX();
 			unsigned char value = DecodeNN();
 			this->gp_register_[gp_register_index] = value;
 			break;
 		}
-		case 0x7000: // 7XNN
+		case Instruction::I7XNN:
 		{
-			LogDecodedInstruction("7XNN");
 			unsigned char gp_register_index = DecodeX();
 			unsigned char value = DecodeNN();
 			this->gp_register_[gp_register_index] += value;
 			break;
 		}
-		case 0xA000: // ANNN
+		case Instruction::IANNN:
 		{
-			LogDecodedInstruction("ANNN");
 			unsigned short address = DecodeNNN();
 			this->index_register_ = address;
 			break;
 		}
-		case 0xD000: // DXYN
+		case Instruction::IDXYN:
 		{
-			LogDecodedInstruction("DXYN");
 			unsigned char gp_register_index_x = DecodeX();
 			unsigned char gp_register_index_y = DecodeY();
 			unsigned char sprite_height = DecodeN();
 			DrawSprite(this->gp_register_[gp_register_index_x], this->gp_register_[gp_register_index_y], sprite_height);
 			break;
 		}
-		default:
-			std::cout << "Warning! Unknown instruction.";
-			std::cout << "\n";
-			break;
 	}
 }
 
