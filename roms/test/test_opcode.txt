@@ -1,42 +1,42 @@
 (00)
 124E - 1NNN - JUMP TO ADDRESS $24E (i.e. $4E)
-EAAC - DATA (POINTED AT INSTRUCTION $262 (i.e. $62); USED BY DRAWING INSTRUCCTION $268 (i.e. $68)) + (POINT,DRAW) = ($278, $27A), ($28A, $28C)
+EAAC - DATA (== "ok") (POINTED AT INSTRUCTION $262 (i.e. $62); USED BY DRAWING INSTRUCCTION $268 (i.e. $68)) + (POINT,DRAW) = ($278, $27A), ($28A, $28C)
 AAEA - DATA
-CEAA - DATA (POINTED AT INSTRUCTION $274 (i.e. $74); USED BY DRAWING INSTRUCCTION $??? (i.e. $??)) + (POINT,DRAW) = ($286, $???)
+CEAA - DATA (== "no") (POINTED AT INSTRUCTION $274 (i.e. $74); USED BY DRAWING INSTRUCCTION $??? (i.e. $??)) + (POINT,DRAW) = ($286, $???)
 AAAE - DATA
-E0A0 - 
-A0E0 - 
-C040 - 
+E0A0 - DATA (== "0") (POINTED AT INSTRUCTION $2C8 (i.e. $C8))
+A0E0 - DATA
+C040 - DATA (== "1") (POINTED AT INSTRUCTION $2EE (i.e. $EE))
 
 (10)
-40E0 - 
-E020 - 
-C0E0 - 
-E060 - DATA (POINTED AT INSTRUCTION $25A (i.e. $5A); USED BY DRAWING INSTRUCCTION $25C (i.e. $5C))
+40E0 - DATA
+E020 - DATA (== "2") (POINTED AT INSTRUCTION $304 (i.e. $104))
+C0E0 - DATA
+E060 - DATA (== "3") (POINTED AT INSTRUCTION $25A (i.e. $5A); USED BY DRAWING INSTRUCCTION $25C (i.e. $5C))
 20E0 - DATA
-A0E0 - DATA (POINTED AT INSTRUCTION $26C (i.e. $6C); USED BY DRAWING INSTRUCCTION $26E (i.e. $6E))
+A0E0 - DATA (== "4") (POINTED AT INSTRUCTION $26C (i.e. $6C); USED BY DRAWING INSTRUCCTION $26E (i.e. $6E))
 2020 - DATA
-6040 - DATA (POINTED AT INSTRUCTION $27E (i.e. $7E); USED BY DRAWING INSTRUCCTION $280 (i.e. $80))
+6040 - DATA (== "5") (POINTED AT INSTRUCTION $27E (i.e. $7E); USED BY DRAWING INSTRUCCTION $280 (i.e. $80))
 
 (20)
 2040 - DATA
-E080 - 
-E0E0 - 
-E020 - 
-2020 - 
-E0E0 - 
-A0E0 - 
-E0E0 - 
+E080 - DATA (== "6") (POINTED AT INSTRUCTION $36A (i.e. $16A))
+E0E0 - DATA
+E020 - DATA (== "7") (POINTED AT INSTRUCTION $290 (i.e. $90))
+2020 - DATA
+E0E0 - DATA (== "8") (POINTED AT INSTRUCTION $2D6 (i.e. $D6))
+A0E0 - DATA
+E0E0 - DATA (== "9") (POINTED AT INSTRUCTION $2A4 (i.e. $A4))
 
 (30)
-20E0 - 
-40A0 - 
-E0A0 - 
-E0C0 - 
-80E0 - 
-E080 - 
-C080 - 
-A040 - DATA (POINTED AT INSTRUCTION $25E (i.e. $5E); USED BY DRAWING INSTRUCCTION $260 (i.e. $60)) + (POINT,DRAW) = ($270, $272), ($282, $284)
+20E0 - DATA
+40A0 - DATA (== "A") (POINTED AT INSTRUCTION $2B6 (i.e. $B6))
+E0A0 - DATA
+E0C0 - DATA (== "E") (POINTED AT INSTRUCTION $2CC (i.e. $CC))
+80E0 - DATA
+E080 - DATA (== "F") (POINTED AT INSTRUCTION $392 (i.e. $192))
+C080 - DATA
+A040 - DATA (== "x") (POINTED AT INSTRUCTION $25E (i.e. $5E); USED BY DRAWING INSTRUCCTION $260 (i.e. $60)) + (POINT,DRAW) = ($270, $272), ($282, $284)
 
 (40)
 A0A0 - DATA
@@ -297,7 +297,7 @@ D9B4 - DXYN
 1248 - 1NNN - JUMP TO ADDRESS $248 (i.e. $48)
 13DC - 1NNN - JUMP TO ADDRESS $3DC (i.e. $1DC) (JUMP FROM ADDRESS $24C (i.e. $4C)) - INFINITE LOOP!!! (i.e. END OF PROGRAM)
 
-***　KNOWN INSTRUCTIONS
+*** KNOWN INSTRUCTIONS
 
 1NNN - JUMP TO ADDRESS NNN
 6XNN - SET VX TO CONSTANT NN
@@ -322,11 +322,331 @@ FX55 (new) - WRITE RANGE V0-VX (INCLUDED) INTO MEMORY (START WRITE AT I)
 FX65 (new) - READ RANGE V0-VX (INCLUDED) FROM MEMORY (START READ AT I)
 FX33 (new) - WRITE BCD OF VX INTO MEMORY (START WRITE AT I)
 
-***　NOTES
+*** NOTES
 
 This program repeats same instruction set for every being tested CHIP-8 instruction:
 - Draw the alias of being tested CHIP-8 instruction.
 - Execute being tested CHIP-8 instruction.
-- Draw "ok" block (4 Byte starting at address $202 (i.e. $02)) if succeeded; otherwise, draw "no" block (4 Byte starting at address $206 (i.e. $06)).
+- Draw "ok" sprite (4 Byte starting at address $202 (i.e. $02)) if succeeded; otherwise, draw "no" sprite (4 Byte starting at address $206 (i.e. $06)).
 
 Warning! Some CHIP-8 instructions that write to memory (e.g. FX55) may appear to be wrong because the memory address used is outside the program memory (e.g. F155 starts writing to address $3E8 when the program memory ends at $3DB). This is absolutely correct since the program should not overwrite itself, so writing to free memory is the correct way to do it.
+
+Error! Some being tested CHIP-8 instruction not included in the report (e.g. 2242)
+
+Error! Instruction set ordering is not correct in most of the cases.
+It is supossed to draw "ok" block in case being tested CHIP-8 instruction succeeded and otherwise draw "no" block.
+The problem is that this behaviour depends on the implementation of being tested CHIP-8 instruction and the lack of implementation makes draw block selection fail.
+Issue CHIP-8 instruction e.g. 452A, 5560, 462A, 9560, 8750 (+472A), 87B1 (+472B), 8752 (+4718), 8763 (+4767), 8764 (+4718), 8765 (+47EC), 866E (+46C0), 8666 (+4607), 4030, F633 (+F265). 
+
+*** SPRITES
+
+($216) E060 20E0 : "3"
+($23E) A040 A0A0 : "x"
+($202) EAAC AAEA : "ok"
+($206) CEAA AAAE : "no"
+($21A) A0E0 2020 : "4"
+($21E) 6040 2040 : "5" (Alt: 6040 2060)
+($226) E020 2020 : "7" (Alt: E020 6020)
+($22E) E0E0 20E0 : "9"
+($232) 40A0 E0A0 : "A"
+($20A) E0A0 A0E0 : "0"
+($236) E0C0 80E0 : "E"
+($22A) E0E0 A0E0 : "8"
+($20E) C040 40E0 : "1" (Alt: 40C0 40E0)
+($212) E020 C0E0 : "2"
+($222) E080 E0E0 : "6"
+($23A) E080 C080 : "F"
+
+*** CHIP-8 INSTRUCTION TEST SETS
+
+# 3XNN
+
+($25A) A216
+($25C) D8B4
+($25E) A23E
+($260) D9B4
+($262) A202
+($264) 362B
+($266) A206
+($268) DAB4
+
+# 4XNN
+
+($26C) A21A
+($26E) D8B4
+($270) A23E
+($272) D9B4
+($274) A206
+($276) 452A
+($278) A202
+($27A) DAB4
+
+# 5XY0
+
+($27E) A21E
+($280) D8B4
+($282) A23E
+($284) D9B4
+($286) A206
+($288) 5560
+($28A) A202
+($28C) DAB4
+
+# 7XNN
+
+($290) A226
+($292) D8B4
+($294) A23E
+($296) D9B4
+($298) A206
+($29A) 76FF
+($29C) 462A
+($29E) A202
+($2A0) DAB4
+
+# 9XY0
+
+($2A4) A22E
+($2A6) D8B4
+($2A8) A23E
+($2AA) D9B4
+($2AC) A206
+($2AE) 9560
+($2B0) A202
+($2B2) DAB4
+
+# 2NNN
+
+($2B6) A232
+($2B8) D8B4
+($2BA) A23E
+($2BC) D9B4
+($2BE) 2242
+
+($242) A202
+($244) DAB4
+
+# 00EE
+
+($246) 00EE
+
+($2C8) A20A
+($2CA) D8B4
+($2CC) A236
+($2CE) D9B4
+($2D0) A202
+($2D2) DAB4
+
+# 8XY0
+
+($2D6) A22A
+($2D8) D8B4
+($2DA) A20A
+($2DC) D9B4
+($2DE) A206
+($2E0) 8750
+($2E2) 472A
+($2E4) A202
+($2E6) DAB4
+
+# 8XY1
+
+($2EA) A22A
+($2EC) D8B4
+($2EE) A20E
+($2F0) D9B4
+($2F2) A206
+($2F4) 672A
+($2F6) 87B1
+($2F8) 472B
+($2FA) A202
+($2FC) DAB4
+
+# 8XY2
+
+($300) A22A
+($302) D8B4
+($304) A212
+($306) D9B4
+($308) A206
+($30A) 6678
+($30C) 671F
+($30E) 8762
+($310) 4718
+($312) A202
+($314) DAB4
+
+# 8XY3
+
+($318) A22A
+($31A) D8B4
+($31C) A216
+($31E) D9B4
+($320) A206
+($322) 6678
+($324) 671F
+($326) 8763
+($328) 4767
+($32A) A202
+($32C) DAB4
+
+# 8XY4
+
+($330) A22A
+($332) D8B4
+($334) A21A
+($336) D9B4
+($338) A206
+($33A) 668C
+($33C) 678C
+($33E) 8764
+($340) 4718
+($342) A202
+($344) DAB4
+
+# 8XY5
+
+($34E) A22A
+($350) D8B4
+($352) A21E
+($354) D9B4
+($356) A206
+($358) 668C
+($35A) 6778
+($35C) 8765
+($35E) 47EC
+($360) A202
+($362) DAB4
+
+# 8XYE
+
+($366) A22A
+($368) D8B4
+($36A) A222
+($36C) D9B4
+($36E) A206
+($370) 66E0
+($372) 866E
+($374) 46C0
+($376) A202
+($378) DAB4
+
+# 8XY6
+
+($37C) A22A
+($37E) D8B4
+($380) A236
+($382) D9B4
+($384) A206
+($386) 660F
+($388) 8666
+($38A) 4607
+($38C) A202
+($38E) DAB4
+
+# FX55 (AND) FX65
+
+($392) A23A
+($394) D8B4
+($396) A21E
+($398) D9B4
+($39A) A3E8
+($39C) 6000
+($39E) 6130
+($3A0) F155
+($3A2) A3E9
+($3A4) F065
+($3A6) A206
+($3A8) 4030
+($3AA) A202
+($3AC) DAB4
+
+# FX33
+
+($3B0) A23A
+($3B2) D8B4
+($3B4) A216
+($3B6) D9B4
+($3B8) A3E8
+($3BA) 6689
+($3BC) F633
+($3BE) F265
+
+($3C0) A202
+($3C2) 3001
+($3C4) A206
+($3C6) 3103
+($3C8) A206
+($3CA) 3207
+($3CC) A206
+($3CE) DAB4
+
+# 1NNN
+
+($3D2) A20E
+($3D4) D8B4
+($3D6) A23E
+($3D8) D9B4
+($3DA) 1248
+
+($248) A202
+($24A) DAB4
+($24C) 13DC
+
+($3DC) 13DC
+
+*** BUGS AND FIX PROPOSALS
+
+Warning! Most of the problems can be solved just changing the order the result sprites are defined (i.e. interchange A202 and A206 instructions)
+...
+
+# 2NNN
+
+Sprite "A" is incorrect; should be "2".
+Does not print anything if function not implemented.
+
+Fix: ?
+
+# 00EE
+
+This function does not actually check anything; just expect a path to be followed but... What happens when not so?
+Check what happens if:
+- 2NNN NOT implemented, 00EE NOT implemented
+- 2NNN implemented, 00EE NOT implemented
+- 2NNN NOT implemented, 00EE implemented
+- 2NNN implemented, 00EE implemented
+
+Fix: ?
+
+# 8XY0
+
+"ok" sprite is drawn even if function not implemented.
+
+Fix: Interchange result sprite instructions.
+
+# 8XYE
+
+Draw "6" sprite on instruction name instead of "E".
+
+Fix: Set correct instruction name sprite (i.e. "E").
+
+# 8XY6
+
+Draw "E" sprite on instruction name instead of "6".
+
+Fix: Set correct instruction name sprite (i.e. "6").
+
+# FX55 & FX65
+
+These instructions are being tested in a single test, so single result is printed "F5".
+
+Fix: ?
+
+# 1NNN
+
+Not very convenient to test the last when is being first instruction being executed in the program.
+With current test program structure, all the program crashes if this instruction not implemented ( because emulator would start fetching sprite data as opcodes after ignoring very first instruction).
+
+Fix: Move al sprite block at the end of the program, so this instruction is no needed in the begining and therefore can be tested where it already is places (at the very end).
+
+...
