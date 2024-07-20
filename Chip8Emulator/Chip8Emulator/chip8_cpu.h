@@ -2,13 +2,15 @@
 
 #include <iostream>
 #include <string>
+#include <chrono> // TODO: Remove when removing sleep.
+#include <thread> // TODO: Remove when removing sleep.
 
 #include "chip8_memory.h"
 #include "chip8_rom.h"
 #include "chip8_display.h"
 
 enum Instruction: unsigned char {
-	I00E0,
+	I00E0 = 1,
 	I1NNN,
 	I6XNN,
 	I7XNN,

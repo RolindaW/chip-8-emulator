@@ -776,6 +776,7 @@ Instruction is used even before being tested.
 
 Fix: Move al sprite data at the end of the program, so this instruction is no needed anymore in the very begining and therefore it is only used for testing purposes.
 
+Warning! All memory references (e.g. sprite data, subroutine call/return address) must be updated.
 Warning! Instruction would still be used for keeping the program running within an infinite loop; when lacking implementation the test program would start fetching (and processing) sprite data as opcodes - but this is an error that actually exist with current test program structure.
 
 Additionally, the test could be reformulated as follows to avoid malicious memory jumps:

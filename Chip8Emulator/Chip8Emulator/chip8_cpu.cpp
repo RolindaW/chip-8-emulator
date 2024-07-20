@@ -23,6 +23,7 @@ void Chip8Cpu::Start(std::string filename)
 		Cycle();
 		// TODO this is called everytime to re-draw last issued data. Pero el motivo es para ejecutar el polliwg de los eventos. No me gusta, lo tendre que cambiar.
 		this->display_.Render();
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 }
 
@@ -57,9 +58,10 @@ void Chip8Cpu::Fetch()
 	unsigned char low_byte = this->memory_.Read(this->program_counter_ + (unsigned short)1);
 
 	this->opcode_ = high_byte << 8 | low_byte;
-	LogFetchedOpcode();
-
+	
 	this->program_counter_ += 2;
+
+	LogFetchedOpcode();
 }
 
 // TODO: Throw (and handle) error in case decoding fails.
@@ -100,6 +102,11 @@ void Chip8Cpu::Decode()
 		//}
 	case 0x1000: // 1NNN
 	{
+		// TODO: Remove on finish testing "test_opcode" ROM.
+		LogDecodedInstruction("Test - Unknown");
+		this->instruction_ = 0;
+		return;
+
 		LogDecodedInstruction("1NNN");
 		this->instruction_ = Instruction::I1NNN;
 		break;
@@ -112,6 +119,11 @@ void Chip8Cpu::Decode()
 	}
 	case 0x7000: // 7XNN
 	{
+		// TODO: Remove on finish testing "test_opcode" ROM.
+		LogDecodedInstruction("Test - Unknown");
+		this->instruction_ = 0;
+		return;
+
 		LogDecodedInstruction("7XNN");
 		this->instruction_ = Instruction::I7XNN;
 		break;
@@ -131,6 +143,7 @@ void Chip8Cpu::Decode()
 	default:
 		LogDecodedInstruction("Unknown");
 		// TODO: Throw error! And handle it.
+		this->instruction_ = 0;
 		break;
 	}
 }
