@@ -638,33 +638,33 @@ Warning! Test program relies in the correct implementation of 1NNN being tested 
 This may make the execution of the test program not reliable.
 
 Error! Ordering of instructions for displaying results is not correct in most of the test cases.
-The lack of implementation of being tested instructions makes in many cases executing instructions that because of the expected result should be by-passed.
+The lack of implementation of being tested instructions makes in many cases executing instructions expected to be by-passed.
 In those failing cases displayed result does not match actual result (i.e. "ok" instead of "no").
-In most of the cases it can be solved just swapping instructions for displaying results (i.e. A206 and A202).
+In most of the cases it can be solved swapping instructions for displaying results (i.e. A206 and A202) and other updates (e.g. being tested instruction parameters, fixture, and/or result checking instruction parameters).
 
 # 4XNN
 
 Bug: display success when lacking implementation.
 
-Fix: swap instructions for displaying result (i.e. ($274) A206 and ($278) A202).
+Fix: swap instructions for displaying result (i.e. ($274) A206 and ($278) A202); modify being tested instruction so following A206 instruction is skipped only if it is executed correctly (e.g. ($276) 452A by 452B) - or modify corresponding fixture (i.e. set 5th general purpose register value to anything different from $2A) - Warning! Other tests relying on same fixture should be updated.
 
 # 5XY0
 
 Bug: display success when lacking implementation.
 
-Fix: swap instructions for displaying result (i.e. ($286) A206 and ($28A) A202).
+Fix: swap instructions for displaying result (i.e. ($286) A206 and ($28A) A202); modify being tested instruction so following A206 instruction is skipped only if it is executed correctly (i.e. ($288) 5560 by 5340) - or modify corresponding fixture (i.e. set 6th general purpose register value to $2A) - Warning! Other tests relying on same fixture should be updated.
 
 # 7XNN
 
 Bug: display success when lacking implementation.
 
-Fix: swap instructions for displaying result (i.e. ($298) A206 and ($29E) A202).
+Fix: swap instructions for displaying result (i.e. ($298) A206 and ($29E) A202); modify result checking instruction so following A206 instruction is skipped only if both being tested function and itself are executed correctly (i.e. ($29C) 462A by 362A) - or modify corresponding fixture (i.e. set 6th general purpose register value to anything different from $2B e.g. $2A) - Warning! Other tests relying on same fixture should be updated.
 
 # 9XY0
 
 Bug: display success when lacking implementation.
 
-Fix: swap instructions for displaying result (i.e. ($2AC) A206 and ($2B0) A202).
+Fix: swap instructions for displaying result (i.e. ($2AC) A206 and ($2B0) A202); modify result checking instruction so following A206 instruction is skipped only if both being tested function and itself are executed correctly (i.e. ($2AE) 9560 by 9570) - or modify corresponding fixture (i.e. set 6th general purpose register value to anything different from $2B e.g. $2A) - Warning! Other tests relying on same fixture should be updated.
 
 # 2NNN
 
@@ -706,37 +706,37 @@ TODO: Check what happens if:
 
 Bug: display success when lacking implementation.
 
-Fix: swap instructions for displaying result (i.e. ($2DE) A206 and ($2E4) A202).
+Fix: swap instructions for displaying result (i.e. ($2DE) A206 and ($2E4) A202); modify result checking instruction so following A206 instruction is skipped only if both being tested function and itself are executed correctly (i.e. ($2E2) 472A by 372A).
 
 # 8XY1
 
 Bug: display success when lacking implementation.
 
-Fix: swap instructions for displaying result (i.e. ($2F2) A206 and ($2FA) A202).
+Fix: swap instructions for displaying result (i.e. ($2F2) A206 and ($2FA) A202); modify result checking instruction so following A206 instruction is skipped only if both being tested function and itself are executed correctly (i.e. ($2F8) 472B by 372B).
 
 # 8XY2
 
 Bug: display success when lacking implementation.
 
-Fix: swap instructions for displaying result (i.e. ($308) A206 and ($312) A202).
+Fix: swap instructions for displaying result (i.e. ($308) A206 and ($312) A202); modify result checking instruction so following A206 instruction is skipped only if both being tested function and itself are executed correctly (i.e. ($310) 4718 by 3718).
 
 # 8XY3
 
 Bug: display success when lacking implementation.
 
-Fix: swap instructions for displaying result (i.e. ($320) A206 and ($32A) A202).
+Fix: swap instructions for displaying result (i.e. ($320) A206 and ($32A) A202); modify result checking instruction so following A206 instruction is skipped only if both being tested function and itself are executed correctly (i.e. ($328) 4767 by 3767).
 
 # 8XY4
 
 Bug: display success when lacking implementation.
 
-Fix: swap instructions for displaying result (i.e. ($338) A206 and ($342) A202).
+Fix: swap instructions for displaying result (i.e. ($338) A206 and ($342) A202); modify result checking instruction so following A206 instruction is skipped only if both being tested function and itself are executed correctly (i.e. ($340) 4718 by 3718).
 
 # 8XY5
 
 Bug: display success when lacking implementation.
 
-Fix: swap instructions for displaying result (i.e. ($356) A206 and ($360) A202).
+Fix: swap instructions for displaying result (i.e. ($356) A206 and ($360) A202); modify result checking instruction so following A206 instruction is skipped only if both being tested function and itself are executed correctly (i.e. ($35E) 47EC by 37EC).
 
 # 8XYE
 
@@ -746,7 +746,7 @@ Fix: draw sprite "E" ($236) instead of "6" ($222) (i.e. replace instruction ($36
 
 Bug: display success when lacking implementation.
 
-Fix: swap instructions for displaying result (i.e. ($36E) A206 and ($376) A202).
+Fix: swap instructions for displaying result (i.e. ($36E) A206 and ($376) A202); modify result checking instruction so following A206 instruction is skipped only if both being tested function and itself are executed correctly (i.e. ($374) 46C0 by 36C0).
 
 # 8XY6
 
@@ -756,7 +756,7 @@ Fix: draw sprite "6" ($222) instead of "E" ($236) (i.e. replace instruction ($38
 
 Bug: display success when lacking implementation.
 
-Fix: swap instructions for displaying result (i.e. ($384) A206 and ($38C) A202).
+Fix: swap instructions for displaying result (i.e. ($384) A206 and ($38C) A202); modify result checking instruction so following A206 instruction is skipped only if both being tested function and itself are executed correctly (i.e. ($38A) 4607 by 3607).
 
 # FX55 & FX65
 
@@ -768,7 +768,7 @@ Fix: TBD
 
 Bug: display success when lacking implementation.
 
-Fix: swap instructions for displaying result (i.e. ($3A6) A206 and ($3AA) A202).
+Fix: swap instructions for displaying result (i.e. ($3A6) A206 and ($3AA) A202); modify result checking instruction so following A206 instruction is skipped only if both being tested function and itself are executed correctly (i.e. ($3A8) 4030 by 3030).
 
 # 1NNN
 

@@ -9,11 +9,16 @@
 #include "chip8_rom.h"
 #include "chip8_display.h"
 
-enum Instruction: unsigned char {
+enum Instruction : unsigned char {
 	I00E0 = 1,
 	I1NNN,
+	I3XNN,
+	I4XNN,
+	I5XY0,
 	I6XNN,
 	I7XNN,
+	I8XY0,
+	I9XY0,
 	IANNN,
 	IDXYN
 };
@@ -70,6 +75,7 @@ private:
 	void LoadRom(std::string filename);
 	void Cycle();
 	void Fetch();
+	void NextInstruction();
 	void Decode();
 	void Execute();
 	unsigned char DecodeX();

@@ -246,41 +246,41 @@ Processed by nibbles (low nibble 1st): N1N2N3N4 == ABCD (where B-n (0xAB), B-n+1
 -N2N3N4: NNN (12-bit memory address)
 
 Table
--0NNN: call machine code routine at address NNN; not necessary for most programs.
+-0NNN (TODO): call machine code routine at address NNN; not necessary for most programs.
 -00E0: clear screen. [turn all px to 0]
--00EE: return form subroutine. [pop last address from the stack; the set PC to it]
+-00EE (TODO): return form subroutine. [pop last address from the stack; the set PC to it]
 -1NNN: jump to address NNN. [set PC to NNN]
--2NNN: call subroutine at address NNN. [push current PC into stack; then set PC to NNN]
+-2NNN (TODO): call subroutine at address NNN. [push current PC into stack; then set PC to NNN]
 -3XNN: skip next instruction if VX equals NN - Warning! These type of instructions act like an opposite "if" statement: if the condition is met, then related code is skipped - skip next instruction (that usually is a jump instruction to corresponding code); otherwise, code is executed - execute next instruction. [increment PC by 2 if condition is met]
 -4XNN: skip next instruction if VX not equals NN. [increment PC by 2 if condition is met]
 -5XY0: skip next instruction if VX equals VY. [increment PC by 2 if condition is met]
 -6XNN: set VX to constant NN
 -7XNN: add constant NN to VX (VF - carry flag - is not affected)
 -8XY0: set VX to VY
--8XY1: set VX to (VX OR VY). [VY is not affected]
--8XY2: set VX to (VX AND VY). [VY is not affected]
--8XY3: set VX to (VX XOR VY). [VY is not affected]
--8XY4: add VY to VX (set VF to 1 if overflow; otherwise, 0). [VY is not affected]
--8XY5: set VX to (VX - VY) (set VF to 0 if underflow; otherwise 1). [VY is not affected]
--8XY6: right-shift VX by 1 (store in VF previous LSB from VX). [alternative behaviour: first set VX to VY; then, proceed normally - Warning! Implement both solutions and make it configurable]
--8XY7: set VX to (VY - VX) (set VF to 0 if underflow; otherwise 1). [VY is not affected]
--8XYE: left-shift VX by 1 (store in VF previous MSB from VX). [alternative behaviour: first set VX to VY; then, proceed normally - Warning! Implement both solutions and make it configurable]
+-8XY1 (TODO): set VX to (VX OR VY). [VY is not affected]
+-8XY2 (TODO): set VX to (VX AND VY). [VY is not affected]
+-8XY3 (TODO): set VX to (VX XOR VY). [VY is not affected]
+-8XY4 (TODO): add VY to VX (set VF to 1 if overflow; otherwise, 0). [VY is not affected]
+-8XY5 (TODO): set VX to (VX - VY) (set VF to 0 if underflow; otherwise 1). [VY is not affected]
+-8XY6 (TODO): right-shift VX by 1 (store in VF previous LSB from VX). [alternative behaviour: first set VX to VY; then, proceed normally - Warning! Implement both solutions and make it configurable]
+-8XY7 (TODO): set VX to (VY - VX) (set VF to 0 if underflow; otherwise 1). [VY is not affected]
+-8XYE (TODO): left-shift VX by 1 (store in VF previous MSB from VX). [alternative behaviour: first set VX to VY; then, proceed normally - Warning! Implement both solutions and make it configurable]
 -9XY0: skip next instruction if VX not equals VY. [increment PC by 2 if condition is met]
 -ANNN: set I to address NNN
--BNNN: jump to address NNN plus V0. [alternative behaviour BXNN: jump to address XNN plus VX - Warning! Implement both solutions and make it configurable]
--CXNN: set VX to (rand(8-bit) AND constant NN)
+-BNNN (TODO): jump to address NNN plus V0. [alternative behaviour BXNN: jump to address XNN plus VX - Warning! Implement both solutions and make it configurable]
+-CXNN (TODO): set VX to (rand(8-bit) AND constant NN)
 -DXYN: draw sprite at coordinate (VX, VY) with a size of 8xN px. Start reading each B (up to N) at address I (I is not affected). Set VF to 1 if px flipping; otherwise, 0. [Tip: starting drawing position must be wrapped - MOD by corresponding dimension (i.e. screen size) to get correct value; sprite drawing must be clipped against the border] [alternative behaviour: sprite drawing must be wrapped - and not clipped - against the border - Warning! Implement both solutions and make it configurable]
--EX9E: skip next instruction if VX is pressed key - Warning! Do not await
--EXA1: skip next instruction if VX is not pressed key - Warning! Do not await
--FX07: set VX to delay timer value
--FX0A: await to key press (bloking operation - Warning! Depending on implementation, PC may be decremented 2 B so current instruction keep being execued; timers should keep decremeting if active); then, store in VX. [alternative behaviour: await to key press & release - Warning! Implement both solutions and make it configurable]
--FX15: set delay timer to VX
--FX18: set sound timer to VX
--FX1E: add VX to I (VF is not affected). [alternative behaviour: set VF to 1 if 12-bit overflow; otherwise, 0 - Warning! Implement both solutions and make it configurable]
--FX29: set I to the memory location of the font sprite in VX. [use last - high - nibble from VX].
--FX33: store BCD (Binary-Coded Decimal) of VX - Warning! Convert to decimal first: hundreds at memory location I, tens at I+1, and ones at I+2.
--FX55: Store range V0-VX (included) starting at memory location I and offseting by 1 B for each value (I is not affected). [alternative behaviour: update I - Warning! Implement both solutions and make it configurable]
--FX65: Fill range V0-VX (included) starting at memory location I and offseting by 1 B for each value (I is not affected). [alternative behaviour: update I - Warning! Implement both solutions and make it configurable]
+-EX9E (TODO): skip next instruction if VX is pressed key - Warning! Do not await
+-EXA1 (TODO): skip next instruction if VX is not pressed key - Warning! Do not await
+-FX07 (TODO): set VX to delay timer value
+-FX0A (TODO): await to key press (bloking operation - Warning! Depending on implementation, PC may be decremented 2 B so current instruction keep being execued; timers should keep decremeting if active); then, store in VX. [alternative behaviour: await to key press & release - Warning! Implement both solutions and make it configurable]
+-FX15 (TODO): set delay timer to VX
+-FX18 (TODO): set sound timer to VX
+-FX1E (TODO): add VX to I (VF is not affected). [alternative behaviour: set VF to 1 if 12-bit overflow; otherwise, 0 - Warning! Implement both solutions and make it configurable]
+-FX29 (TODO): set I to the memory location of the font sprite in VX. [use last - high - nibble from VX].
+-FX33 (TODO): store BCD (Binary-Coded Decimal) of VX - Warning! Convert to decimal first: hundreds at memory location I, tens at I+1, and ones at I+2.
+-FX55 (TODO): Store range V0-VX (included) starting at memory location I and offseting by 1 B for each value (I is not affected). [alternative behaviour: update I - Warning! Implement both solutions and make it configurable]
+-FX65 (TODO): Fill range V0-VX (included) starting at memory location I and offseting by 1 B for each value (I is not affected). [alternative behaviour: update I - Warning! Implement both solutions and make it configurable]
 
 ---
 

@@ -59,12 +59,17 @@ void Chip8Cpu::Fetch()
 
 	this->opcode_ = high_byte << 8 | low_byte;
 	
-	this->program_counter_ += 2;
+	NextInstruction();
 
 	LogFetchedOpcode();
 }
 
-// TODO: Throw (and handle) error in case decoding fails.
+void Chip8Cpu::NextInstruction()
+{
+	this->program_counter_ += 2;
+}
+
+// TODO: Throw (and handle) error in case decoding fails; refactor (get rid of nested switch statements) so do not to repeat error handle in each switch statement
 void Chip8Cpu::Decode()
 {
 	if (this->opcode_ == 0x00E0) // 00E0
@@ -78,73 +83,105 @@ void Chip8Cpu::Decode()
 	switch (this->opcode_ & 0xF000)
 	{
 		//case 0x0000:
-		//{
-		//	switch (this->opcode_)
-		//	{
-		//		case 0x00E0: // 00E0
-		//		{
-		//			//LogDecodedInstruction("00E0");
-		//			//SetOffAllFramebufferElementsOff();
-		//			//this->display_.Render(&framebuffer);
-		//			//break;
-		//		}
-		//		case 0x00EE: // 0x00EE
-		//		{
-		//			// TODO
-		//			//break;
-		//		}
-		//		default: // 0NNN
-		//		{
-		//			//LogDecodedInstruction("0NNN (NOT SUPPORTTED)");
-		//			//break;
-		//		}
-		//	}
-		//}
-	case 0x1000: // 1NNN
-	{
-		// TODO: Remove on finish testing "test_opcode" ROM.
-		LogDecodedInstruction("Test - Unknown");
-		this->instruction_ = 0;
-		return;
-
-		LogDecodedInstruction("1NNN");
-		this->instruction_ = Instruction::I1NNN;
-		break;
-	}
-	case 0x6000: // 6XNN
-	{
-		LogDecodedInstruction("6XNN");
-		this->instruction_ = Instruction::I6XNN;
-		break;
-	}
-	case 0x7000: // 7XNN
-	{
-		// TODO: Remove on finish testing "test_opcode" ROM.
-		LogDecodedInstruction("Test - Unknown");
-		this->instruction_ = 0;
-		return;
-
-		LogDecodedInstruction("7XNN");
-		this->instruction_ = Instruction::I7XNN;
-		break;
-	}
-	case 0xA000: // ANNN
-	{
-		LogDecodedInstruction("ANNN");
-		this->instruction_ = Instruction::IANNN;
-		break;
-	}
-	case 0xD000: // DXYN
-	{
-		LogDecodedInstruction("DXYN");
-		this->instruction_ = Instruction::IDXYN;
-		break;
-	}
-	default:
-		LogDecodedInstruction("Unknown");
-		// TODO: Throw error! And handle it.
-		this->instruction_ = 0;
-		break;
+			//{
+			//	switch (this->opcode_)
+			//	{
+			//		case 0x00E0: // 00E0
+			//		{
+			//			//LogDecodedInstruction("00E0");
+			//			//SetOffAllFramebufferElementsOff();
+			//			//this->display_.Render(&framebuffer);
+			//			//break;
+			//		}
+			//		case 0x00EE: // 0x00EE
+			//		{
+			//			// TODO
+			//			//break;
+			//		}
+			//		default: // 0NNN
+			//		{
+			//			//LogDecodedInstruction("0NNN (NOT SUPPORTTED)");
+			//			//break;
+			//		}
+			//	}
+			//}
+		case 0x1000: // 1NNN
+		{
+			LogDecodedInstruction("1NNN");
+			this->instruction_ = Instruction::I1NNN;
+			break;
+		}
+		case 0x3000: // 3XNN
+		{
+			LogDecodedInstruction("3XNN");
+			this->instruction_ = Instruction::I3XNN;
+			break;
+		}
+		case 0x4000: // 4XNN
+		{
+			LogDecodedInstruction("4XNN");
+			this->instruction_ = Instruction::I4XNN;
+			break;
+		}
+		case 0x5000: // 5XY0
+		{
+			LogDecodedInstruction("5XY0");
+			this->instruction_ = Instruction::I5XY0;
+			break;
+		}
+		case 0x6000: // 6XNN
+		{
+			LogDecodedInstruction("6XNN");
+			this->instruction_ = Instruction::I6XNN;
+			break;
+		}
+		case 0x7000: // 7XNN
+		{
+			LogDecodedInstruction("7XNN");
+			this->instruction_ = Instruction::I7XNN;
+			break;
+		}
+		case 0x8000: // 8xxx instruction family
+		{
+			switch (this->opcode_ & 0x000F)
+			{
+				case 0x0000: // 8XY0
+				{
+					LogDecodedInstruction("8XY0");
+					this->instruction_ = Instruction::I8XY0;
+					break;
+				}
+				default:
+					LogDecodedInstruction("Unknown");
+					// TODO: Throw error! And handle it.
+					this->instruction_ = 0;
+					break;
+			}
+			break;
+		}
+		case 0x9000: // 9XY0
+		{
+			LogDecodedInstruction("9XY0");
+			this->instruction_ = Instruction::I9XY0;
+			break;
+		}
+		case 0xA000: // ANNN
+		{
+			LogDecodedInstruction("ANNN");
+			this->instruction_ = Instruction::IANNN;
+			break;
+		}
+		case 0xD000: // DXYN
+		{
+			LogDecodedInstruction("DXYN");
+			this->instruction_ = Instruction::IDXYN;
+			break;
+		}
+		default:
+			LogDecodedInstruction("Unknown");
+			// TODO: Throw error! And handle it.
+			this->instruction_ = 0;
+			break;
 	}
 }
 
@@ -164,6 +201,36 @@ void Chip8Cpu::Execute()
 			this->program_counter_ = address;
 			break;
 		}
+		case Instruction::I3XNN:
+		{
+			unsigned char gp_register_index = DecodeX();
+			unsigned char value = DecodeNN();
+			if (this->gp_register_[gp_register_index] == value)
+			{
+				NextInstruction();
+			}
+			break;
+		}
+		case Instruction::I4XNN:
+		{
+			unsigned char gp_register_index = DecodeX();
+			unsigned char value = DecodeNN();
+			if (this->gp_register_[gp_register_index] != value)
+			{
+				NextInstruction();
+			}
+			break;
+		}
+		case Instruction::I5XY0:
+		{
+			unsigned char gp_register_index_x = DecodeX();
+			unsigned char gp_register_index_y = DecodeY();
+			if (this->gp_register_[gp_register_index_x] == this->gp_register_[gp_register_index_y])
+			{
+				NextInstruction();
+			}
+			break;
+		}
 		case Instruction::I6XNN:
 		{
 			unsigned char gp_register_index = DecodeX();
@@ -176,6 +243,23 @@ void Chip8Cpu::Execute()
 			unsigned char gp_register_index = DecodeX();
 			unsigned char value = DecodeNN();
 			this->gp_register_[gp_register_index] += value;
+			break;
+		}
+		case Instruction::I8XY0:
+		{
+			unsigned char gp_register_index_x = DecodeX();
+			unsigned char gp_register_index_y = DecodeY();
+			this->gp_register_[gp_register_index_x] = this->gp_register_[gp_register_index_y];
+			break;
+		}
+		case Instruction::I9XY0:
+		{
+			unsigned char gp_register_index_x = DecodeX();
+			unsigned char gp_register_index_y = DecodeY();
+			if (this->gp_register_[gp_register_index_x] != this->gp_register_[gp_register_index_y])
+			{
+				NextInstruction();
+			}
 			break;
 		}
 		case Instruction::IANNN:
