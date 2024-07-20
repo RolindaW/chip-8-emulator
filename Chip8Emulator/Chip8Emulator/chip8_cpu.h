@@ -18,6 +18,13 @@ enum Instruction : unsigned char {
 	I6XNN,
 	I7XNN,
 	I8XY0,
+	I8XY1,
+	I8XY2,
+	I8XY3,
+	I8XY4,
+	I8XY5,
+	I8XY6,
+	I8XYE,
 	I9XY0,
 	IANNN,
 	IDXYN

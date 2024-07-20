@@ -257,9 +257,9 @@ Table
 -6XNN: set VX to constant NN
 -7XNN: add constant NN to VX (VF - carry flag - is not affected)
 -8XY0: set VX to VY
--8XY1 (TODO): set VX to (VX OR VY). [VY is not affected]
--8XY2 (TODO): set VX to (VX AND VY). [VY is not affected]
--8XY3 (TODO): set VX to (VX XOR VY). [VY is not affected]
+-8XY1: set VX to (VX OR VY). [VY is not affected]
+-8XY2: set VX to (VX AND VY). [VY is not affected]
+-8XY3: set VX to (VX XOR VY). [VY is not affected]
 -8XY4 (TODO): add VY to VX (set VF to 1 if overflow; otherwise, 0). [VY is not affected]
 -8XY5 (TODO): set VX to (VX - VY) (set VF to 0 if underflow; otherwise 1). [VY is not affected]
 -8XY6 (TODO): right-shift VX by 1 (store in VF previous LSB from VX). [alternative behaviour: first set VX to VY; then, proceed normally - Warning! Implement both solutions and make it configurable]

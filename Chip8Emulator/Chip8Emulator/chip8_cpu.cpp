@@ -72,9 +72,8 @@ void Chip8Cpu::NextInstruction()
 // TODO: Throw (and handle) error in case decoding fails; refactor (get rid of nested switch statements) so do not to repeat error handle in each switch statement
 void Chip8Cpu::Decode()
 {
-	if (this->opcode_ == 0x00E0) // 00E0
+	if (this->opcode_ == 0x00E0)
 	{
-		// TODO: Make decoding and execution clear (separation of concerns)
 		LogDecodedInstruction("00E0");
 		this->instruction_ = Instruction::I00E0;
 		return;
@@ -86,14 +85,7 @@ void Chip8Cpu::Decode()
 			//{
 			//	switch (this->opcode_)
 			//	{
-			//		case 0x00E0: // 00E0
-			//		{
-			//			//LogDecodedInstruction("00E0");
-			//			//SetOffAllFramebufferElementsOff();
-			//			//this->display_.Render(&framebuffer);
-			//			//break;
-			//		}
-			//		case 0x00EE: // 0x00EE
+			//		case 0x00EE:
 			//		{
 			//			// TODO
 			//			//break;
@@ -105,37 +97,37 @@ void Chip8Cpu::Decode()
 			//		}
 			//	}
 			//}
-		case 0x1000: // 1NNN
+		case 0x1000:
 		{
 			LogDecodedInstruction("1NNN");
 			this->instruction_ = Instruction::I1NNN;
 			break;
 		}
-		case 0x3000: // 3XNN
+		case 0x3000:
 		{
 			LogDecodedInstruction("3XNN");
 			this->instruction_ = Instruction::I3XNN;
 			break;
 		}
-		case 0x4000: // 4XNN
+		case 0x4000:
 		{
 			LogDecodedInstruction("4XNN");
 			this->instruction_ = Instruction::I4XNN;
 			break;
 		}
-		case 0x5000: // 5XY0
+		case 0x5000:
 		{
 			LogDecodedInstruction("5XY0");
 			this->instruction_ = Instruction::I5XY0;
 			break;
 		}
-		case 0x6000: // 6XNN
+		case 0x6000:
 		{
 			LogDecodedInstruction("6XNN");
 			this->instruction_ = Instruction::I6XNN;
 			break;
 		}
-		case 0x7000: // 7XNN
+		case 0x7000:
 		{
 			LogDecodedInstruction("7XNN");
 			this->instruction_ = Instruction::I7XNN;
@@ -145,10 +137,52 @@ void Chip8Cpu::Decode()
 		{
 			switch (this->opcode_ & 0x000F)
 			{
-				case 0x0000: // 8XY0
+				case 0x0000:
 				{
 					LogDecodedInstruction("8XY0");
 					this->instruction_ = Instruction::I8XY0;
+					break;
+				}
+				case 0x0001:
+				{
+					LogDecodedInstruction("8XY1");
+					this->instruction_ = Instruction::I8XY1;
+					break;
+				}
+				case 0x0002:
+				{
+					LogDecodedInstruction("8XY2");
+					this->instruction_ = Instruction::I8XY2;
+					break;
+				}
+				case 0x0003:
+				{
+					LogDecodedInstruction("8XY3");
+					this->instruction_ = Instruction::I8XY3;
+					break;
+				}
+				case 0x0004:
+				{
+					LogDecodedInstruction("8XY4");
+					this->instruction_ = Instruction::I8XY4;
+					break;
+				}
+				case 0x0005:
+				{
+					LogDecodedInstruction("8XY5");
+					this->instruction_ = Instruction::I8XY5;
+					break;
+				}
+				case 0x0006:
+				{
+					LogDecodedInstruction("8XY6");
+					this->instruction_ = Instruction::I8XY6;
+					break;
+				}
+				case 0x000E:
+				{
+					LogDecodedInstruction("8XYE");
+					this->instruction_ = Instruction::I8XYE;
 					break;
 				}
 				default:
@@ -159,19 +193,19 @@ void Chip8Cpu::Decode()
 			}
 			break;
 		}
-		case 0x9000: // 9XY0
+		case 0x9000:
 		{
 			LogDecodedInstruction("9XY0");
 			this->instruction_ = Instruction::I9XY0;
 			break;
 		}
-		case 0xA000: // ANNN
+		case 0xA000:
 		{
 			LogDecodedInstruction("ANNN");
 			this->instruction_ = Instruction::IANNN;
 			break;
 		}
-		case 0xD000: // DXYN
+		case 0xD000:
 		{
 			LogDecodedInstruction("DXYN");
 			this->instruction_ = Instruction::IDXYN;
@@ -250,6 +284,51 @@ void Chip8Cpu::Execute()
 			unsigned char gp_register_index_x = DecodeX();
 			unsigned char gp_register_index_y = DecodeY();
 			this->gp_register_[gp_register_index_x] = this->gp_register_[gp_register_index_y];
+			break;
+		}
+		case Instruction::I8XY1:
+		{
+			unsigned char gp_register_index_x = DecodeX();
+			unsigned char gp_register_index_y = DecodeY();
+			this->gp_register_[gp_register_index_x] |= this->gp_register_[gp_register_index_y];
+			break;
+		}
+		case Instruction::I8XY2:
+		{
+			unsigned char gp_register_index_x = DecodeX();
+			unsigned char gp_register_index_y = DecodeY();
+			this->gp_register_[gp_register_index_x] &= this->gp_register_[gp_register_index_y];
+			break;
+		}
+		case Instruction::I8XY3:
+		{
+			unsigned char gp_register_index_x = DecodeX();
+			unsigned char gp_register_index_y = DecodeY();
+			this->gp_register_[gp_register_index_x] ^= this->gp_register_[gp_register_index_y];
+			break;
+		}
+		case Instruction::I8XY4:
+		{
+			unsigned char gp_register_index_x = DecodeX();
+			unsigned char gp_register_index_y = DecodeY();
+			unsigned short addition = this->gp_register_[gp_register_index_x] + this->gp_register_[gp_register_index_y];
+			this->gp_register_[gp_register_index_x] = addition & 0xFF;  // Get 8 LSB bits (1 B) as addition result
+			this->gp_register_[0xF] = (unsigned char)addition > 0x8;  // Set flag register VF (general purpose register 0xF) on overflow
+			break;
+		}
+		case Instruction::I8XY5:
+		{
+			// TODO
+			break;
+		}
+		case Instruction::I8XY6:
+		{
+			// TODO
+			break;
+		}
+		case Instruction::I8XYE:
+		{
+			// TODO
 			break;
 		}
 		case Instruction::I9XY0:
