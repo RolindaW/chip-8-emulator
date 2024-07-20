@@ -300,7 +300,7 @@ D9B4 - DXYN
 *** INSTRUCTIONS
 
 Warning! Instructions 6XNN, ANNN, and DXYN are assumed to be already implemented to be able running the test (i.e. they are not tested).
-All remaining instructions are tested (i.e. they do not actually need to be implemented for properly running the test - because this is the purpose of a test itself).
+All remaining instructions are tested (i.e. they should not actually need to be implemented for properly running the test - because this is the purpose of a test itself).
 
 1NNN - JUMP TO ADDRESS NNN
 6XNN - SET VX TO CONSTANT NN
@@ -627,15 +627,20 @@ Test program repeats same instruction set for every being tested instruction:
 
 *** BUGS AND FIXES (PROPOSALS)
 
-Error! Ordering of instructions for displaying result is not correct in most of the test cases.
+Info! Instructions writting into memory may appear to be wrong because the memory address used is outside the program memory (e.g. ($3A0) F155 - FX55 - starts writing into the address $3E8 when the program memory ends at $3DB).
+This is absolutely correct since the program should not overwrite itself, so writing to free memory space is the correct way to do it.
+
+Warning! Test program relies in the correct implementation of other being tested instructions for testing most of the instructions (e.g. 4XNN and 3XNN instructions are used extensively for checking results).
+This is not a good practice on unit testing where test cases are commonly expected to run isolated.
+This may make the results of dependent being tested instructions not reliable.
+
+Warning! Test program relies in the correct implementation of 1NNN being tested instruction for running the test itself (e.g. it is used in the very beginnig to skip all sprite data and in the very end for keeping the program running within an infinite loop).
+This may make the execution of the test program not reliable.
+
+Error! Ordering of instructions for displaying results is not correct in most of the test cases.
 The lack of implementation of being tested instructions makes in many cases executing instructions that because of the expected result should be by-passed.
 In those failing cases displayed result does not match actual result (i.e. "ok" instead of "no").
-Instructions: 452A, 5560, 462A, 9560, 8750 (+472A), 87B1 (+472B), 8752 (+4718), 8763 (+4767), 8764 (+4718), 8765 (+47EC), 866E (+46C0), 8666 (+4607), 4030, F633 (+F265). 
-
-Fix (general): most of the times it can be solved just swapping instructions for displaying result (i.e. A202 and A206).
-
-Warning! Instructions writting to memory (e.g. FX55) may appear to be wrong because the memory address used is outside the program memory (e.g. F155 starts writing to address $3E8 when the program memory ends at $3DB).
-This is absolutely correct since the program should not overwrite itself, so writing to free memory is the correct way to do it.
+In most of the cases it can be solved just swapping instructions for displaying results (i.e. A206 and A202).
 
 # 4XNN
 
@@ -647,91 +652,136 @@ Fix: swap instructions for displaying result (i.e. ($274) A206 and ($278) A202).
 
 Display success when lacking implementation.
 
-Fix: swap instructions for displaying result (i.e. ($274) A206 and ($278) A202).
+Fix: swap instructions for displaying result (i.e. ($286) A206 and ($28A) A202).
 
 # 7XNN
 
 Display success when lacking implementation.
 
-Fix: swap instructions for displaying result (i.e. ($274) A206 and ($278) A202).
+Fix: swap instructions for displaying result (i.e. ($298) A206 and ($29E) A202).
 
 # 9XY0
 
 Display success when lacking implementation.
 
-Fix: swap instructions for displaying result (i.e. ($274) A206 and ($278) A202).
+Fix: swap instructions for displaying result (i.e. ($2AC) A206 and ($2B0) A202).
 
 # 2NNN
 
 Display incorrect alias of being tested instruction (i.e. "A" instead of "2").
 
-Fix: draw sprite "2" ($212) instead of "A" ($232) (i.e. replace instruction ($2B6) A232 by A212)
+Fix: draw sprite "2" ($212) instead of "A" ($232) (i.e. replace instruction ($2B6) A232 by A212).
 
 Do not display any result when lacking implementation.
 
-Fix: Warning! This is a complex case as the test of both current and following instruction (i.e. 00EE) are dependent each other).
+Fix: TBD
 
-One easy fix would be initializing test result to error and expecting the subroutine to set it success (i.e. display error when lacking implementation).
+Warning! This is a complex case because multiple reasons:
+- Test of both current (i.e. 2NNN) and following (i.e. 00EE) instructions are dependent each other.
+- All instructions are not stored in memory one after the other (i.e. there are gaps), which makes error handling more difficult.
+
+One fix approach would be initializing test result to error and expecting the subroutine to set it to success (i.e. display error when lacking implementation).
 
 ($2BC) A206
 ($2BE) 2242 - INSTRUCTION
 ($2C2) DAB4
 
-But there would be trouble in case 00EE instruction not implemented: how would it come back?
+But there would be a problem in case 00EE instruction not implemented: how would it return back?
 
 # 00EE
 
-This function does not actually check anything; just expect a path to be followed but... What happens when not so?
-Check what happens if:
-- 2NNN NOT implemented, 00EE NOT implemented
-- 2NNN implemented, 00EE NOT implemented
-- 2NNN NOT implemented, 00EE implemented
-- 2NNN implemented, 00EE implemented
-
-Warning! When 2NNN not implemented 00EE could never work (because there would not be recorded any address to go back in the stack).
+This function does not actually check anything; just expect a happy path to be followed. What happens when not so?
 
 Fix: TBD
 
+Warning! When 2NNN not implemented 00EE could never work (because there would not be stored in the stack any address to return back).
+
+TODO: Check what happens if:
+- 2NNN NOT implemented, 00EE NOT implemented.
+- 2NNN implemented, 00EE NOT implemented.
+- 2NNN NOT implemented, 00EE implemented.
+- 2NNN implemented, 00EE implemented.
+
 # 8XY0
 
-"ok" sprite is drawn even if function not implemented.
+Display success when lacking implementation.
 
-Fix: Interchange result sprite instructions.
+Fix: swap instructions for displaying result (i.e. ($2DE) A206 and ($2E4) A202).
+
+# 8XY1
+
+Display success when lacking implementation.
+
+Fix: swap instructions for displaying result (i.e. ($2F2) A206 and ($2FA) A202).
+
+# 8XY2
+
+Display success when lacking implementation.
+
+Fix: swap instructions for displaying result (i.e. ($308) A206 and ($312) A202).
+
+# 8XY3
+
+Display success when lacking implementation.
+
+Fix: swap instructions for displaying result (i.e. ($320) A206 and ($32A) A202).
+
+# 8XY4
+
+Display success when lacking implementation.
+
+Fix: swap instructions for displaying result (i.e. ($338) A206 and ($342) A202).
+
+# 8XY5
+
+Display success when lacking implementation.
+
+Fix: swap instructions for displaying result (i.e. ($356) A206 and ($360) A202).
 
 # 8XYE
 
-Draw "6" sprite on instruction name instead of "E".
+Display incorrect alias of being tested instruction (i.e. "6" instead of "E").
 
-Fix: Set correct instruction name sprite (i.e. "E").
+Fix: draw sprite "E" ($236) instead of "6" ($222) (i.e. replace instruction ($36A) A222 by A236).
+
+Display success when lacking implementation.
+
+Fix: swap instructions for displaying result (i.e. ($36E) A206 and ($376) A202).
 
 # 8XY6
 
-Draw "E" sprite on instruction name instead of "6".
+Display incorrect alias of being tested instruction (i.e. "E" instead of "6").
 
-Fix: Set correct instruction name sprite (i.e. "6").
+Fix: draw sprite "6" ($222) instead of "E" ($236) (i.e. replace instruction ($380) A236 by A222).
+
+Display success when lacking implementation.
+
+Fix: swap instructions for displaying result (i.e. ($384) A206 and ($38C) A202).
 
 # FX55 & FX65
 
-These instructions are being tested in a single test, so single result is printed "F5".
+These instructions are being tested within a single test case (i.e. "F5" alias) making testing dependent, so single result is being displayed.
 
-Fix: ?
+TODO: Check what happens if either both implementations or single one lacking.
+
+Fix: TBD
+
+Display success when lacking implementation.
+
+Fix: swap instructions for displaying result (i.e. ($3A6) A206 and ($3AA) A202).
 
 # 1NNN
 
-Not very convenient to test the last when is being first instruction being executed in the program.
-With current test program structure, all the program crashes if this instruction not implemented ( because emulator would start fetching sprite data as opcodes after ignoring very first instruction).
+Instruction is used even before being tested.
 
-Fix: Move al sprite block at the end of the program, so this instruction is no needed in the begining and therefore can be tested where it already is places (at the very end).
+Fix: Move al sprite data at the end of the program, so this instruction is no needed anymore in the very begining and therefore it is only used for testing purposes.
 
-Warning! If this not implemented is not neither possible the ending infinite loop to happen.
+Warning! Instruction would still be used for keeping the program running within an infinite loop; when lacking implementation the test program would start fetching (and processing) sprite data as opcodes - but this is an error that actually exist with current test program structure.
 
-Another option: Test this function the first in the beginnig.
+Additionally, the test could be reformulated as follows to avoid malicious memory jumps:
 
-($200) I = OK SPRITE
-($202) JUMP TO ($206)
-($204) I = ERROR SPRITE
-($206) DRAW RESULT
-
-If jump not implemented it would set I to error sprite before drawing; otherwise, would use I (== ok sprite) set in the beginning.
-
-...
+($n) A202
+($n+1) 1n+3 (SKIP ($n+2) A206 IF SUCCESS - KEEP I POINTING TO ($202) "ok" SPRITE; OTHERWISE, RUN ($n+2) A206 - SET I POINTING TO ($206) "no" SPRITE)
+($n+2) A206
+($n+3) DAB4
+($n+4) 1n+4 (INFINITE LOOP)
