@@ -644,35 +644,35 @@ In most of the cases it can be solved just swapping instructions for displaying 
 
 # 4XNN
 
-Display success when lacking implementation.
+Bug: display success when lacking implementation.
 
 Fix: swap instructions for displaying result (i.e. ($274) A206 and ($278) A202).
 
 # 5XY0
 
-Display success when lacking implementation.
+Bug: display success when lacking implementation.
 
 Fix: swap instructions for displaying result (i.e. ($286) A206 and ($28A) A202).
 
 # 7XNN
 
-Display success when lacking implementation.
+Bug: display success when lacking implementation.
 
 Fix: swap instructions for displaying result (i.e. ($298) A206 and ($29E) A202).
 
 # 9XY0
 
-Display success when lacking implementation.
+Bug: display success when lacking implementation.
 
 Fix: swap instructions for displaying result (i.e. ($2AC) A206 and ($2B0) A202).
 
 # 2NNN
 
-Display incorrect alias of being tested instruction (i.e. "A" instead of "2").
+Bug: display incorrect alias of being tested instruction (i.e. "A" instead of "2").
 
 Fix: draw sprite "2" ($212) instead of "A" ($232) (i.e. replace instruction ($2B6) A232 by A212).
 
-Do not display any result when lacking implementation.
+Bug: do not display any result when lacking implementation.
 
 Fix: TBD
 
@@ -690,7 +690,7 @@ But there would be a problem in case 00EE instruction not implemented: how would
 
 # 00EE
 
-This function does not actually check anything; just expect a happy path to be followed. What happens when not so?
+Bug: the test does not actually check anything; just expect a happy path to be followed. What happens when not so?
 
 Fix: TBD
 
@@ -704,85 +704,101 @@ TODO: Check what happens if:
 
 # 8XY0
 
-Display success when lacking implementation.
+Bug: display success when lacking implementation.
 
 Fix: swap instructions for displaying result (i.e. ($2DE) A206 and ($2E4) A202).
 
 # 8XY1
 
-Display success when lacking implementation.
+Bug: display success when lacking implementation.
 
 Fix: swap instructions for displaying result (i.e. ($2F2) A206 and ($2FA) A202).
 
 # 8XY2
 
-Display success when lacking implementation.
+Bug: display success when lacking implementation.
 
 Fix: swap instructions for displaying result (i.e. ($308) A206 and ($312) A202).
 
 # 8XY3
 
-Display success when lacking implementation.
+Bug: display success when lacking implementation.
 
 Fix: swap instructions for displaying result (i.e. ($320) A206 and ($32A) A202).
 
 # 8XY4
 
-Display success when lacking implementation.
+Bug: display success when lacking implementation.
 
 Fix: swap instructions for displaying result (i.e. ($338) A206 and ($342) A202).
 
 # 8XY5
 
-Display success when lacking implementation.
+Bug: display success when lacking implementation.
 
 Fix: swap instructions for displaying result (i.e. ($356) A206 and ($360) A202).
 
 # 8XYE
 
-Display incorrect alias of being tested instruction (i.e. "6" instead of "E").
+Bug: display incorrect alias of being tested instruction (i.e. "6" instead of "E").
 
 Fix: draw sprite "E" ($236) instead of "6" ($222) (i.e. replace instruction ($36A) A222 by A236).
 
-Display success when lacking implementation.
+Bug: display success when lacking implementation.
 
 Fix: swap instructions for displaying result (i.e. ($36E) A206 and ($376) A202).
 
 # 8XY6
 
-Display incorrect alias of being tested instruction (i.e. "E" instead of "6").
+Bug: display incorrect alias of being tested instruction (i.e. "E" instead of "6").
 
 Fix: draw sprite "6" ($222) instead of "E" ($236) (i.e. replace instruction ($380) A236 by A222).
 
-Display success when lacking implementation.
+Bug: display success when lacking implementation.
 
 Fix: swap instructions for displaying result (i.e. ($384) A206 and ($38C) A202).
 
 # FX55 & FX65
 
-These instructions are being tested within a single test case (i.e. "F5" alias) making testing dependent, so single result is being displayed.
+Bug: these instructions are being tested within a single test case (i.e. "F5" alias) making testing dependent, so single result is being displayed.
 
 TODO: Check what happens if either both implementations or single one lacking.
 
 Fix: TBD
 
-Display success when lacking implementation.
+Bug: display success when lacking implementation.
 
 Fix: swap instructions for displaying result (i.e. ($3A6) A206 and ($3AA) A202).
 
 # 1NNN
 
-Instruction is used even before being tested.
+Bug: do not display any result when lacking implementation.
 
-Fix: Move al sprite data at the end of the program, so this instruction is no needed anymore in the very begining and therefore it is only used for testing purposes.
+Fix: display error when lacking implementation (i.e. include instruction A206 before executing being tested instruction)
 
-Warning! All memory references (e.g. sprite data, subroutine call/return address) must be updated.
-Warning! Instruction would still be used for keeping the program running within an infinite loop; when lacking implementation the test program would start fetching (and processing) sprite data as opcodes - but this is an error that actually exist with current test program structure.
+($3DA) A206
+($3DC) 1248 - INSTRUCTION
 
-Additionally, the test could be reformulated as follows to avoid malicious memory jumps:
+($248) A202
+($24A) DAB4
+($24C) 13E0
+
+($3DE) DAB4
+($3E0) 13DE
+
+Warning! Instruction ($24A) DAB4 could be actually removed but many memory references should be updated if so. This is a basic fix approach.
+
+Alt: refactor the test to avoid malicious memory jumps.
 
 ($n) A202
 ($n+1) 1n+3 (SKIP ($n+2) A206 IF SUCCESS - KEEP I POINTING TO ($202) "ok" SPRITE; OTHERWISE, RUN ($n+2) A206 - SET I POINTING TO ($206) "no" SPRITE)
 ($n+2) A206
 ($n+3) DAB4
 ($n+4) 1n+4 (INFINITE LOOP)
+
+Bug: instruction is used even before being tested.
+
+Fix: move al sprite data at the end of the program, so this instruction is no needed anymore in the very begining and therefore it is only used for testing purposes.
+
+Warning! All memory references (e.g. sprite data, subroutine call/return address) must be updated.
+Warning! Instruction would still be used for keeping the program running within an infinite loop; when lacking implementation the test program would start fetching (and processing) sprite data as opcodes - but this is an error that actually exist with current test program structure.
