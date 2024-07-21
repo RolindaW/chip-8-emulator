@@ -2,18 +2,39 @@
 
 #include <iostream>
 #include <string>
+#include <chrono> // TODO: Remove when removing sleep.
+#include <thread> // TODO: Remove when removing sleep.
 
 #include "chip8_memory.h"
 #include "chip8_rom.h"
 #include "chip8_display.h"
 
-enum Instruction: unsigned char {
+enum Instruction : unsigned char {
+	I0NNN = 1,
 	I00E0,
+	I00EE,
 	I1NNN,
+	I2NNN,
+	I3XNN,
+	I4XNN,
+	I5XY0,
 	I6XNN,
 	I7XNN,
+	I8XY0,
+	I8XY1,
+	I8XY2,
+	I8XY3,
+	I8XY4,
+	I8XY5,
+	I8XY6,
+	I8XY7,
+	I8XYE,
+	I9XY0,
 	IANNN,
-	IDXYN
+	IDXYN,
+	IFX33,
+	IFX55,
+	IFX65
 };
 
 class Chip8Cpu
@@ -44,7 +65,6 @@ private:
 private:
 	unsigned short program_counter_;
 	unsigned short index_register_;
-	unsigned char stack_pointer_;
 	unsigned char gp_register_[16];
 
 	unsigned char delay_timer_;
@@ -68,6 +88,7 @@ private:
 	void LoadRom(std::string filename);
 	void Cycle();
 	void Fetch();
+	void NextInstruction();
 	void Decode();
 	void Execute();
 	unsigned char DecodeX();

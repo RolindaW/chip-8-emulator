@@ -1,0 +1,820 @@
+(00)
+124E - 1NNN - JUMP TO ADDRESS $24E (i.e. $4E)
+EAAC - DATA (== "ok") (POINTED AT INSTRUCTION $262 (i.e. $62); USED BY DRAWING INSTRUCCTION $268 (i.e. $68)) + (POINT,DRAW) = ($278, $27A), ($28A, $28C)
+AAEA - DATA
+CEAA - DATA (== "no") (POINTED AT INSTRUCTION $274 (i.e. $74); USED BY DRAWING INSTRUCCTION $??? (i.e. $??)) + (POINT,DRAW) = ($286, $???)
+AAAE - DATA
+E0A0 - DATA (== "0") (POINTED AT INSTRUCTION $2C8 (i.e. $C8))
+A0E0 - DATA
+C040 - DATA (== "1") (POINTED AT INSTRUCTION $2EE (i.e. $EE))
+
+(10)
+40E0 - DATA
+E020 - DATA (== "2") (POINTED AT INSTRUCTION $304 (i.e. $104))
+C0E0 - DATA
+E060 - DATA (== "3") (POINTED AT INSTRUCTION $25A (i.e. $5A); USED BY DRAWING INSTRUCCTION $25C (i.e. $5C))
+20E0 - DATA
+A0E0 - DATA (== "4") (POINTED AT INSTRUCTION $26C (i.e. $6C); USED BY DRAWING INSTRUCCTION $26E (i.e. $6E))
+2020 - DATA
+6040 - DATA (== "5") (POINTED AT INSTRUCTION $27E (i.e. $7E); USED BY DRAWING INSTRUCCTION $280 (i.e. $80))
+
+(20)
+2040 - DATA
+E080 - DATA (== "6") (POINTED AT INSTRUCTION $36A (i.e. $16A))
+E0E0 - DATA
+E020 - DATA (== "7") (POINTED AT INSTRUCTION $290 (i.e. $90))
+2020 - DATA
+E0E0 - DATA (== "8") (POINTED AT INSTRUCTION $2D6 (i.e. $D6))
+A0E0 - DATA
+E0E0 - DATA (== "9") (POINTED AT INSTRUCTION $2A4 (i.e. $A4))
+
+(30)
+20E0 - DATA
+40A0 - DATA (== "A") (POINTED AT INSTRUCTION $2B6 (i.e. $B6))
+E0A0 - DATA
+E0C0 - DATA (== "E") (POINTED AT INSTRUCTION $2CC (i.e. $CC))
+80E0 - DATA
+E080 - DATA (== "F") (POINTED AT INSTRUCTION $392 (i.e. $192))
+C080 - DATA
+A040 - DATA (== "x") (POINTED AT INSTRUCTION $25E (i.e. $5E); USED BY DRAWING INSTRUCCTION $260 (i.e. $60)) + (POINT,DRAW) = ($270, $272), ($282, $284)
+
+(40)
+A0A0 - DATA
+A202 - ANNN (CALL FROM ADDRESS $2BE (i.e. $BE))
+DAB4 - DXYN
+00EE - 00EE - RETURN FROM SUBROUTINE (BACK TO NEXT INSTRUCTION $2C0 (i.e. $C0))
+A202 - ANNN (JUMP FROM ADDRESS $3DA (i.e. $1DA))
+DAB4 - DXYN
+13DC - 1NNN - JUMP TO ADDRESS $3DC (i.e. $1DC)
+6801 - 6XNN - V8 = $01 (JUMP FROM ADDRESS $200 (i.e. $0))
+
+(50)
+6905 - 6XNN - V9 = $05
+6A0A - 6XNN - VA = $0A
+6B01 - 6XNN - VB = $01
+652A - 6XNN - V5 = $2A
+662B - 6XNN - V6 = $2B
+A216 - ANNN - I = $216 (i.e. $16)
+D8B4 - DXYN - DRAW SPRITE 8x4 (START READ AT I == $216 (i.e. $16)) AT LOCATION (V8 == $01, VB == $01)
+A23E - ANNN - I = $23E (i.e. $3E)
+
+(60)
+D9B4 - DXYN - DRAW SPRITE 8x4 (START READ AT I == $23E (i.e. $3E)) AT LOCATION (V9 == $05, VB == $01)
+A202 - ANNN - I = $202 (i.e. $02)
+362B - 3XNN - V6 (== $2B) == 2B ? TRUE; DO SKIP NEXT INSTRUCTION $266 (i.e. $66) (JUMP TO $268 (i.e. $68))
+A206 - ANNN - I = $206 (i.e. $06) (WARNING! CONDITIONAL EXECUTION)
+DAB4 - DXYN - DRAW SPRITE 8x4 (START READ AT I == $202 (i.e. $2)) AT LOCATION (VA == $0A, VB == $01)
+6B06 - 6XNN - VB = $06
+A21A - ANNN - I = $21A (i.e. $1A)
+D8B4 - DXYN - DRAW SPRITE 8x4 (START READ AT I == $21A (i.e. $1A)) AT LOCATION (V8 == $01, VB == $06)
+
+(70)
+A23E - ANNN - I = $23E (i.e. $3E)
+D9B4 - DXYN - DRAW SPRITE 8x4 (START READ AT I == $21A (i.e. $1A)) AT LOCATION (V9 == $05, VB == $06)
+A206 - ANNN - I = $206 (i.e. $06)
+452A - 4XNN - V5 (== $2A) != 2A ? FALSE; DO NOT SKIP NEXT INSTRUCTION $278 (i.e. $78)
+A202 - ANNN - I = $202 (i.e. $02)
+DAB4 - DXYN - DRAW SPRITE 8x4 (START READ AT I == $21A (i.e. $1A)) AT LOCATION (VA == $0A, VB == $06)
+6B0B - 6XNN - VB = $0B
+A21E - ANNN - I = $21E (i.e. $1E)
+
+(80)
+D8B4 - DXYN - DRAW SPRITE 8x4 (START READ AT I == $21A (i.e. $1A)) AT LOCATION (V8 == $01, VB == $0B)
+A23E - ANNN - I = $23E (i.e. $3E)
+D9B4 - DXYN - DRAW SPRITE 8x4 (START READ AT I == $23E (i.e. $3E)) AT LOCATION (V9 == $05, VB == $0B)
+A206 - ANNN - I = $206 (i.e. $06)
+5560 - 5XY0 - V5 (== $2A) == V6 (== $2B) ? FALSE; DO NOT SKIP NEXT INSTRUCTION $28A (i.e. $8A)
+A202 - ANNN - I = $202 (i.e. $02)
+DAB4 - DXYN - DRAW SPRITE 8x4 (START READ AT I == $202 (i.e. $02)) AT LOCATION (VA == $0A, VB == $0B)
+6B10 - 6XNN - VB = $10
+
+(90) ... LAZY FROM HERE ON ...
+A226 - ANNN
+D8B4 - DXYN
+A23E - ANNN
+D9B4 - DXYN
+A206 - ANNN
+76FF - 7XNN - V6 (== $2B) += $FF = $2A
+462A - 4XNN - V6 (== $2A) != 2A ? FALSE; DO NOT SKIP NEXT INSTRUCTION $29E (i.e. $9E)
+A202 - ANNN
+
+(A0)
+DAB4 - DXYN
+6B15 - 6XNN - VB = $15
+A22E - ANNN
+D8B4 - DXYN
+A23E - ANNN
+D9B4 - DXYN
+A206 - ANNN
+9560 - 9XY0 - V5 (== $2A) != V6 (== $2A) ? FALSE; DO NOT SKIP NEXT INSTRUCTION $2B0 (i.e. $B0)
+
+(B0)
+A202 - ANNN
+DAB4 - DXYN
+6B1A - 6XNN - VB = $1A
+A232 - ANNN
+D8B4 - DXYN
+A23E - ANNN
+D9B4 - DXYN
+2242 - 2NNN - CALL (JUMP, RUN AND FINALLY BACK TO NEXT INSTRUCTION $2C0 (i.e. $C0)) AT $242 (i.e. $42)
+
+(C0)
+6817 - 6XNN - V8 = $17
+691B - 6XNN - V9 = $1B
+6A20 - 6XNN - VA = $20
+6B01 - 6XNN - VB = $01
+A20A - ANNN
+D8B4 - DXYN
+A236 - ANNN
+D9B4 - DXYN
+
+(D0)
+A202 - ANNN
+DAB4 - DXYN
+6B06 - 6XNN - VB = $06
+A22A - ANNN
+D8B4 - DXYN
+A20A - ANNN
+D9B4 - DXYN
+A206 - ANNN
+
+(E0)
+8750 - 8XY0 - V7 = V5 (== $2A) = $2A
+472A - 4XNN - V7 (== $2A) != $2A ? FALSE; DO NOT SKIP NEXT INSTRUCTION $2E4 (i.e. $E4)
+A202 - ANNN
+DAB4 - DXYN
+6B0B - 6XNN - VB = $0B
+A22A - ANNN
+D8B4 - DXYN
+A20E - ANNN
+
+(F0)
+D9B4 - DXYN
+A206 - ANNN
+672A - 6XNN - V7 = $2A
+87B1 - 8XY1 - V7 = (V7 (== $2A) OR VB (== $0B)) = $2B
+472B - 4XNN - V7 (== $2B) != $2B ? FALSE; DO NOT SKIP NEXT INSTRUCTION $2FA (i.e. $FA)
+A202 - ANNN
+DAB4 - DXYN
+6B10 - 6XNN - VB = $10
+
+(100)
+A22A - ANNN
+D8B4 - DXYN
+A212 - ANNN
+D9B4 - DXYN
+A206 - ANNN
+6678 - 6XNN - V6 = $78
+671F - 6XNN - V7 = $1F
+8762 - 8XY2 - V7 = (V7 (== $1F) AND V6 (== $78)) = $18
+
+(110)
+4718 - 4XNN - V7 (== $18) != $18 ? FALSE; DO NOT SKIP NEXT INSTRUCTION $312 (i.e. $112)
+A202 - ANNN
+DAB4 - DXYN
+6B15 - 6XNN - VB = $15
+A22A - ANNN
+D8B4 - DXYN
+A216 - ANNN
+D9B4 - DXYN
+
+(120)
+A206 - ANNN
+6678 - 6XNN - V6 = $78
+671F - 6XNN - V7 = $1F
+8763 - 8XY3 - V7 = (V7 (== $1F) XOR V6 (== $78)) = $67
+4767 - 4XNN - V7 (== $67) != $67 ? FALSE; DO NOT SKIP NEXT INSTRUCTION $32A (i.e. $12A)
+A202 - ANNN
+DAB4 - DXYN
+6B1A - 6XNN - VB = $1A
+
+(130)
+A22A - ANNN
+D8B4 - DXYN
+A21A - ANNN
+D9B4 - DXYN
+A206 - ANNN
+668C - 6XNN - V6 = $8C
+678C - 6XNN - V7 = $8C
+8764 - 8XY4 - V7 (== $8C) += V6 (== $8C) = $18 (OVERFLOW! SET VF)
+
+(140)
+4718 - 4XNN - V7 (== $18) != $18 ? FALSE; DO NOT SKIP NEXT INSTRUCTION $342 (i.e. $142)
+A202 - ANNN
+DAB4 - DXYN
+682C - 6XNN - V8 = $2C
+6930 - 6XNN - V9 = $30
+6A34 - 6XNN - VA = $34
+6B01 - 6XNN - VB = $01
+A22A - ANNN
+
+(150)
+D8B4 - DXYN
+A21E - ANNN
+D9B4 - DXYN
+A206 - ANNN
+668C - 6XNN - V6 = $8C
+6778 - 6XNN - V7 = $78
+8765 - 8XY5 - V7 (== $78) -= V6 (== $8C) = $EC (UNDERFLOW! SET VF)
+47EC - 4XNN - V7 (== $EC) != $EC ? FALSE; DO NOT SKIP NEXT INSTRUCTION $360 (i.e. $160)
+
+(160)
+A202 - ANNN
+DAB4 - DXYN
+6B06 - 6XNN - VB = $06
+A22A - ANNN
+D8B4 - DXYN
+A222 - ANNN
+D9B4 - DXYN
+A206 - ANNN
+
+(170)
+66E0 - 6XNN - V6 = $E0
+866E - 8XYE - V6 (== $E0) <= $1 = $C0 (MSB: 1! SET VF)
+46C0 - 4XNN - V6 (== $C0) != $C0 ? FALSE; DO NOT SKIP NEXT INSTRUCTION $376 (i.e. $176)
+A202 - ANNN
+DAB4 - DXYN
+6B0B - 6XNN - VB = $0B
+A22A - ANNN
+D8B4 - DXYN
+
+(180)
+A236 - ANNN
+D9B4 - DXYN
+A206 - ANNN
+660F - 6XNN - V6 = $0F
+8666 - 8XY6 - V6 (== $0F) >= $1 = $07 (LSB: 1! SET VF)
+4607 - 4XNN - V6 (== $07) != $07 ? FALSE; DO NOT SKIP NEXT INSTRUCTION $38C (i.e. $18C)
+A202 - ANNN
+DAB4 - DXYN
+
+(190)
+6B10 - 6XNN - VB = $10
+A23A - ANNN
+D8B4 - DXYN
+A21E - ANNN
+D9B4 - DXYN
+A3E8 - ANNN - I = $3E8 (i.e. $1E8)
+6000 - 6XNN - V0 = $00
+6130 - 6XNN - V1 = $30
+
+(1A0)
+F155 - FX55 - WRITE RANGE V0-V1 (INCLUDED) INTO MEMORY (START WRITE AT I (== $3E8 (i.e. $1E8)))
+A3E9 - ANNN - I = $3E9 (i.e. $1E9)
+F065 - FX65 - READ RANGE V0 (INCLUDED) FROM MEMORY (START READ AT I (== $3E9 (i.e. $1E9))) - V0 = $30
+A206 - ANNN
+4030 - 4XNN - V0 (== $30) != $30 ? FALSE; DO NOT SKIP NEXT INSTRUCTION $3AA (i.e. $1AA)
+A202 - ANNN
+DAB4 - DXYN
+6B15 - 6XNN - VB = $15
+
+(1B0)
+A23A - ANNN
+D8B4 - DXYN
+A216 - ANNN
+D9B4 - DXYN
+A3E8 - ANNN - I = $3E8 (i.e. $1E8)
+6689 - 6XNN - V6 = $89
+F633 - FX33 - WRITE BCD OF V6 (== &89) (i.e. 137) INTO MEMORY (START WRITE AT I (== $3E8 (i.e. $1E8)))
+F265 - FX65 - READ RANGE V0-V2 (INCLUDED) FROM MEMORY (START READ AT I (== $3E8 (i.e. $1E8))) - V0 = $1; V1 = $3; V2 = $7
+
+(1C0)
+A202 - ANNN
+3001 - 3XNN - V0 (== $1) == $01 ? TRUE; DO SKIP NEXT INSTRUCTION
+A206 - 
+3103 - 3XNN - V1 (== $3) == $03 ? TRUE; DO SKIP NEXT INSTRUCTION
+A206 - 
+3207 - 3XNN - V2 (== $7) == $07 ? TRUE; DO SKIP NEXT INSTRUCTION
+A206 - 
+DAB4 - DXYN
+
+(1D0)
+6B1A - 6XNN - VB = $1A
+A20E - ANNN
+D8B4 - DXYN
+A23E - ANNN
+D9B4 - DXYN
+1248 - 1NNN - JUMP TO ADDRESS $248 (i.e. $48)
+13DC - 1NNN - JUMP TO ADDRESS $3DC (i.e. $1DC) (JUMP FROM ADDRESS $24C (i.e. $4C)) - INFINITE LOOP!!! (i.e. END OF PROGRAM)
+
+*** INSTRUCTIONS
+
+Warning! Instructions 6XNN, ANNN, and DXYN are assumed to be already implemented to be able running the test (i.e. they are not tested).
+All remaining instructions are tested (i.e. they should not actually need to be implemented for properly running the test - because this is the purpose of a test itself).
+
+1NNN - JUMP TO ADDRESS NNN
+6XNN - SET VX TO CONSTANT NN
+ANNN - SET I TO ADDRESS NNN
+DXYN - DRAW SPRITE 8xN (START READ AT I) AT LOCATION (VX,VY)
+3XNN (NEW!) - SKIP NEXT INSTRUCTION IF VX == NN
+4XNN (NEW!) - SKIP NEXT INSTRUCTION IF VX != NN
+5XY0 (NEW!) - SKIP NEXT INSTRUCTION IF VX == VY
+7XNN - ADD CONSTANT NN TO VX
+9XY0 (NEW) - SKIP NEXT INSTRUCTION IF VX != VY
+2NNN (NEW!) - CALL SUBROUTINE AT NNN
+00EE (NEW!) - RETURN FROM SUBROUTINE
+8XY0 (NEW!) - SET VX TO VY
+8XY1 (NEW!) - SET VX TO (VX OR VY)
+8XY2 (NEW!) - SET VX TO (VX AND VY)
+8XY3 (NEW!) - SET VX TO (VX XOR VY)
+8XY4 (NEW!) - SET VX TO (VX + VY) (i.e. ADD VY TO VX) - SET VF ON OVERFLOW
+8XY5 (NEW!) - SET VX TO (VX - VY) (i.e. SUBSTRACT VY TO VX) - SET VF ON UNDERFLOW
+8XYE (NEW!) - LEFT-SHIFT VX BY 1 (SET VF TO ORIGINAL VX MSB)
+8XY6 (NEW!) - RIGHT-SHIFT VX BY 1 (SET VF TO ORIGINAL VX LSB)
+FX55 (NEW!) - WRITE RANGE V0-VX (INCLUDED) INTO MEMORY (START WRITE AT I)
+FX65 (NEW!) - READ RANGE V0-VX (INCLUDED) FROM MEMORY (START READ AT I)
+FX33 (NEW!) - WRITE BCD OF VX INTO MEMORY (START WRITE AT I)
+
+*** SPRITES
+
+($202) EAAC AAEA : "ok"
+($206) CEAA AAAE : "no"
+($20A) E0A0 A0E0 : "0"
+($20E) C040 40E0 : "1" (Alt: 40C0 40E0)
+($212) E020 C0E0 : "2"
+($216) E060 20E0 : "3"
+($21A) A0E0 2020 : "4"
+($21E) 6040 2040 : "5" (Alt: 6040 2060)
+($222) E080 E0E0 : "6"
+($226) E020 2020 : "7" (Alt: E020 6020)
+($22A) E0E0 A0E0 : "8"
+($22E) E0E0 20E0 : "9"
+($232) 40A0 E0A0 : "A"
+($236) E0C0 80E0 : "E"
+($23A) E080 C080 : "F"
+($23E) A040 A0A0 : "x"
+
+*** WORKFLOW
+
+Test program repeats same instruction set for every being tested instruction:
+- Display the alias of being tested instruction: draw corresponding 2 sprites next to each other.
+- Prepare fixture (e.g. set specific values into corresponding general purpose registers) - Warning! Optional; and sometimes before previous step.
+- Execute being tested instruction.
+- Check result - Warning! Optional; most of the times using already tested instructions.
+- Display result: draw "ok" sprite if success; otherwise, "no" sprite.
+
+*** TEST CASES
+
+... INITIAL FIXTURE ...
+
+($200) 124E
+
+($24E) 6801
+($250) 6905
+($252) 6A0A
+($254) 6B01
+($256) 652A
+($258) 662B
+
+# 3XNN
+
+($25A) A216
+($25C) D8B4
+($25E) A23E
+($260) D9B4
+($262) A202
+($264) 362B - INSTRUCTION
+($266) A206
+($268) DAB4
+
+# 4XNN
+
+($26A) 6B06
+($26C) A21A
+($26E) D8B4
+($270) A23E
+($272) D9B4
+($274) A206
+($276) 452A - INSTRUCTION
+($278) A202
+($27A) DAB4
+
+# 5XY0
+
+($27C) 6B0B
+($27E) A21E
+($280) D8B4
+($282) A23E
+($284) D9B4
+($286) A206
+($288) 5560 - INSTRUCTION
+($28A) A202
+($28C) DAB4
+
+# 7XNN
+
+($28E) 6B10
+($290) A226
+($292) D8B4
+($294) A23E
+($296) D9B4
+($298) A206
+($29A) 76FF - INSTRUCTION
+($29C) 462A
+($29E) A202
+($2A0) DAB4
+
+# 9XY0
+
+($2A2) 6B15
+($2A4) A22E
+($2A6) D8B4
+($2A8) A23E
+($2AA) D9B4
+($2AC) A206
+($2AE) 9560 - INSTRUCTION
+($2B0) A202
+($2B2) DAB4
+
+# 2NNN
+
+($2B4) 6B1A
+($2B6) A232
+($2B8) D8B4
+($2BA) A23E
+($2BC) D9B4
+($2BE) 2242 - INSTRUCTION
+
+($242) A202
+($244) DAB4
+
+# 00EE
+
+($246) 00EE - INSTRUCTION
+
+($2C0) 6817
+($2C2) 691B
+($2C4) 6A20
+($2C6) 6B01
+($2C8) A20A
+($2CA) D8B4
+($2CC) A236
+($2CE) D9B4
+($2D0) A202
+($2D2) DAB4
+
+# 8XY0
+
+($2D4) 6B06
+($2D6) A22A
+($2D8) D8B4
+($2DA) A20A
+($2DC) D9B4
+($2DE) A206
+($2E0) 8750 - INSTRUCTION
+($2E2) 472A
+($2E4) A202
+($2E6) DAB4
+
+# 8XY1
+
+($2E8) 6B0B
+($2EA) A22A
+($2EC) D8B4
+($2EE) A20E
+($2F0) D9B4
+($2F2) A206
+($2F4) 672A
+($2F6) 87B1 - INSTRUCTION
+($2F8) 472B
+($2FA) A202
+($2FC) DAB4
+
+# 8XY2
+
+($2FE) 6B10
+($300) A22A
+($302) D8B4
+($304) A212
+($306) D9B4
+($308) A206
+($30A) 6678
+($30C) 671F
+($30E) 8762 - INSTRUCTION
+($310) 4718
+($312) A202
+($314) DAB4
+
+# 8XY3
+
+($316) 6B15
+($318) A22A
+($31A) D8B4
+($31C) A216
+($31E) D9B4
+($320) A206
+($322) 6678
+($324) 671F
+($326) 8763 - INSTRUCTION
+($328) 4767
+($32A) A202
+($32C) DAB4
+
+# 8XY4
+
+($32E) 6B1A
+($330) A22A
+($332) D8B4
+($334) A21A
+($336) D9B4
+($338) A206
+($33A) 668C
+($33C) 678C
+($33E) 8764 - INSTRUCTION
+($340) 4718
+($342) A202
+($344) DAB4
+
+# 8XY5
+
+($346) 682C
+($348) 6930
+($34A) 6A34
+($34C) 6B01
+($34E) A22A
+($350) D8B4
+($352) A21E
+($354) D9B4
+($356) A206
+($358) 668C
+($35A) 6778
+($35C) 8765 - INSTRUCTION
+($35E) 47EC
+($360) A202
+($362) DAB4
+
+# 8XYE
+
+($364) 6B06
+($366) A22A
+($368) D8B4
+($36A) A222
+($36C) D9B4
+($36E) A206
+($370) 66E0
+($372) 866E - INSTRUCTION
+($374) 46C0
+($376) A202
+($378) DAB4
+
+# 8XY6
+
+($37A) 6B0B
+($37C) A22A
+($37E) D8B4
+($380) A236
+($382) D9B4
+($384) A206
+($386) 660F
+($388) 8666 - INSTRUCTION
+($38A) 4607
+($38C) A202
+($38E) DAB4
+
+# FX55 (AND) FX65
+
+($390) 6B10
+($392) A23A
+($394) D8B4
+($396) A21E
+($398) D9B4
+($39A) A3E8
+($39C) 6000
+($39E) 6130
+($3A0) F155 - INSTRUCTION
+($3A2) A3E9
+($3A4) F065 - INSTRUCTION
+($3A6) A206
+($3A8) 4030
+($3AA) A202
+($3AC) DAB4
+
+# FX33
+
+($3AE) 6B15
+($3B0) A23A
+($3B2) D8B4
+($3B4) A216
+($3B6) D9B4
+($3B8) A3E8
+($3BA) 6689
+($3BC) F633 - INSTRUCTION
+($3BE) F265
+
+($3C0) A202
+($3C2) 3001
+($3C4) A206
+($3C6) 3103
+($3C8) A206
+($3CA) 3207
+($3CC) A206
+($3CE) DAB4
+
+# 1NNN
+
+($3D0) 6B1A
+($3D2) A20E
+($3D4) D8B4
+($3D6) A23E
+($3D8) D9B4
+($3DA) 1248 - INSTRUCTION
+
+($248) A202
+($24A) DAB4
+($24C) 13DC
+
+($3DC) 13DC
+
+*** BUGS AND FIXES (PROPOSALS)
+
+Info! Instructions writting into memory may appear to be wrong because the memory address used is outside the program memory (e.g. ($3A0) F155 - FX55 - starts writing into the address $3E8 when the program memory ends at $3DB).
+This is absolutely correct since the program should not overwrite itself, so writing to free memory space is the correct way to do it.
+
+Warning! Test program relies in the correct implementation of other being tested instructions for testing most of the instructions (e.g. 4XNN and 3XNN instructions are used extensively for checking results).
+This is not a good practice on unit testing where test cases are commonly expected to run isolated.
+This may make the results of dependent being tested instructions not reliable.
+
+Warning! Test program relies in the correct implementation of 1NNN being tested instruction for running the test itself (e.g. it is used in the very beginnig to skip all sprite data and in the very end for keeping the program running within an infinite loop).
+This may make the execution of the test program not reliable.
+
+Error! Ordering of instructions for displaying results is not correct in most of the test cases.
+The lack of implementation of being tested instructions makes in many cases executing instructions expected to be by-passed.
+In those failing cases displayed result does not match actual result (i.e. "ok" instead of "no").
+In most of the cases it can be solved swapping instructions for displaying results (i.e. A206 and A202) and other updates (e.g. being tested instruction parameters, fixture, and/or result checking instruction parameters).
+
+# 4XNN
+
+Bug: display success when lacking implementation.
+
+Fix: swap instructions for displaying result (i.e. ($274) A206 and ($278) A202); modify being tested instruction so following A206 instruction is skipped only if it is executed correctly (e.g. ($276) 452A by 452B) - or modify corresponding fixture (i.e. set 5th general purpose register value to anything different from $2A) - Warning! Other tests relying on same fixture should be updated.
+
+# 5XY0
+
+Bug: display success when lacking implementation.
+
+Fix: swap instructions for displaying result (i.e. ($286) A206 and ($28A) A202); modify being tested instruction so following A206 instruction is skipped only if it is executed correctly (i.e. ($288) 5560 by 5340) - or modify corresponding fixture (i.e. set 6th general purpose register value to $2A) - Warning! Other tests relying on same fixture should be updated.
+
+# 7XNN
+
+Bug: display success when lacking implementation.
+
+Fix: swap instructions for displaying result (i.e. ($298) A206 and ($29E) A202); modify result checking instruction so following A206 instruction is skipped only if both being tested function and itself are executed correctly (i.e. ($29C) 462A by 362A) - or modify corresponding fixture (i.e. set 6th general purpose register value to anything different from $2B e.g. $2A) - Warning! Other tests relying on same fixture should be updated.
+
+# 9XY0
+
+Bug: display success when lacking implementation.
+
+Fix: swap instructions for displaying result (i.e. ($2AC) A206 and ($2B0) A202); modify result checking instruction so following A206 instruction is skipped only if both being tested function and itself are executed correctly (i.e. ($2AE) 9560 by 9570) - or modify corresponding fixture (i.e. set 6th general purpose register value to anything different from $2B e.g. $2A) - Warning! Other tests relying on same fixture should be updated.
+
+# 2NNN
+
+Bug: display incorrect alias of being tested instruction (i.e. "A" instead of "2").
+
+Fix: draw sprite "2" ($212) instead of "A" ($232) (i.e. replace instruction ($2B6) A232 by A212).
+
+Bug: do not display any result when lacking implementation.
+
+Fix: TBD
+
+Warning! This is a complex case because multiple reasons:
+- Test of both current (i.e. 2NNN) and following (i.e. 00EE) instructions are dependent each other.
+- All instructions are not stored in memory one after the other (i.e. there are gaps), which makes error handling more difficult.
+
+One fix approach would be initializing test result to error and expecting the subroutine to set it to success (i.e. display error when lacking implementation).
+
+($2BC) A206
+($2BE) 2242 - INSTRUCTION
+($2C2) DAB4
+
+But there would be a problem in case 00EE instruction not implemented: how would it return back?
+
+# 00EE
+
+Bug: the test does not actually check anything; just expect a happy path to be followed. What happens when not so?
+
+Fix: TBD
+
+Warning! When 2NNN not implemented 00EE could never work (because there would not be stored in the stack any address to return back).
+
+TODO: Check what happens if:
+- 2NNN NOT implemented, 00EE NOT implemented.
+- 2NNN implemented, 00EE NOT implemented.
+- 2NNN NOT implemented, 00EE implemented.
+- 2NNN implemented, 00EE implemented.
+
+# 8XY0
+
+Bug: display success when lacking implementation.
+
+Fix: swap instructions for displaying result (i.e. ($2DE) A206 and ($2E4) A202); modify result checking instruction so following A206 instruction is skipped only if both being tested function and itself are executed correctly (i.e. ($2E2) 472A by 372A).
+
+# 8XY1
+
+Bug: display success when lacking implementation.
+
+Fix: swap instructions for displaying result (i.e. ($2F2) A206 and ($2FA) A202); modify result checking instruction so following A206 instruction is skipped only if both being tested function and itself are executed correctly (i.e. ($2F8) 472B by 372B).
+
+# 8XY2
+
+Bug: display success when lacking implementation.
+
+Fix: swap instructions for displaying result (i.e. ($308) A206 and ($312) A202); modify result checking instruction so following A206 instruction is skipped only if both being tested function and itself are executed correctly (i.e. ($310) 4718 by 3718).
+
+# 8XY3
+
+Bug: display success when lacking implementation.
+
+Fix: swap instructions for displaying result (i.e. ($320) A206 and ($32A) A202); modify result checking instruction so following A206 instruction is skipped only if both being tested function and itself are executed correctly (i.e. ($328) 4767 by 3767).
+
+# 8XY4
+
+Bug: display success when lacking implementation.
+
+Fix: swap instructions for displaying result (i.e. ($338) A206 and ($342) A202); modify result checking instruction so following A206 instruction is skipped only if both being tested function and itself are executed correctly (i.e. ($340) 4718 by 3718).
+
+Bug: flag register (i.e. 16th general purpose register) is not being validated in result checking to verify whether overflow happened or not.
+
+Fix: add new instruction pair (i.e. 3F01 result checking instruction - because overflow is expected to happen in current test - and A206 instruction).
+
+# 8XY5
+
+Bug: display success when lacking implementation.
+
+Fix: swap instructions for displaying result (i.e. ($356) A206 and ($360) A202); modify result checking instruction so following A206 instruction is skipped only if both being tested function and itself are executed correctly (i.e. ($35E) 47EC by 37EC).
+
+Bug: flag register (i.e. 16th general purpose register) is not being validated in result checking to verify whether underflow happened or not.
+
+Fix: add new instruction pair (i.e. 3F00 result checking instruction - because underflow is expected to happen in current test - and A206 instruction).
+
+# 8XYE
+
+Bug: display incorrect alias of being tested instruction (i.e. "6" instead of "E").
+
+Fix: draw sprite "E" ($236) instead of "6" ($222) (i.e. replace instruction ($36A) A222 by A236).
+
+Bug: display success when lacking implementation.
+
+Fix: swap instructions for displaying result (i.e. ($36E) A206 and ($376) A202); modify result checking instruction so following A206 instruction is skipped only if both being tested function and itself are executed correctly (i.e. ($374) 46C0 by 36C0).
+
+Bug: flag register (i.e. 16th general purpose register) is not being validated in result checking to verify whether original MSB is set or not.
+
+Fix: add new instruction pair (i.e. 3F01 result checking instruction - because original MSB is expected to be set in current test - and A206 instruction).
+
+# 8XY6
+
+Bug: display incorrect alias of being tested instruction (i.e. "E" instead of "6").
+
+Fix: draw sprite "6" ($222) instead of "E" ($236) (i.e. replace instruction ($380) A236 by A222).
+
+Bug: display success when lacking implementation.
+
+Fix: swap instructions for displaying result (i.e. ($384) A206 and ($38C) A202); modify result checking instruction so following A206 instruction is skipped only if both being tested function and itself are executed correctly (i.e. ($38A) 4607 by 3607).
+
+Bug: flag register (i.e. 16th general purpose register) is not being validated in result checking to verify whether original LSB is set or not.
+
+Fix: add new instruction pair (i.e. 3F01 result checking instruction - because original LSB is expected to be set in current test - and A206 instruction).
+
+# FX55 & FX65
+
+Bug: these instructions are being tested within a single test case (i.e. "F5" alias) making testing dependent, so single result is being displayed.
+
+TODO: Check what happens if either both implementations or single one lacking.
+
+Fix: TBD
+
+Bug: display success when lacking implementation.
+
+Fix: swap instructions for displaying result (i.e. ($3A6) A206 and ($3AA) A202); modify result checking instruction so following A206 instruction is skipped only if both being tested function and itself are executed correctly (i.e. ($3A8) 4030 by 3030).
+
+# 1NNN
+
+Bug: do not display any result when lacking implementation.
+
+Fix: display error when lacking implementation (i.e. include instruction A206 before executing being tested instruction)
+
+($3DA) A206
+($3DC) 1248 - INSTRUCTION
+
+($248) A202
+($24A) DAB4
+($24C) 13E0
+
+($3DE) DAB4
+($3E0) 13DE
+
+Warning! Instruction ($24A) DAB4 could be actually removed but many memory references should be updated if so. This is a basic fix approach.
+
+Alt: refactor the test to avoid malicious memory jumps.
+
+($n) A202
+($n+1) 1n+3 (SKIP ($n+2) A206 IF SUCCESS - KEEP I POINTING TO ($202) "ok" SPRITE; OTHERWISE, RUN ($n+2) A206 - SET I POINTING TO ($206) "no" SPRITE)
+($n+2) A206
+($n+3) DAB4
+($n+4) 1n+4 (INFINITE LOOP)
+
+Bug: instruction is used even before being tested.
+
+Fix: move al sprite data at the end of the program, so this instruction is no needed anymore in the very begining and therefore it is only used for testing purposes.
+
+Warning! All memory references (e.g. sprite data, subroutine call/return address) must be updated.
+Warning! Instruction would still be used for keeping the program running within an infinite loop; when lacking implementation the test program would start fetching (and processing) sprite data as opcodes - but this is an error that actually exist with current test program structure.
