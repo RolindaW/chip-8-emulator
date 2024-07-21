@@ -10,8 +10,11 @@
 #include "chip8_display.h"
 
 enum Instruction : unsigned char {
-	I00E0 = 1,
+	I0NNN = 1,
+	I00E0,
+	I00EE,
 	I1NNN,
+	I2NNN,
 	I3XNN,
 	I4XNN,
 	I5XY0,
@@ -59,7 +62,6 @@ private:
 private:
 	unsigned short program_counter_;
 	unsigned short index_register_;
-	unsigned char stack_pointer_;
 	unsigned char gp_register_[16];
 
 	unsigned char delay_timer_;

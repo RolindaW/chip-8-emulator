@@ -3,7 +3,6 @@
 Chip8Cpu::Chip8Cpu()
 	: program_counter_(0)
 	, index_register_(0)
-	, stack_pointer_(0)
 	, gp_register_{0}
 	, delay_timer_(0)
 	, sound_timer_(0)
@@ -72,35 +71,44 @@ void Chip8Cpu::NextInstruction()
 // TODO: Throw (and handle) error in case decoding fails; refactor (get rid of nested switch statements) so do not to repeat error handle in each switch statement
 void Chip8Cpu::Decode()
 {
-	if (this->opcode_ == 0x00E0)
-	{
-		LogDecodedInstruction("00E0");
-		this->instruction_ = Instruction::I00E0;
-		return;
-	}
-
 	switch (this->opcode_ & 0xF000)
 	{
-		//case 0x0000:
-			//{
-			//	switch (this->opcode_)
-			//	{
-			//		case 0x00EE:
-			//		{
-			//			// TODO
-			//			//break;
-			//		}
-			//		default: // 0NNN
-			//		{
-			//			//LogDecodedInstruction("0NNN (NOT SUPPORTTED)");
-			//			//break;
-			//		}
-			//	}
-			//}
+		case 0x0000:
+		{
+			// 0XXX instruction family
+			switch (this->opcode_)
+			{
+				case 0x00E0:
+				{
+					LogDecodedInstruction("00E0");
+					this->instruction_ = Instruction::I00E0;
+					break;
+				}
+				case 0x00EE:
+				{
+					LogDecodedInstruction("00EE");
+					this->instruction_ = Instruction::I00EE;
+					break;
+				}
+				default:
+				{
+					LogDecodedInstruction("0NNN - Warning! Not supported");
+					this->instruction_ = Instruction::I0NNN;
+					break;
+				}
+			}
+			break;
+		}
 		case 0x1000:
 		{
 			LogDecodedInstruction("1NNN");
 			this->instruction_ = Instruction::I1NNN;
+			break;
+		}
+		case 0x2000:
+		{
+			LogDecodedInstruction("2NNN");
+			this->instruction_ = Instruction::I2NNN;
 			break;
 		}
 		case 0x3000:
@@ -133,8 +141,9 @@ void Chip8Cpu::Decode()
 			this->instruction_ = Instruction::I7XNN;
 			break;
 		}
-		case 0x8000: // 8xxx instruction family
+		case 0x8000:
 		{
+			// 8XXX instruction family
 			switch (this->opcode_ & 0x000F)
 			{
 				case 0x0000:
@@ -192,10 +201,12 @@ void Chip8Cpu::Decode()
 					break;
 				}
 				default:
-					LogDecodedInstruction("Unknown");
+				{
+					LogDecodedInstruction("Error! Unknown");
 					// TODO: Throw error! And handle it.
 					this->instruction_ = 0;
 					break;
+				}	
 			}
 			break;
 		}
@@ -218,10 +229,12 @@ void Chip8Cpu::Decode()
 			break;
 		}
 		default:
-			LogDecodedInstruction("Unknown");
+		{
+			LogDecodedInstruction("Error! Unknown");
 			// TODO: Throw error! And handle it.
 			this->instruction_ = 0;
 			break;
+		}
 	}
 }
 
@@ -230,14 +243,32 @@ void Chip8Cpu::Execute()
 {
 	switch (this->instruction_)
 	{
+		case Instruction::I0NNN:
+		{
+			// Warning! This instruction could be only implemented if emulating the whole microcomputer (it would be executing corresponding processor instructions).
+			break;
+		}
 		case Instruction::I00E0:
 		{
 			ClearDisplay();
 			break;
 		}
+		case Instruction::I00EE:
+		{
+			unsigned short address = this->memory_.Pop();
+			this->program_counter_ = address;
+			break;
+		}
 		case Instruction::I1NNN:
 		{
 			unsigned short address = DecodeNNN();
+			this->program_counter_ = address;
+			break;
+		}
+		case Instruction::I2NNN:
+		{
+			unsigned short address = DecodeNNN();
+			this->memory_.Push(this->program_counter_);
 			this->program_counter_ = address;
 			break;
 		}
@@ -380,6 +411,8 @@ void Chip8Cpu::Execute()
 			DrawSprite(this->gp_register_[gp_register_index_x], this->gp_register_[gp_register_index_y], sprite_height);
 			break;
 		}
+		default:
+			break;
 	}
 }
 

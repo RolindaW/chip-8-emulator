@@ -246,11 +246,11 @@ Processed by nibbles (low nibble 1st): N1N2N3N4 == ABCD (where B-n (0xAB), B-n+1
 -N2N3N4: NNN (12-bit memory address)
 
 Table
--0NNN (TODO): call machine code routine at address NNN; not necessary for most programs.
+-0NNN: call machine code routine at address NNN; not necessary for most programs.
 -00E0: clear screen. [turn all px to 0]
--00EE (TODO): return form subroutine. [pop last address from the stack; the set PC to it]
+-00EE: return form subroutine. [pop last address from the stack; the set PC to it]
 -1NNN: jump to address NNN. [set PC to NNN]
--2NNN (TODO): call subroutine at address NNN. [push current PC into stack; then set PC to NNN]
+-2NNN: call subroutine at address NNN. [push current PC into stack; then set PC to NNN]
 -3XNN: skip next instruction if VX equals NN - Warning! These type of instructions act like an opposite "if" statement: if the condition is met, then related code is skipped - skip next instruction (that usually is a jump instruction to corresponding code); otherwise, code is executed - execute next instruction. [increment PC by 2 if condition is met]
 -4XNN: skip next instruction if VX not equals NN. [increment PC by 2 if condition is met]
 -5XY0: skip next instruction if VX equals VY. [increment PC by 2 if condition is met]
