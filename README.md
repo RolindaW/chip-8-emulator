@@ -279,8 +279,8 @@ Table
 -FX1E (TODO): add VX to I (VF is not affected). [alternative behaviour: set VF to 1 if 12-bit overflow; otherwise, 0 - Warning! Implement both solutions and make it configurable]
 -FX29 (TODO): set I to the memory location of the font sprite in VX. [use last - high - nibble from VX].
 -FX33 (TODO): store BCD (Binary-Coded Decimal) of VX - Warning! Convert to decimal first: hundreds at memory location I, tens at I+1, and ones at I+2.
--FX55 (TODO): Store range V0-VX (included) starting at memory location I and offseting by 1 B for each value (I is not affected). [alternative behaviour: update I - Warning! Implement both solutions and make it configurable]
--FX65 (TODO): Fill range V0-VX (included) starting at memory location I and offseting by 1 B for each value (I is not affected). [alternative behaviour: update I - Warning! Implement both solutions and make it configurable]
+-FX55: Store range V0-VX (included) starting at memory location I and offseting by 1 B for each value (I is not affected). [alternative behaviour: update I - Warning! Implement both solutions and make it configurable]
+-FX65: Fill range V0-VX (included) starting at memory location I and offseting by 1 B for each value (I is not affected). [alternative behaviour: update I - Warning! Implement both solutions and make it configurable]
 
 ---
 

@@ -31,7 +31,9 @@ enum Instruction : unsigned char {
 	I8XYE,
 	I9XY0,
 	IANNN,
-	IDXYN
+	IDXYN,
+	IFX55,
+	IFX65
 };
 
 class Chip8Cpu

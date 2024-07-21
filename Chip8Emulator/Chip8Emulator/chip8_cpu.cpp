@@ -228,6 +228,33 @@ void Chip8Cpu::Decode()
 			this->instruction_ = Instruction::IDXYN;
 			break;
 		}
+		case 0xF000:
+		{
+			// FXXX instruction family
+			switch (this->opcode_ & 0x00FF)
+			{
+				case 0x0055:
+				{
+					LogDecodedInstruction("FX55");
+					this->instruction_ = Instruction::IFX55;
+					break;
+				}
+				case 0x0065:
+				{
+					LogDecodedInstruction("FX65");
+					this->instruction_ = Instruction::IFX65;
+					break;
+				}
+				default:
+				{
+					LogDecodedInstruction("Error! Unknown");
+					// TODO: Throw error! And handle it.
+					this->instruction_ = 0;
+					break;
+				}
+			}
+			break;
+		}
 		default:
 		{
 			LogDecodedInstruction("Error! Unknown");
@@ -409,6 +436,24 @@ void Chip8Cpu::Execute()
 			unsigned char gp_register_index_y = DecodeY();
 			unsigned char sprite_height = DecodeN();
 			DrawSprite(this->gp_register_[gp_register_index_x], this->gp_register_[gp_register_index_y], sprite_height);
+			break;
+		}
+		case Instruction::IFX55:
+		{
+			unsigned char gp_register_index_x = DecodeX();
+			for (unsigned char i = 0; i <= gp_register_index_x; i++)
+			{
+				this->memory_.Write(this->index_register_ + i, this->gp_register_[i]);
+			}
+			break;
+		}
+		case Instruction::IFX65:
+		{
+			unsigned char gp_register_index_x = DecodeX();
+			for (unsigned char i = 0; i <= gp_register_index_x; i++)
+			{
+				this->gp_register_[i] = this->memory_.Read(this->index_register_ + i);
+			}
 			break;
 		}
 		default:
