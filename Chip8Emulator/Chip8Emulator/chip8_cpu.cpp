@@ -233,6 +233,12 @@ void Chip8Cpu::Decode()
 			// FXXX instruction family
 			switch (this->opcode_ & 0x00FF)
 			{
+				case 0x0033:
+				{
+					LogDecodedInstruction("FX33");
+					this->instruction_ = Instruction::IFX33;
+					break;
+				}
 				case 0x0055:
 				{
 					LogDecodedInstruction("FX55");
@@ -436,6 +442,16 @@ void Chip8Cpu::Execute()
 			unsigned char gp_register_index_y = DecodeY();
 			unsigned char sprite_height = DecodeN();
 			DrawSprite(this->gp_register_[gp_register_index_x], this->gp_register_[gp_register_index_y], sprite_height);
+			break;
+		}
+		case Instruction::IFX33:
+		{
+			unsigned char gp_register_index_x = DecodeX();
+			unsigned char value = this->gp_register_[gp_register_index_x];
+			// TODO: implement BCD calculation in separated function.
+			this->memory_.Write(this->index_register_, (value / 100) % 10);
+			this->memory_.Write(this->index_register_ + 1, (value / 10) % 10);
+			this->memory_.Write(this->index_register_ + 2, value % 10);
 			break;
 		}
 		case Instruction::IFX55:
