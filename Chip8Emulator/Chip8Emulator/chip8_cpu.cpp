@@ -179,6 +179,12 @@ void Chip8Cpu::Decode()
 					this->instruction_ = Instruction::I8XY6;
 					break;
 				}
+				case 0x0007:
+				{
+					LogDecodedInstruction("8XY7");
+					this->instruction_ = Instruction::I8XY7;
+					break;
+				}
 				case 0x000E:
 				{
 					LogDecodedInstruction("8XYE");
@@ -313,22 +319,41 @@ void Chip8Cpu::Execute()
 			unsigned char gp_register_index_y = DecodeY();
 			unsigned short addition = this->gp_register_[gp_register_index_x] + this->gp_register_[gp_register_index_y];
 			this->gp_register_[gp_register_index_x] = addition & 0xFF;  // Get 8 LSB bits (1 B) as addition result
-			this->gp_register_[0xF] = (unsigned char)addition > 0x8;  // Set flag register VF (general purpose register 0xF) on overflow
+			this->gp_register_[0xF] = (unsigned char)addition >> 0x8;  // Set flag register VF (general purpose register 0xF) on overflow
 			break;
 		}
 		case Instruction::I8XY5:
 		{
-			// TODO
+			unsigned char gp_register_index_x = DecodeX();
+			unsigned char gp_register_index_y = DecodeY();
+			unsigned short substraction = this->gp_register_[gp_register_index_x] - this->gp_register_[gp_register_index_y];
+			this->gp_register_[gp_register_index_x] = substraction & 0xFF;  // Get 8 LSB bits (1 B) as substraction result
+			this->gp_register_[0xF] != (unsigned char)substraction >> 0x8;  // Unset (TODO: set or unset?) flag register VF (general purpose register 0xF) on underflow
 			break;
 		}
 		case Instruction::I8XY6:
 		{
-			// TODO
+			// TODO: implement variation (VX=VY in the very beginning)
+			unsigned char gp_register_index_x = DecodeX();
+			this->gp_register_[0xF] = this->gp_register_[gp_register_index_x] & 0x01;  // Get LSB (1st bit)
+			this->gp_register_[gp_register_index_x] = this->gp_register_[gp_register_index_x] >> 1;
+			break;
+		}
+		case Instruction::I8XY7:
+		{
+			unsigned char gp_register_index_x = DecodeX();
+			unsigned char gp_register_index_y = DecodeY();
+			unsigned short substraction = this->gp_register_[gp_register_index_y] - this->gp_register_[gp_register_index_x];
+			this->gp_register_[gp_register_index_x] = substraction & 0xFF;  // Get 8 LSB bits (1 B) as substraction result
+			this->gp_register_[0xF] != (unsigned char)substraction >> 0x8;  // Unset (TODO: set or unset?) flag register VF (general purpose register 0xF) on underflow
 			break;
 		}
 		case Instruction::I8XYE:
 		{
-			// TODO
+			// TODO: implement variation (VX=VY in the very beginning)
+			unsigned char gp_register_index_x = DecodeX();
+			this->gp_register_[0xF] = this->gp_register_[gp_register_index_x] & 0x80 ? 0x1 : 0x0;  // Get MSB (8th bit)
+			this->gp_register_[gp_register_index_x] = this->gp_register_[gp_register_index_x] << 1;
 			break;
 		}
 		case Instruction::I9XY0:

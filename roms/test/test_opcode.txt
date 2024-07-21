@@ -732,11 +732,19 @@ Bug: display success when lacking implementation.
 
 Fix: swap instructions for displaying result (i.e. ($338) A206 and ($342) A202); modify result checking instruction so following A206 instruction is skipped only if both being tested function and itself are executed correctly (i.e. ($340) 4718 by 3718).
 
+Bug: flag register (i.e. 16th general purpose register) is not being validated in result checking to verify whether overflow happened or not.
+
+Fix: add new instruction pair (i.e. 3F01 result checking instruction - because overflow is expected to happen in current test - and A206 instruction).
+
 # 8XY5
 
 Bug: display success when lacking implementation.
 
 Fix: swap instructions for displaying result (i.e. ($356) A206 and ($360) A202); modify result checking instruction so following A206 instruction is skipped only if both being tested function and itself are executed correctly (i.e. ($35E) 47EC by 37EC).
+
+Bug: flag register (i.e. 16th general purpose register) is not being validated in result checking to verify whether underflow happened or not.
+
+Fix: add new instruction pair (i.e. 3F00 result checking instruction - because underflow is expected to happen in current test - and A206 instruction).
 
 # 8XYE
 
@@ -748,6 +756,10 @@ Bug: display success when lacking implementation.
 
 Fix: swap instructions for displaying result (i.e. ($36E) A206 and ($376) A202); modify result checking instruction so following A206 instruction is skipped only if both being tested function and itself are executed correctly (i.e. ($374) 46C0 by 36C0).
 
+Bug: flag register (i.e. 16th general purpose register) is not being validated in result checking to verify whether original MSB is set or not.
+
+Fix: add new instruction pair (i.e. 3F01 result checking instruction - because original MSB is expected to be set in current test - and A206 instruction).
+
 # 8XY6
 
 Bug: display incorrect alias of being tested instruction (i.e. "E" instead of "6").
@@ -757,6 +769,10 @@ Fix: draw sprite "6" ($222) instead of "E" ($236) (i.e. replace instruction ($38
 Bug: display success when lacking implementation.
 
 Fix: swap instructions for displaying result (i.e. ($384) A206 and ($38C) A202); modify result checking instruction so following A206 instruction is skipped only if both being tested function and itself are executed correctly (i.e. ($38A) 4607 by 3607).
+
+Bug: flag register (i.e. 16th general purpose register) is not being validated in result checking to verify whether original LSB is set or not.
+
+Fix: add new instruction pair (i.e. 3F01 result checking instruction - because original LSB is expected to be set in current test - and A206 instruction).
 
 # FX55 & FX65
 

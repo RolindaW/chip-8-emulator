@@ -24,6 +24,7 @@ enum Instruction : unsigned char {
 	I8XY4,
 	I8XY5,
 	I8XY6,
+	I8XY7,
 	I8XYE,
 	I9XY0,
 	IANNN,
