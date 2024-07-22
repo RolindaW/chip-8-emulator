@@ -288,7 +288,7 @@ Endianess - Example - IBM Logo
 
 Memory: 00 E0 A2 2A 60 0C 61 08 D0 1F 70 09 A2 39 D0 1F
 
-(BE) > Does make sense
+(BE - Big Endian) > Does make sense
 00E0 - CLEAR SCREEN
 A22A - SET I TO 22A
 600C - SET V0 TO 0C
@@ -298,6 +298,97 @@ D01F - DRAW AT (V0,V1) SPRITE 8xF (START AT I)
 A239 - SET I TO 239
 D01F - DRAW AT (V0,V1) SPRITE 8xF (START AT I)
 ...
+
+(LE - Little Endian) > Does NOT make any sense!!
+E000 - UNKNOWN
+2AA2 - (2NNN) CALL SUBROUTINE AT $AA2
+0C60 - (0NNN) CALL MACHINE CODE AT $C60
+0861 - (0NNN) CALL MACHINE CODE AT $861
+1FD0 - (1NNN) JUMP TO ADDRESS $FD0
+0970 - (0NNN) CALL MACHINE CODE AT $970
+39A2 - (3XNN) SKIP NEXT INSTRUCTION IF V9 == $A2
+1FD0 - (1NNN) JUMP TO ADDRESS $FD0
+...
+
+---
+
+Instruction DXYN
+
+Difficult because two really complicated tasks:
+- Manage memory cache or buffer (calculate positions, update position, fit outbounds constraints, detect collisions, etc.)
+- Render (knowledge on graphics API (e.g. OpenGL) or higher level libraries/frameworks for rendering (e.g. SDL)
+
+Warning! Axes orientation on both stages (buffering and drawing) must match; otherwise, mirroring will happen on rendering.
+- Commonly, when drawing x-y axes people use following convention: +x left to right; +y down to up
+- Screen coordinates axes orientatio convention is different to this one:  +x left to right; +y up to down
+
+Depending on which utility you will use for drawing from your buffer, it is important to store and manage data accordingly.
+In the case of OpenGL, textures are processed as screen coordinates convention: +x left to right; +y up to down
+So, I should manage my data (i.e. how I store and access it in memory) following that convention too.
+
+In this case, the display is 64 px width by 32 px height: 64x32 (== 2048 px)
+
+```
+Common convention:
+
+     (+Y)
+     ^
+[31] |(0,31)                     (63,31)
+     |
+     |
+    ...
+     |
+     |
+     |(0,0)                       (63,0)
+ [0] --------------- ... ---------------> (+X)
+      [0]                           [63]
+
+     (+Y)
+     ^
+[31] |(1984)                      (2047)
+     |
+     |
+    ...
+     |
+     |
+     |(0)                           (63)
+ [0] --------------- ... ---------------> (+X)
+      [0]                           [63]
+
+               [r0 ...           , r1 ...                    ...    , r30                        , r31 ...                     ]
+      indics = [0, 1, ..., 62, 63, 64, 65, ..., 126, 127,    ...    , 1920, 1921, ..., 1982, 1983, 1984, 1985, ..., 2046, 2047 ]
+      buffer = [0, 1, ..., 62, 63, 64, 65, ..., 126, 127,    ...    , 1920, 1921, ..., 1982, 1983, 1984, 1985, ..., 2046, 2047 ]
+
+Screen coordinates convention:
+
+      [0]                           [63]
+ [0] --------------- ... ---------------> (+X)
+     |(0,0)                       (63,0)
+     |
+     |
+    ...
+     |
+     |
+[31] |(0,31)                     (63,31)
+     v
+     (+Y)
+
+      [0]                           [63]
+ [0] --------------- ... ---------------> (+X)
+     |(0)                           (63)
+     |
+     |
+    ...
+     |
+     |
+[31] |(1984)                      (2047)
+     v
+     (+Y)
+
+               [r0 ...                     , r1 ...                          ...    , r30                        , r31 ...                     ]
+      indics = [0,    1,    ..., 62,   63,   64,   65,   ..., 126,  127,     ...    , 1920, 1921, ..., 1982, 1983, 1984, 1985, ..., 2046, 2047 ]
+      buffer = [1984, 1985, ..., 2046, 2047, 1920, 1921, ..., 1982, 1983,    ...    , 64,   65,   ..., 126,  127,  0,    1,    ..., 62,   63   ]
+```
 
 ---
 
