@@ -57,10 +57,9 @@ void Chip8Cpu::Fetch()
 	unsigned char low_byte = this->memory_.Read(this->program_counter_ + (unsigned short)1);
 
 	this->opcode_ = high_byte << 8 | low_byte;
-	
-	NextInstruction();
-
 	LogFetchedOpcode();
+
+	NextInstruction();
 }
 
 void Chip8Cpu::NextInstruction()
@@ -233,6 +232,18 @@ void Chip8Cpu::Decode()
 			// FXXX instruction family
 			switch (this->opcode_ & 0x00FF)
 			{
+				case 0x001E:
+				{
+					LogDecodedInstruction("FX1E");
+					this->instruction_ = Instruction::IFX1E;
+					break;
+				}
+				case 0x0029:
+				{
+					LogDecodedInstruction("FX29");
+					this->instruction_ = Instruction::IFX29;
+					break;
+				}
 				case 0x0033:
 				{
 					LogDecodedInstruction("FX33");
@@ -383,7 +394,8 @@ void Chip8Cpu::Execute()
 			unsigned char gp_register_index_y = DecodeY();
 			unsigned short addition = this->gp_register_[gp_register_index_x] + this->gp_register_[gp_register_index_y];
 			this->gp_register_[gp_register_index_x] = addition & 0xFF;  // Get 8 LSB bits (1 B) as addition result
-			this->gp_register_[0xF] = (unsigned char)addition >> 0x8;  // Set flag register VF (general purpose register 0xF) on overflow
+			// Warning! Do not need to worry about 8 MSB bits (15-8 bit from 2 B) on result checking because greatest possible value is a 9 bit number (0xFF + 0xFF == 0x1FE == 0b1 1111 1110)
+			this->gp_register_[0xF] = addition >> 0x8;  // Set flag register VF (general purpose register 0xF) on overflow
 			break;
 		}
 		case Instruction::I8XY5:
@@ -392,7 +404,7 @@ void Chip8Cpu::Execute()
 			unsigned char gp_register_index_y = DecodeY();
 			unsigned short substraction = this->gp_register_[gp_register_index_x] - this->gp_register_[gp_register_index_y];
 			this->gp_register_[gp_register_index_x] = substraction & 0xFF;  // Get 8 LSB bits (1 B) as substraction result
-			this->gp_register_[0xF] != (unsigned char)substraction >> 0x8;  // Unset (TODO: set or unset?) flag register VF (general purpose register 0xF) on underflow
+			this->gp_register_[0xF] = !(substraction >> 0x8);  // Unset flag register VF (general purpose register 0xF) on underflow
 			break;
 		}
 		case Instruction::I8XY6:
@@ -409,7 +421,7 @@ void Chip8Cpu::Execute()
 			unsigned char gp_register_index_y = DecodeY();
 			unsigned short substraction = this->gp_register_[gp_register_index_y] - this->gp_register_[gp_register_index_x];
 			this->gp_register_[gp_register_index_x] = substraction & 0xFF;  // Get 8 LSB bits (1 B) as substraction result
-			this->gp_register_[0xF] != (unsigned char)substraction >> 0x8;  // Unset (TODO: set or unset?) flag register VF (general purpose register 0xF) on underflow
+			this->gp_register_[0xF] = !(substraction >> 0x8);  // Unset flag register VF (general purpose register 0xF) on underflow
 			break;
 		}
 		case Instruction::I8XYE:
@@ -444,6 +456,21 @@ void Chip8Cpu::Execute()
 			DrawSprite(this->gp_register_[gp_register_index_x], this->gp_register_[gp_register_index_y], sprite_height);
 			break;
 		}
+		case Instruction::IFX1E:
+		{
+			// TODO: implement variation (set VF on 12-bit overflow)
+			unsigned char gp_register_index_x = DecodeX();
+			unsigned char value = this->gp_register_[gp_register_index_x];
+			this->index_register_ += value;
+			break;
+		}
+		case Instruction::IFX29:
+		{
+			unsigned char gp_register_index_x = DecodeX();
+			unsigned char value = this->gp_register_[gp_register_index_x];
+			this->index_register_ = kFontAddress + (value * 5); // Each font sprite is made of 5 B
+			break;
+		}
 		case Instruction::IFX33:
 		{
 			unsigned char gp_register_index_x = DecodeX();
@@ -456,6 +483,7 @@ void Chip8Cpu::Execute()
 		}
 		case Instruction::IFX55:
 		{
+			// TODO: implement variation (update I after each calculation)
 			unsigned char gp_register_index_x = DecodeX();
 			for (unsigned char i = 0; i <= gp_register_index_x; i++)
 			{
@@ -465,6 +493,7 @@ void Chip8Cpu::Execute()
 		}
 		case Instruction::IFX65:
 		{
+			// TODO: implement variation (update I after each calculation)
 			unsigned char gp_register_index_x = DecodeX();
 			for (unsigned char i = 0; i <= gp_register_index_x; i++)
 			{
@@ -574,7 +603,9 @@ void Chip8Cpu::DrawSprite(unsigned char at_x, unsigned char at_y, unsigned char 
 
 void Chip8Cpu::LogFetchedOpcode()
 {
-	std::cout << "Opcode: ";
+	std::cout << "($";
+	std::cout << std::hex << this->program_counter_;
+	std::cout << ") Opcode: ";
 	std::cout << std::hex << this->opcode_;
 	std::cout << " - ";
 }
