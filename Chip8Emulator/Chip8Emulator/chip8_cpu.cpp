@@ -588,8 +588,8 @@ void Chip8Cpu::DrawSprite(unsigned char at_x, unsigned char at_y, unsigned char 
 			// TODO: Ojo! A la hora de calcular la posicion en el array invertimos el eje Y, ya que el sentido del eje +Y en los sitema de coordenadas del display chip8 y de la textura 2d de opengl son opuestos.
 			// Esta inversion se podria haber hecho despues en el Render, pero seria algo mas complicado (realmente tendria que darle una vuelta para saber de quien deberia ser realmente la responsabilidad de esta tarea)
 			// Tambien la podriamos haber hecho antes a la hora de definier la variable offset_at_y, pero me interesa dejar eso sin tocar - limpio- y hacer el cambio solo aqui a la hora de hacer el calculo de la posicion en el array de la memorya del display.
-			unsigned short framebuffer_index = 64 * (32 - offset_at_y) + offset_at_x;
-			this->gp_register_[0xF] |= p[framebuffer_index];  // Llegados a este punto, vamos a tener que modificar el pixel correspondiente. Si en cache hay algo, indicar colision (al usar el OR, si ya se hubiera puesta el flag antes no se borraria en los casos en que bo hubiera)
+			unsigned short framebuffer_index = 64 * (31 - offset_at_y) + offset_at_x;
+			this->gp_register_[0xF] |= p[framebuffer_index] ? 0x1 : 0x0;  // Llegados a este punto, vamos a tener que modificar el pixel correspondiente. Si en cache hay algo, indicar colision (al usar el OR, si ya se hubiera puesta el flag antes no se borraria en los casos en que bo hubiera)
 			
 			// Me huele que esto puede no estar comportandose siempre como espero. pruebo a hacerlo hardcoded.
 			// Effectivamente, el problema esta aqui, pero no entiendo por que??? Revisarlo.
