@@ -4,6 +4,7 @@
 #include <string>
 #include <chrono> // TODO: Remove when removing sleep.
 #include <thread> // TODO: Remove when removing sleep.
+#include <random>
 
 #include "chip8_memory.h"
 #include "chip8_rom.h"
@@ -32,6 +33,7 @@ enum Instruction : unsigned char {
 	I9XY0,
 	IANNN,
 	IBNNN,
+	ICXNN,
 	IDXYN,
 	IFX1E,
 	IFX29,
@@ -39,6 +41,9 @@ enum Instruction : unsigned char {
 	IFX55,
 	IFX65
 };
+
+typedef std::mt19937 MyRNG;
+
 
 class Chip8Cpu
 {
@@ -65,6 +70,8 @@ private:
 
 	const unsigned short kRomAddress = 0x200;
 
+	uint32_t kSeed = 0x31;  // TODO: RElocate about rndom nuber genration
+
 private:
 	unsigned short program_counter_;
 	unsigned short index_register_;
@@ -75,6 +82,8 @@ private:
 
 	Chip8Memory memory_;
 	Chip8Display display_;
+
+	MyRNG rng_;  // TODO: RElocate about rndom nuber genration
 
 private:
 	unsigned short opcode_;

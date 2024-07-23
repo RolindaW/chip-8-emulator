@@ -10,6 +10,7 @@ Chip8Cpu::Chip8Cpu()
 	, opcode_(0)
 {
 	LoadFont();
+	rng_.seed(kSeed);
 }
 
 void Chip8Cpu::Start(std::string filename)
@@ -225,6 +226,12 @@ void Chip8Cpu::Decode()
 		{
 			LogDecodedInstruction("BNNN");
 			this->instruction_ = Instruction::IBNNN;
+			break;
+		}
+		case 0xC000:
+		{
+			LogDecodedInstruction("CXNN");
+			this->instruction_ = Instruction::ICXNN;
 			break;
 		}
 		case 0xD000:
@@ -459,6 +466,15 @@ void Chip8Cpu::Execute()
 			unsigned short address = DecodeNNN();
 			unsigned char value = this->gp_register_[0];
 			this->program_counter_ = address + value;
+			break;
+		}
+		case Instruction::ICXNN:
+		{
+			unsigned char gp_register_index_x = DecodeX();
+			unsigned char value = DecodeNN();
+			std::uniform_int_distribution<uint32_t> uint_dist256(0x0, 0xFF);  // TODO: relocate (this should inly be generated once)
+			unsigned char randomNumber = uint_dist256(rng_); // 8 bit random number
+			this->gp_register_[gp_register_index_x] = randomNumber & value;
 			break;
 		}
 		case Instruction::IDXYN:

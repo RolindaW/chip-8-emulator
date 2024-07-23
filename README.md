@@ -268,7 +268,7 @@ Table
 -9XY0: skip next instruction if VX not equals VY. [increment PC by 2 if condition is met]
 -ANNN: set I to address NNN
 -BNNN: jump to address NNN plus V0. [alternative behaviour BXNN: jump to address XNN plus VX - Warning! Implement both solutions and make it configurable]
--CXNN (TODO): set VX to (rand(8-bit) AND constant NN)
+-CXNN: set VX to (rand(8-bit) AND constant NN)
 -DXYN: draw sprite at coordinate (VX, VY) with a size of 8xN px. Start reading each B (up to N) at address I (I is not affected). Set VF to 1 if px flipping; otherwise, 0. [Tip: starting drawing position must be wrapped - MOD by corresponding dimension (i.e. screen size) to get correct value; sprite drawing must be clipped against the border] [alternative behaviour: sprite drawing must be wrapped - and not clipped - against the border - Warning! Implement both solutions and make it configurable]
 -EX9E (TODO): skip next instruction if VX is being held down (i.e. is being pressed) - Warning! Do not await (i.e. not blocking)
 -EXA1 (TODO): skip next instruction if VX is NOT being held down (i.e. is NOT being pressed) - Warning! Do not await (i.e. not blocking)
