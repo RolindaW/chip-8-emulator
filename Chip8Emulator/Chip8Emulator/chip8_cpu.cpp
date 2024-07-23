@@ -221,6 +221,12 @@ void Chip8Cpu::Decode()
 			this->instruction_ = Instruction::IANNN;
 			break;
 		}
+		case 0xB000:
+		{
+			LogDecodedInstruction("BNNN");
+			this->instruction_ = Instruction::IBNNN;
+			break;
+		}
 		case 0xD000:
 		{
 			LogDecodedInstruction("DXYN");
@@ -446,6 +452,13 @@ void Chip8Cpu::Execute()
 		{
 			unsigned short address = DecodeNNN();
 			this->index_register_ = address;
+			break;
+		}
+		case Instruction::IBNNN:
+		{
+			unsigned short address = DecodeNNN();
+			unsigned char value = this->gp_register_[0];
+			this->program_counter_ = address + value;
 			break;
 		}
 		case Instruction::IDXYN:

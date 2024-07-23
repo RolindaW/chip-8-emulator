@@ -31,6 +31,7 @@ enum Instruction : unsigned char {
 	I8XYE,
 	I9XY0,
 	IANNN,
+	IBNNN,
 	IDXYN,
 	IFX1E,
 	IFX29,
