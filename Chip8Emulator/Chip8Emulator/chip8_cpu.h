@@ -9,6 +9,7 @@
 #include "chip8_memory.h"
 #include "chip8_rom.h"
 #include "chip8_display.h"
+#include "chip8_beep.h"
 
 enum Instruction : unsigned char {
 	I0NNN = 1,
@@ -35,6 +36,9 @@ enum Instruction : unsigned char {
 	IBNNN,
 	ICXNN,
 	IDXYN,
+	IFX07,
+	IFX15,
+	IFX18,
 	IFX1E,
 	IFX29,
 	IFX33,
@@ -72,6 +76,8 @@ private:
 
 	uint32_t kSeed = 0x31;  // TODO: RElocate about rndom nuber genration
 
+	char kBeepFilename[80] = "C://workspace/chip-8-emulator/audio/censor-beep-1s.wav";  // TODO: Move this to another location
+
 private:
 	unsigned short program_counter_;
 	unsigned short index_register_;
@@ -84,6 +90,8 @@ private:
 	Chip8Display display_;
 
 	MyRNG rng_;  // TODO: RElocate about rndom nuber genration
+
+	Chip8Beep beep_;
 
 private:
 	unsigned short opcode_;
@@ -110,6 +118,7 @@ private:
 	unsigned short DecodeNNN();
 	void ClearDisplay();
 	void DrawSprite(unsigned char at_x, unsigned char at_y, unsigned char sprite_height);
+	void HandleTimers();
 	void LogFetchedOpcode();
 	void LogDecodedInstruction(std::string instruction);
 };

@@ -33,6 +33,9 @@
     <ClCompile Include="..\..\src\gl3w.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="chip8_beep.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="chip8_cpu.h">
@@ -45,6 +48,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="chip8_display.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="chip8_beep.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -11,7 +11,7 @@ int main()
     //chip8_cpu.Start("C://workspace/chip-8-emulator/roms/test/test_opcode_mod.ch8");
     //chip8_cpu.Start("C://workspace/chip-8-emulator/roms/test/bc_test.ch8");
     //chip8_cpu.Start("C://workspace/chip-8-emulator/roms/test/SCTEST.ch8");
-    chip8_cpu.Start("C://workspace/chip-8-emulator/roms/test/CXNN_test.ch8");
+    chip8_cpu.Start("C://workspace/chip-8-emulator/roms/test/TIMER_SOUND_test.ch8");
 
     std::cout << "CHIP-8 Interpreter - Finish!\n";
 }

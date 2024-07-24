@@ -8,6 +8,7 @@ Chip8Cpu::Chip8Cpu()
 	, sound_timer_(0)
 	, memory_()
 	, opcode_(0)
+	, beep_(kBeepFilename)
 {
 	LoadFont();
 	rng_.seed(kSeed);
@@ -20,10 +21,16 @@ void Chip8Cpu::Start(std::string filename)
 
 	while (true)
 	{
+		HandleTimers();
+
 		Cycle();
+
 		// TODO this is called everytime to re-draw last issued data. Pero el motivo es para ejecutar el polliwg de los eventos. No me gusta, lo tendre que cambiar.
 		this->display_.Render();
+
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		//std::this_thread::sleep_for(std::chrono::microseconds(1000));
+		//std::this_thread::sleep_for(std::chrono::nanoseconds(400));
 	}
 }
 
@@ -245,6 +252,24 @@ void Chip8Cpu::Decode()
 			// FXXX instruction family
 			switch (this->opcode_ & 0x00FF)
 			{
+				case 0x0007:
+				{
+					LogDecodedInstruction("FX07");
+					this->instruction_ = Instruction::IFX07;
+					break;
+				}
+				case 0x0015:
+				{
+					LogDecodedInstruction("FX15");
+					this->instruction_ = Instruction::IFX15;
+					break;
+				}
+				case 0x0018:
+				{
+					LogDecodedInstruction("FX18");
+					this->instruction_ = Instruction::IFX18;
+					break;
+				}
 				case 0x001E:
 				{
 					LogDecodedInstruction("FX1E");
@@ -485,6 +510,31 @@ void Chip8Cpu::Execute()
 			DrawSprite(this->gp_register_[gp_register_index_x], this->gp_register_[gp_register_index_y], sprite_height);
 			break;
 		}
+		case Instruction::IFX07:
+		{
+			unsigned char gp_register_index_x = DecodeX();
+			this->gp_register_[gp_register_index_x] = this->delay_timer_;
+			break;
+		}
+		case Instruction::IFX15:
+		{
+			unsigned char gp_register_index_x = DecodeX();
+			this->delay_timer_ = this->gp_register_[gp_register_index_x];
+			break;
+		}
+		case Instruction::IFX18:
+		{
+			unsigned char gp_register_index_x = DecodeX();
+
+			if (!this->sound_timer_)
+			{
+				// Play (async) sound (in loop)
+				this->beep_.Play();
+			}
+
+			this->sound_timer_ = this->gp_register_[gp_register_index_x];
+			break;
+		}
 		case Instruction::IFX1E:
 		{
 			// TODO: implement variation (set VF on 12-bit overflow)
@@ -628,6 +678,24 @@ void Chip8Cpu::DrawSprite(unsigned char at_x, unsigned char at_y, unsigned char 
 	}
 
 	this->display_.Render(p);
+}
+
+void Chip8Cpu::HandleTimers()
+{
+	if (this->delay_timer_)
+	{
+		this->delay_timer_--;
+	}
+
+	if (this->sound_timer_)
+	{
+		this->sound_timer_--;
+
+		if (!this->sound_timer_)
+		{
+			this->beep_.Stop();
+		}
+	}
 }
 
 void Chip8Cpu::LogFetchedOpcode()
