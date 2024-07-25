@@ -36,7 +36,10 @@ enum Instruction : unsigned char {
 	IBNNN,
 	ICXNN,
 	IDXYN,
+	IEX9E,
+	IEXA1,
 	IFX07,
+	IFX0A,
 	IFX15,
 	IFX18,
 	IFX1E,
@@ -109,6 +112,7 @@ private:
 	void Cycle();
 	void Fetch();
 	void NextInstruction();
+	void PreviousInstruction();
 	void Decode();
 	void Execute();
 	unsigned char DecodeX();

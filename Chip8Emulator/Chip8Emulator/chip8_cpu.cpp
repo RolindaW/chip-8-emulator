@@ -28,9 +28,9 @@ void Chip8Cpu::Start(std::string filename)
 		// TODO this is called everytime to re-draw last issued data. Pero el motivo es para ejecutar el polliwg de los eventos. No me gusta, lo tendre que cambiar.
 		this->display_.Render();
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		//std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		//std::this_thread::sleep_for(std::chrono::microseconds(1000));
-		//std::this_thread::sleep_for(std::chrono::nanoseconds(400));
+		std::this_thread::sleep_for(std::chrono::nanoseconds(400));
 	}
 }
 
@@ -73,6 +73,11 @@ void Chip8Cpu::Fetch()
 void Chip8Cpu::NextInstruction()
 {
 	this->program_counter_ += 2;
+}
+
+void Chip8Cpu::PreviousInstruction()
+{
+	this->program_counter_ -= 2;
 }
 
 // TODO: Throw (and handle) error in case decoding fails; refactor (get rid of nested switch statements) so do not to repeat error handle in each switch statement
@@ -247,6 +252,33 @@ void Chip8Cpu::Decode()
 			this->instruction_ = Instruction::IDXYN;
 			break;
 		}
+		case 0xE000:
+		{
+			// EXXX instruction family
+			switch (this->opcode_ & 0x00FF)
+			{
+				case 0x009E:
+				{
+					LogDecodedInstruction("EX9E");
+					this->instruction_ = Instruction::IEX9E;
+					break;
+				}
+				case 0x00A1:
+				{
+					LogDecodedInstruction("EXA1");
+					this->instruction_ = Instruction::IEXA1;
+					break;
+				}
+				default:
+				{
+					LogDecodedInstruction("Error! Unknown");
+					// TODO: Throw error! And handle it.
+					this->instruction_ = 0;
+					break;
+				}
+			}
+			break;
+		}
 		case 0xF000:
 		{
 			// FXXX instruction family
@@ -256,6 +288,12 @@ void Chip8Cpu::Decode()
 				{
 					LogDecodedInstruction("FX07");
 					this->instruction_ = Instruction::IFX07;
+					break;
+				}
+				case 0x000A:
+				{
+					LogDecodedInstruction("FX0A");
+					this->instruction_ = Instruction::IFX0A;
 					break;
 				}
 				case 0x0015:
@@ -510,10 +548,43 @@ void Chip8Cpu::Execute()
 			DrawSprite(this->gp_register_[gp_register_index_x], this->gp_register_[gp_register_index_y], sprite_height);
 			break;
 		}
+		case Instruction::IEX9E:
+		{
+			unsigned char gp_register_index = DecodeX();
+			unsigned char value = this->gp_register_[gp_register_index];			
+			if (this->display_.IsKeyPressed(value))
+			{
+				NextInstruction();
+			}
+			break;
+		}
+		case Instruction::IEXA1:
+		{
+			unsigned char gp_register_index = DecodeX();
+			unsigned char value = this->gp_register_[gp_register_index];
+			if (!this->display_.IsKeyPressed(value))
+			{
+				NextInstruction();
+			}
+			break;
+		}
 		case Instruction::IFX07:
 		{
 			unsigned char gp_register_index_x = DecodeX();
 			this->gp_register_[gp_register_index_x] = this->delay_timer_;
+			break;
+		}
+		case Instruction::IFX0A:
+		{
+			unsigned char value;
+			if (this->display_.GetKeyPressed(&value)) {
+				unsigned char gp_register_index = DecodeX();
+				this->gp_register_[gp_register_index] = value;
+			}
+			else
+			{
+				PreviousInstruction();
+			}
 			break;
 		}
 		case Instruction::IFX15:
