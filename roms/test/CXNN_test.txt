@@ -1,0 +1,114 @@
+
+# INSTRUCTIONS
+
+## TEST
+
+- CXNN
+
+## DEPENDENCY
+
+- 6XNN
+- 5XY0
+- 8XY0
+- 8XY2
+- 3XNN
+- 7XNN
+- 1NNN
+- ANNN
+- DXY0
+
+# PROGRAM
+
+## SUMMARY
+
+### STEP
+
+1- Set fixture
+2- Call test instruction
+2.1- Call once for initializing auxiliar register
+2.2- Call during iteration process
+3- Evaluate result
+4- Display result
+
+### OUTPUT
+
+A- "01": error; not implemented - Warning! Also if VX is being set to a constant value equal to selected key (8th general purpose register value).
+B- "02": error; bad implementation - VX is being set to a constant value.
+B- "03": error; bad implementation - AND mask is not being properly applied.
+C- "ok": success - Warning! Random number generation is not being verified but almost to be a non-constant output.
+
+### SPRITE
+
+(&246) "ok": (4B) EAAC AAEA
+(&24A) "01": (4B) ECA4 A4EE
+(&24E) "02": (4B) EEA2 ACEE
+(&252) "02": (4B) EEA6 A2EE
+
+## FLOW
+
+### FIXTURE
+
+(&200) 6010 - 6XNN - V0 = $10 (RESULT = KEY)
+(&202) 6110 - 6XNN - V1 = $10 (PREVIOUS RESULT = KEY)
+(&204) 6200 - 6XNN - V2 = $0 (ITERATOR)
+(&206) 6300 - 6XNN - V3 = $0 (FLAG - MULTIPLE OUTPUT)
+(&208) 6400 - 6XNN - V4 = $0 (FLAG - OUTPUT OUT OF RANGE)
+(&20A) 670F - 6XNN - V7 = $F0 (MASK)
+(&20C) 6810 - 6XNN - V8 = $10 (KEY)
+(&20E) 692F - 6XNN - V9 = $2F (MAXIMUM ITERATIONS)
+(&210) 6A01 - 6XNN - VA = $01 (DRAW COORDINATE X)
+(&212) 6B01 - 6XNN - VB = $01 (DRAW COORDINATE Y)
+
+### CALL
+
+#### ONCE
+
+(&214) C10F (Test) - CXNN - V1 = RAND AND $0F - WARNING! PREVIOUS RESULT MUST BE INITIALIZED BEFORE START ITERATING
+
+#### DURING ITERATION
+
+(&216) C00F (Test) - CXNN - V0 = RAND AND $0F (MASK 4 LSB BIT - FIX OUTPUT TO RANGE [0X0, 0XF])
+
+(&218) 5010 - 5XY0 - SKIP NEXT IF V0 == V1
+(&21A) 6301 - 6XNN - V3 = $01 (SET FLAG - MULTIPLE OUTPUT)
+
+(&21C) 8500 - 8XY0 - V5 = V0
+(&21E) 8572 - 8XY2 - V5 &= V7
+(&220) 3500 - 3XNN - SKIP NEXT IF V5 == $00
+(&222) 6401 - 6XNN - V4 = $01 (SET FLAG - OUTPUT OUT OF RANGE)
+
+(&224) 8100 - 8XY0 - V1 = V0 (UPDATE PREVIOUS RESULT)
+
+(&226) 7201 - 7XNN - V2 += $01
+(&228) 5290 - 5XY0 - SKIP NEXT IF V2 == V9
+(&22A) 1216 - 1NNN - JUMP TO ADDRESS $216 (ITERATE)
+
+### EVALUATE
+
+(&22C) 3301 - 3XNN - SKIP NEXT IF V3 == $01 (IS FLAG - MULTIPLE OUTPUT)
+(&22E) 123A - 1NNN - JUMP TO ADDRESS $23A (BOTTOM IF STATEMENT)
+(&230) 1232 - 1NNN - JUMP TO ADDRESS $232 (TOP IF STATEMENT)
+
+(&232) A252 - ANNN - I = $252 ("03" SPRITE ERROR) (TOP IF STATEMENT)
+(&234) 3401 - 3XNN - SKIP NEXT IF V4 == $01 (IS FLAG - OUTPUT OUT OF RANGE)
+(&236) A246 - ANNN - I = $246 ("ok" SPRITE SUCCESS)
+(&238) 1242 - 1NNN - JUMP TO ADDRESS $242 (DISPLAY)
+
+(&23A) A24A - ANNN - I = $24A ("01" SPRITE ERROR) (BOTTOM IF STATEMENT)
+(&23C) 5180 - 5XY0 - SKIP NEXT IF V1 == V8 (IS PREVIOUS RESULT == KEY)
+(&23E) A24E - ANNN - I = $24E ("02" SPRITE ERROR)
+(&240) 1242 - 1NNN - JUMP TO ADDRESS $242 (DISPLAY)
+
+### DISPLAY
+
+(&242) DAB4 - DXY0 - DRAW 4 B SPRITE - FROM I (== ?) - AT (VA (== $01), VB (== $01))
+(&244) 1244 - 1NNN - JUMP TO ADDRESS $244 (INFINITE LOOP)
+
+(&246) EAAC - DATA ("ok" SPRITE SUCCESS)
+(&248) AAEA - DATA
+(&24A) ECA4 - DATA ("01" SPRITE ERROR) 
+(&24C) A4EE - DATA
+(&24E) EEA2 - DATA ("02" SPRITE ERROR) 
+(&250) ACEE - DATA
+(&252) EEA6 - DATA ("03" SPRITE ERROR) 
+(&254) A2EE - DATA

@@ -1,0 +1,55 @@
+
+# INSTRUCTIONS
+
+## TEST
+
+- BNNN
+
+## DEPENDENCY
+
+- 6XNN
+- ANNN
+- 1NNN
+- DXY0
+
+# PROGRAM
+
+## SUMMARY
+
+### STEP
+
+1- Set fixture
+2- Call test instruction
+3- Evaluate result
+4- Display result
+
+### OUTPUT
+
+A- "01": error; not implemented.
+B- "02": error; bad implementation.
+C- "ok": success
+
+### SPRITE
+
+(&214) "ok": (4B) EAAC AAEA
+(&218) "01": (4B) ECA4 A4EE
+(&21C) "02": (4B) EEA2 ACEE
+
+## FLOW
+
+(&200) 6002 - 6XNN - V0 = $02
+(&202) 6A01 - 6XNN - VA = $01
+(&204) 6B01 - 6XNN - VB = $01
+(&206) A214 - ANNN - I = $214
+(&208) B20E - BNNN (Test) - JUMP TO ADDRESS $20E + V0 (== $02) == $210
+(&20A) A218 - ANNN - I = $218
+($20C) 1210 - 1NNN - JUMP TO ADDRESS $210
+(&20E) A21C - ANNN - I = $21C
+(&210) DAB4 - DXY0 - DRAW 4 B SPRITE - FROM I (== ?) - AT (VA (== $01), VB (== $01))
+(&212) 1212 - 1NNN - JUMP TO ADDRESS $212 (INFINITE LOOP)
+(&214) EAAC - DATA ("ok" SPRITE SUCCESS)
+(&216) AAEA - DATA
+(&218) ECA4 - DATA ("01" SPRITE ERROR) 
+(&21A) A4EE - DATA
+(&21C) EEA2 - DATA ("02" SPRITE ERROR) 
+(&21E) ACEE - DATA

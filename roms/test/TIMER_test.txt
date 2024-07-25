@@ -1,0 +1,129 @@
+
+
+WARNING! EL valor inicila a poner en el timer no deberi ser grande para poder hacer el test.
+En caso de que la gestion de los timers sea secuencial (en el mismo hilo donde se gestiona la ejecucion del interprete), independientemente de si la velocidad de ejecicion del emulador esta controlada o no, mientras por cada ciclo (por cada instruccion del CHIP-8 que se ejecute) como maximo se decrementa el contador 1 unidad, no deberia haber problema.
+En caso de que la gestion fuera en paralelo (en otro hilo), podria haber problemas en caso de que la ejecucion del procesamiento de las instrucciones fuera muy pesado (relativamente hablando) en comparacion con el hilo encargado de decrementar los registros - es decir, podria pasar antes de que se hubiera procesado siguiqera una instruccion mmas en el hiulo principal, el hilo que gestiona los timers ya hubiera puesto a cero los timers -> Esto, sin embargo, seria mas un problema de implementacion del emulador porqu no tendria sentido que la ejecucion de una instruccion fuera tan pesada como para que se pudiera descontar un timer entero mientras tanto... teniendo en cuenta que, hablando en terminos preciosos, los timers se deberian descontrar a 60Hz (60 veces por segundo) mientras que el hilo de ejecicon principal de el emulador podria ir literalmente a toda hostia (a menos que se estuviera gestionando intencionadamente para poder correr el emulador a una frecuencia determinada - en cuyo caso, dependiendo de la vecolidad de emulacion seleccionada podria llegar a haber algu conflicto NOTA* no tengo ni puta idea de cual es una velocidad de ejecucion nominal para el emulador del chip-8 aunque como pista el procesador RCA 1802 del COSMAC VIP original tenia un oscilador de 3.2 MHz to 6.4 MHz lo cual es muuuuuuuuuy superior a esos 60Hz con lo que no deberia de haber ningun problema ESTO significa que ese procesador puede ejecutar entre 3.2 y 6.4 millones de instrucciones - no de instruccion CHIP-8 sino las del propio procesador (aunque al ser un interprete de tan bajo nivel no creo que cada instruccion del CHIP-8 ejecute muchas instrucciones del procesador) - por segundo, y los timers se descuentan 60 veces por segundo).
+
+Nosomotros aqui usamos 3 instrucciones para hacer el test:
+Nota: dependiendo de la implementacion, los timers se podrian gestionar A) en el mismo ciclo despues de procesar la instruccion o B) en el siguiente ciclo antes de procesar la siguiente instruccion.
+1) poner timer == $x (timer == $x)
+2) (actualizar timer == $x-1) copiar valor timer a registro VX (VX == $x-1)
+3) (actualizar timer == $x-2) comprobar VX (realmente en este punto el valor del timer nos daria igual porque ya lo habriamos copiado anteriormente)
+
+-FX07  set VX to delay timer value
+-FX15  set delay timer to VX
+
+###
+###
+
+set v0 = $00 (result initial)
+set v1 = $10 (result iteration == init timer value)
+set v2 = $00 (iterador)
+set v8 = $10 (init timer value)
+set v9 = $FF (max iteraciones)
+
+set initial value to delay timer - set to $V8 (TEST! FX15)
+
+set V0 to delay timer (TEST! FX07)
+if V0 == $0 -> (error "01": alguna - o ambas - instruccion no implementada; o gestion de timers esta implementado en paralelo y es sumamente rapido - POCO PROBABLE)
+else -> continue
+
+(ahora vamos a esperar un maximo de iteraciones - e.g. $FF - hasta que el timer pase a valer $0; si nunca ocurrem entonces errror)
+
+set V1 to delay timer (TEST! FX07)
+if V1 == $0 -> "ok" (Fin iteracion)
+else -> seguir iterando
+(El error raqui seria; err "02" TIMER IS NOT BEING DECREMENTED!!)
+si despues de iterar todo no se ha lllegado a cero es relativamente seguro interpretar que no esta bien implementado
+
+(check results)
+if V0 == $0 => error "01" (one or both of the instructions not implemented)
+else if V1 != $0 => error "02" (timer not correctly decremented:: not decremented or not enough fast)
+else => "ok" success
+
+draw results
+
+data
+
+xxx
+xxx
+
+***
+*** IMPLEMENTATION
+
+Warning!
+V8 (INITIAL VALUE) debe de ser lo suficientemente grande como para asegurarnos de que entre la ejecucion de la instruccion de poner el valor al timer (xxx) y la de leerlo (xxx) el timer no se haya puesto a 0 (e.g. en caso de gestion en paralelo o decrementar secuencialmente mas de una unidad por ciclo) pero lo suficientemnete pequeno para que V9 (MAXIMUM ITERATIONS) pueda tener un numero de iteraciones lo suficientemnete grande en comparacion con V8 para que en caso de que el gestor de los timers sea relativamente lento el test le de el tiempo suficiente para terminar de bajarlo a 0.
+
+### FIXTURE
+
+(&200) 6010 - 6XNN - V0 = $05 (TIMER SET RESULT = INITIAL VALUE)
+(&202) 6110 - 6XNN - V1 = $05 (TIMER UPDATE RESULT = INITIAL VALUE)
+(&204) 6200 - 6XNN - V2 = $0 (ITERATOR)
+(&20C) 6810 - 6XNN - V8 = $05 (INITIAL VALUE)
+(&20E) 692F - 6XNN - V9 = $20 (MAXIMUM ITERATIONS)
+(&210) 6A01 - 6XNN - VA = $01 (DRAW COORDINATE X)
+(&212) 6B01 - 6XNN - VB = $01 (DRAW COORDINATE Y)
+
+### CALL
+
+#### ONCE
+
+(&???) F815 - FX15 (Test) - DELAY TIMER = V8 (== $05)
+(&???) F007 - FX07 (Test) - V0 = DELAY TIMER (== $05 - n)
+
+(&???) 3000 - 3XNN - SKIP NEXT IF V0 == $00
+(&???) 1??? - 1NNN - JUMP TO ADDRESS $??? (ITERATION)
+(&???) 1??? - 1NNN - JUMP TO ADDRESS $??? (EVALUATE) (ERR "01")
+
+#### DURING ITERATION
+
+(&???) F107 - FX07 (Test) - V1 = DELAY TIMER (== ?)
+
+(&220) 4100 - 4XNN - SKIP NEXT IF V1 != $00
+(&???) 1??? - 1NNN - JUMP TO ADDRESS $??? (EVALUATE) (SUCCESS "ok")
+
+(&226) 7201 - 7XNN - V2 += $01
+(&228) 5290 - 5XY0 - SKIP NEXT IF V2 == V9
+(&22A) 1??? - 1NNN - JUMP TO ADDRESS $??? (ITERATE)
+
+### EVALUATE
+
+if V0 == $0 => error "01" 
+else
+    if V1 == $0 => "ok"
+    else => error "02" 
+
+### DISPLAY
+
+(&242) DAB4 - DXY0 - DRAW 4 B SPRITE - FROM I (== ?) - AT (VA (== $01), VB (== $01))
+(&244) 1244 - 1NNN - JUMP TO ADDRESS $244 (INFINITE LOOP)
+
+(&246) EAAC - DATA ("ok" SPRITE SUCCESS)
+(&248) AAEA - DATA
+(&24A) ECA4 - DATA ("01" SPRITE ERROR) 
+(&24C) A4EE - DATA
+(&24E) EEA2 - DATA ("02" SPRITE ERROR) 
+(&250) ACEE - DATA
+
+***
+***
+
+
+
+
+***
+*** Simple
+***
+
+Delay timer
+
+(&200) 6005 - 6XNN - V0 = $05 (TIMER SET RESULT = INITIAL VALUE)
+(&202) F015 - FX15 (Test) - DELAY TIMER = V0 (== $05)
+(&204) F107 - FX07 (Test) - V1 = DELAY TIMER (== $05 - n)
+
+Sound timer
+
+(&200) 6020 - 6XNN - V0 = $20 (TIMER SET RESULT = INITIAL VALUE)
+(&202) F018 - FX18 (Test) - SOUND TIMER = V0 (== $20)
+
+

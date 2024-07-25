@@ -267,15 +267,15 @@ Table
 -8XYE: left-shift VX by 1 (store in VF previous MSB from VX). [alternative behaviour: first set VX to VY; then, proceed normally - Warning! Implement both solutions and make it configurable]
 -9XY0: skip next instruction if VX not equals VY. [increment PC by 2 if condition is met]
 -ANNN: set I to address NNN
--BNNN (TODO): jump to address NNN plus V0. [alternative behaviour BXNN: jump to address XNN plus VX - Warning! Implement both solutions and make it configurable]
--CXNN (TODO): set VX to (rand(8-bit) AND constant NN)
+-BNNN: jump to address NNN plus V0. [alternative behaviour BXNN: jump to address XNN plus VX - Warning! Implement both solutions and make it configurable]
+-CXNN: set VX to (rand(8-bit) AND constant NN)
 -DXYN: draw sprite at coordinate (VX, VY) with a size of 8xN px. Start reading each B (up to N) at address I (I is not affected). Set VF to 1 if px flipping; otherwise, 0. [Tip: starting drawing position must be wrapped - MOD by corresponding dimension (i.e. screen size) to get correct value; sprite drawing must be clipped against the border] [alternative behaviour: sprite drawing must be wrapped - and not clipped - against the border - Warning! Implement both solutions and make it configurable]
--EX9E (TODO): skip next instruction if VX is pressed key - Warning! Do not await
--EXA1 (TODO): skip next instruction if VX is not pressed key - Warning! Do not await
--FX07 (TODO): set VX to delay timer value
--FX0A (TODO): await to key press (bloking operation - Warning! Depending on implementation, PC may be decremented 2 B so current instruction keep being execued; timers should keep decremeting if active); then, store in VX. [alternative behaviour: await to key press & release - Warning! Implement both solutions and make it configurable]
--FX15 (TODO): set delay timer to VX
--FX18 (TODO): set sound timer to VX
+-EX9E: skip next instruction if VX is being held down (i.e. is being pressed) - Warning! Do not await (i.e. not blocking)
+-EXA1: skip next instruction if VX is NOT being held down (i.e. is NOT being pressed) - Warning! Do not await (i.e. not blocking)
+-FX07: set VX to delay timer value
+-FX0A: await to key press; write HEX result into VX (bloking operation - Warning! Depending on implementation, PC may be decremented 2 B so current instruction keep being execued; timers should keep decremeting if active); then, store in VX. [alternative behaviour: await to key press & release - Warning! Implement both solutions and make it configurable]
+-FX15: set delay timer to VX
+-FX18: set sound timer to VX
 -FX1E: add VX to I (VF is not affected). [alternative behaviour: set VF to 1 if 12-bit overflow; otherwise, 0 - Warning! Implement both solutions and make it configurable]
 -FX29: set I to the memory location of the font sprite in VX. [use last - high - nibble from VX].
 -FX33: store BCD (Binary-Coded Decimal) of VX - Warning! Convert to decimal first: hundreds at memory location I, tens at I+1, and ones at I+2.

@@ -1,0 +1,227 @@
+
+# INSTRUCTIONS
+
+## TEST
+
+- FX0A
+- EX9E
+- EXA1
+
+## DEPENDENCY
+
+- 6XNN
+- 00E0
+- ANNN
+- DXY0
+- 7XNN
+- 9XY0
+- 1NNN
+- FX29
+- 3XNN
+
+# PROGRAM
+
+## SUMMARY
+
+### STEP
+
+1- Set fixture
+2- Display message
+3- Test FX0A
+4- Display message
+5- Test EX9E & EXA1
+6- Restart
+
+### OUTPUT
+
+A- "01": error; FX0A not implemented.
+B- "02": error; EX9E or EXA1 not implemented - Warning! Error can be thrown if key is released between instruction execution.
+
+### SPRITE
+
+(&2B2) "p": (4B) E0E0 8080
+(&2B6) "r": (4B) A0C0 8080
+(&2BA) "e": (4B) E0C0 80E0
+(&2BE) "s": (4B) E080 60E0
+
+(&2C2) "i": (4B) E040 40E0
+(&2C6) "n": (4B) 80E0 A0A0
+(&2CA) "g": (4B) 6080 E0E0
+
+(&2CE) "a": (4B) 40A0 E0A0
+(&2D2) "y": (4B) A040 4040
+(&2D6) "k": (4B) A0C0 A0A0
+
+(&2DA) "01": (4B) ECA4 A4EE
+(&2DE) "02": (4B) EEA2 ACEE
+
+#### MESSAGE
+
+"Press\n any key"
+"Pressing\n ?" - Warning! Key use emulator font (5 B)
+
+## FLOW
+
+### FIXTURE
+
+(&200) 6010 - 6XNN - V0 = $10
+(&202) 6810 - 6XNN - V8 = $10 (KEY)
+
+### DISPLAY MESSAGE "press\n any key"
+
+(&204) 00E0 - CLRS - CLEAR DISPLAY
+
+(&206) 6A10 - 6XNN - VA = $10 (DRAW X)
+(&208) 6B0B - 6XNN - VB = $0B (DRAW Y)
+(&20A) A2B2 - ANNN - I = $2B2 ("p" SPRITE)
+(&20C) DAB4 - DXY0 - DRAW 4 B SPRITE - FROM I (== $2B2) - AT (VA (== $10), VB (== $0B))
+
+(&20E) 7A04 - 7XNN - VA (== $10) += $04 = $14
+(&210) A2B6 - ANNN - I = $A2B6 ("r" SPRITE)
+(&212) DAB4 - DXY0 - DRAW 4 B SPRITE - FROM I (== $A2B6) - AT (VA (== $14), VB (== $0B))
+
+(&214) 7A04 - 7XNN - VA (== $14) += $04 = $18
+(&216) A2BA - ANNN - I = $2BA ("e" SPRITE)
+(&218) DAB4 - DXY0 - DRAW 4 B SPRITE - FROM I (== $2BA) - AT (VA (== $18), VB (== $0B))
+
+(&21A) 7A04 - 7XNN - VA (== $18) += $04 = $1C
+(&21C) A2BE - ANNN - I = $2BE ("s" SPRITE)
+(&21E) DAB4 - DXY0 - DRAW 4 B SPRITE - FROM I (== $2BE) - AT (VA (== $1C), VB (== $0B))
+
+(&220) 7A04 - 7XNN - VA (== $1C) += $04 = $20
+(&222) DAB4 - DXY0 - DRAW 4 B SPRITE - FROM I (== $2BE) - AT (VA (== $20), VB (== $0B))
+
+(&224) 6A10 - 6XNN - VA = $10 (DRAW X)
+(&226) 7B08 - 7XNN - VB (== $0B) += $08 = $13
+(&228) A2CE - ANNN - I = $2CE ("a" SPRITE)
+(&22A) DAB4 - DXY0 - DRAW 4 B SPRITE - FROM I (== $2CE) - AT (VA (== $10), VB (== $13))
+
+(&22C) 7A04 - 7XNN - VA (== $10) += $04 = $14
+(&22E) A2C6 - ANNN - I = $2C6 ("n" SPRITE)
+(&230) DAB4 - DXY0 - DRAW 4 B SPRITE - FROM I (== $2C6) - AT (VA (== $14), VB (== $13))
+
+(&232) 7A04 - 7XNN - VA (== $14) += $04 = $18
+(&234) A2D2 - ANNN - I = $2D2 ("y" SPRITE)
+(&236) DAB4 - DXY0 - DRAW 4 B SPRITE - FROM I (== $2D2) - AT (VA (== $18), VB (== $13))
+
+(&238) 7A08 - 7XNN - VA (== $18) += $08 = $20
+(&23A) A2D6 - ANNN - I = $2D6 ("k" SPRITE)
+(&23C) DAB4 - DXY0 - DRAW 4 B SPRITE - FROM I (== $2D6) - AT (VA (== $20), VB (== $13))
+
+(&23E) 7A04 - 7XNN - VA (== $20) += $04 = $24
+(&240) A2BA - ANNN - I = $2BA ("e" SPRITE)
+(&242) DAB4 - DXY0 - DRAW 4 B SPRITE - FROM I (== $2BA) - AT (VA (== $24), VB (== $13))
+
+(&244) 7A04 - 7XNN - VA (== $24) += $04 = $28
+(&246) A2D2 - ANNN - I = $2D2 ("y" SPRITE)
+(&248) DAB4 - DXY0 - DRAW 4 B SPRITE - FROM I (== $2D2) - AT (VA (== $28), VB (== $13))
+
+### TEST - FX0A
+
+(&24A) F00A - FX0A - V0 = KEY (WAIT UNTIL KEY PRESS)
+(&24C) 9080 - 9XY0 - SKIP NEXT IF V0 != V8
+(&24E) 12A0 - 1NNN - JUMP TO ADDRESS $2A0 (EVALUATE ERROR 01)
+
+### DISPLAY MESSAGE "pressing\n ?"
+
+(&250) 00E0 - CLRS - CLEAR DISPLAY
+
+(&252) 6A10 - 6XNN - VA = $10 (DRAW X)
+(&254) 6B0B - 6XNN - VB = $0B (DRAW Y)
+(&256) A2B2 - ANNN - I = $2B2 ("p" SPRITE)
+(&258) DAB4 - DXY0 - DRAW 4 B SPRITE - FROM I (== $2B2) - AT (VA (== $10), VB (== $0B))
+
+(&25A) 7A04 - 7XNN - VA (== $10) += $04 = $14
+(&25C) A2B6 - ANNN - I = $2B6 ("r" SPRITE)
+(&25E) DAB4 - DXY0 - DRAW 4 B SPRITE - FROM I (== $2B6) - AT (VA (== $14), VB (== $0B))
+
+(&260) 7A04 - 7XNN - VA (== $14) += $04 = $18
+(&262) A2BA - ANNN - I = $2BA ("e" SPRITE)
+(&264) DAB4 - DXY0 - DRAW 4 B SPRITE - FROM I (== $2BA) - AT (VA (== $18), VB (== $0B))
+
+(&266) 7A04 - 7XNN - VA (== $18) += $04 = $1C
+(&268) A2BE - ANNN - I = $2BE ("s" SPRITE)
+(&26A) DAB4 - DXY0 - DRAW 4 B SPRITE - FROM I (== $2BE) - AT (VA (== $1C), VB (== $0B))
+
+(&26C) 7A04 - 7XNN - VA (== $1C) += $04 = $20
+(&26E) DAB4 - DXY0 - DRAW 4 B SPRITE - FROM I (== $2BE) - AT (VA (== $20), VB (== $0B))
+
+(&270) 7A04 - 7XNN - VA (== $20) += $04 = $24
+(&272) A2C2 - ANNN - I = $2C2 ("i" SPRITE)
+(&274) DAB4 - DXY0 - DRAW 4 B SPRITE - FROM I (== $2C2) - AT (VA (== $24), VB (== $0B))
+
+(&276) 7A04 - 7XNN - VA (== $24) += $04 = $28
+(&278) A2C6 - ANNN - I = $2C6 ("n" SPRITE)
+(&27A) DAB4 - DXY0 - DRAW 4 B SPRITE - FROM I (== $2C6) - AT (VA (== $28), VB (== $0B))
+
+(&27C) 7A04 - 7XNN - VA (== $28) += $04 = $2C
+(&27E) A2CA - ANNN - I = $2CA ("g" SPRITE)
+(&280) DAB4 - DXY0 - DRAW 4 B SPRITE - FROM I (== $2CA) - AT (VA (== $2C), VB (== $0B))
+
+(&282) 6A1E - 6XNN - VA = $1E (DRAW X)
+(&284) 7B08 - 7XNN - VB (== $0B) += $08 = $13
+(&286) F029 - FX29 - I = ADDRESS OF THE FONT CHARACTER IN V0
+(&288) DAB5 - DXY0 - DRAW 5 B SPRITE - FROM I (== $?) - AT (VA (== $1E), VB (== $13))
+
+### TEST - EX9E & EXA1
+
+(&28A) 6301 - 6XNN - V3 = $01 (KEY PRESSED = TRUE)
+(&28C) E09E - EX9E - SKIP NEXT IF V0 == KEY PRESS
+(&28E) 6300 - 6XNN - V3 = $00 (KEY PRESSED = FALSE)
+
+(&290) 6401 - 6XNN - V4 = $01 (KEY NOT PRESSED = TRUE)
+(&292) E0A1 - EXA1 - SKIP NEXT IF V0 != KEY PRESS
+(&294) 6400 - 6XNN - V4 = $00 (KEY NOT PRESSED = FALSE)
+
+(&296) 9340 - 9XY0 - SKIP NEXT IF V3 != V4 (ONLY ONE CONDITION IS MET ON SUCCESS - VALUES ARE DIFFERENT)
+(&298) 12A4 - 1NNN - JUMP TO ADDRESS $2A4 (EVALUATE ERROR 02)
+
+(&29A) 3301 - 3XNN - SKIP NEXT IF V3 == $01
+(&29C) 1200 - 1NNN - JUMP TO ADDRESS $200 (RESTART)
+(&29E) 128A - 1NNN - JUMP TO ADDRESS $28A (ITERATE)
+
+### EVALUATE ERROR 01
+
+(&2A0) A2DA - ANNN - I = $2DA ("01" SPRITE)
+(&2A2) 12A8 - 1NNN - JUMP TO ADDRESS $2A8 (DISPLAY ERROR)
+
+### EVALUATE ERROR 02
+
+(&2A4) A2DE - ANNN - I = $2DE ("02" SPRITE)
+(&2A6) 12A8 - 1NNN - JUMP TO ADDRESS $2A8 (DISPLAY ERROR)
+
+### DISPLAY ERROR
+
+(&2A8) 00E0 - CLRS - CLEAR DISPLAY
+
+(&2AA) 6A01 - 6XNN - VA = $01 (DRAW X)
+(&2AC) 6B01 - 6XNN - VB = $01 (DRAW Y)
+(&2AE) DAB4 - DXY0 - DRAW 4 B SPRITE - FROM I (== ?) - AT (VA (== $01), VB (== $01))
+(&2B0) 12B0 - 1NNN - JUMP TO ADDRESS $2B0 (INFINITE LOOP)
+
+### DATA
+
+(&2B2) E0E0 - DATA ("p" SPRITE)
+(&2B4) 8080 - DATA
+(&2B6) A0C0 - DATA ("r" SPRITE)
+(&2B8) 8080 - DATA
+(&2BA) E0C0 - DATA ("e" SPRITE)
+(&2BC) 80E0 - DATA
+(&2BE) E080 - DATA ("s" SPRITE)
+(&2C0) 60E0 - DATA
+(&2C2) E040 - DATA ("i" SPRITE)
+(&2C4) 40E0 - DATA
+(&2C6) 80E0 - DATA ("n" SPRITE)
+(&2C8) A0A0 - DATA
+(&2CA) 6080 - DATA ("g" SPRITE)
+(&2CC) E0E0 - DATA
+(&2CE) 40A0 - DATA ("a" SPRITE)
+(&2D0) E0A0 - DATA
+(&2D2) A040 - DATA ("y" SPRITE)
+(&2D4) 4040 - DATA
+(&2D6) A0C0 - DATA ("k" SPRITE)
+(&2D8) A0A0 - DATA
+(&2DA) ECA4 - DATA ("01" SPRITE ERROR) 
+(&2DC) A4EE - DATA
+(&2DE) EEA2 - DATA ("02" SPRITE ERROR) 
+(&2E0) ACEE - DATA
