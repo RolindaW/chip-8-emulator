@@ -20,7 +20,7 @@ void Chip8Memory::Write(unsigned short address, unsigned char value)
 
 unsigned short Chip8Memory::Pop()
 {
-	// TODO: Throw (and handle) error if stack underflow.
+	// TODO: throw error if stack underflow
 	if (this->stack_pointer_ >  0)
 	{
 		this->stack_pointer_--;
@@ -30,7 +30,7 @@ unsigned short Chip8Memory::Pop()
 
 void Chip8Memory::Push(unsigned short value)
 {
-	// TODO: Throw (and handle) error if stack overflow.
+	// TODO: throw error if stack overflow
 	if (this->stack_pointer_ < kStackSize - 1)
 	{
 		this->stack_[this->stack_pointer_] = value;

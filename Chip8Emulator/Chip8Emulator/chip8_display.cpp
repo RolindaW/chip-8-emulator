@@ -2,14 +2,14 @@
 
 Chip8Display::Chip8Display()
 {
-	Initialize();
-    InitializeStuff();
+	InitializeGL();
+    Initialize();
 }
 
 Chip8Display::~Chip8Display()
 {
-    ReleaseStuff();
 	Terminate();
+	TerminateGL();
 }
 
 void Chip8Display::Render(unsigned char* data)
@@ -33,12 +33,12 @@ void Chip8Display::Render()
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	glfwSwapBuffers(this->window_);
-	// TODO: This must be executed periodically so events (such as key inputs) can be processed further than when rendering.
-	// or another approach is that this Redner method be called from CPU every opcode processing -  i.e. even when no drawing commmand issued so the screen content will no change at all.
+
+	// Warning! Event polling is required to update state, but we are not actually using it for the moment
 	glfwPollEvents();
 }
 
-// TODO: use scandcode instead of key to support different keyboard layouts (e.g. QUERTY, QZERTY(, etc.)
+// TODO: use scandcode instead of key to support different keyboard layouts (e.g. QUERTY, QZERTY)
 bool Chip8Display::IsKeyPressed(unsigned char keyHex)
 {
 	bool keyPressed = false;
@@ -113,12 +113,12 @@ int Chip8Display::MapKeyToken(unsigned char keyHex)
 	}
 }
 
-int Chip8Display::Initialize()
+// TODO: initialize GLFW safely (e.g. glfwSetErrorCallback)
+// TODO: set callback on resize for updating the viewport (e.g. glfwSetFramebufferSizeCallback)
+int Chip8Display::InitializeGL()
 {
-    //glfwSetErrorCallback(ErrorCallback);
-
     if (!glfwInit())
-        return 0;//exit(EXIT_FAILURE);
+        return 0;  //exit(EXIT_FAILURE);
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, kOpenGLVersionMajor);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, kOpenGLVersionMinor);
@@ -128,41 +128,37 @@ int Chip8Display::Initialize()
     if (!this->window_)
     {
         glfwTerminate();
-        return 0;//exit(EXIT_FAILURE);
+        return 0;  //exit(EXIT_FAILURE);
     }
-
-    //glfwSetKeyCallback(this->window_, KeyCallback);
-    //glfwSetFramebufferSizeCallback(this->window_, FramebufferSizeCallback);
 
     glfwMakeContextCurrent(this->window_);
 
+	// Warning! GL3W initialization returns 0 if success
     if (gl3wInit()) {
+		// TODO: make console logging consistent across the projec
         fprintf(stderr, "failed to initialize OpenGL\n");
-        return false;
+        return 0;
     }
 
     if (!gl3wIsSupported(kOpenGLVersionMajor, kOpenGLVersionMinor)) {
+		// TODO: make console logging consistent across the projec
         fprintf(stderr, "OpenGL version %i.%i not supported\n", kOpenGLVersionMajor, kOpenGLVersionMinor);
-        return false;
+        return 0;
     }
 
-    // Print active OpenGL and GLSL versions
     printf("OpenGL %s, GLSL %s\n", glGetString(GL_VERSION),
         glGetString(GL_SHADING_LANGUAGE_VERSION));
 
     return 1;
 }
 
-int Chip8Display::Terminate()
+void Chip8Display::TerminateGL()
 {
     glfwDestroyWindow(this->window_);
-
     glfwTerminate();
-
-    return 1;
 }
 
-void Chip8Display::InitializeStuff()
+void Chip8Display::Initialize()
 {
     InitializeProgram();
 	InitializeTexture();
@@ -313,26 +309,9 @@ void Chip8Display::FilterTextureData(unsigned char* rawData, unsigned char** fil
 	*filteredDataAdd = filter;
 }
 
-void Chip8Display::ReleaseStuff()
+void Chip8Display::Terminate()
 {
     glDeleteTextures(1, &texture2D_);
     glDeleteVertexArrays(1, &vao_);
     glDeleteProgram(program_);
 }
-
-//static void ErrorCallback(int error, const char* description)
-//{
-//    fprintf(stderr, "Error: %s\n", description);
-//}
-//
-//static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
-//{
-//    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-//        glfwSetWindowShouldClose(window, GLFW_TRUE);
-//}
-//
-//void FramebufferSizeCallback(GLFWwindow* window, int width, int height)
-//{
-//    glViewport(0, 0, width, height);
-//    // TODO: Issue render command to see changes (unless you know that it will be issued very soon)
-//}

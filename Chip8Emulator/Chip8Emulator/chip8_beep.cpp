@@ -34,7 +34,8 @@ void Chip8Beep::Play()
         return;
     }
 
-    // Warning! From filename (.WAV!) - PlaySound(TEXT("C://workspace/chip-8-emulator/audio/Alarm01.wav"), NULL, SND_FILENAME | SND_LOOP | SND_ASYNC);
+    // Warning! Plays only .WAV sound files
+    // It can be played by filename e.g. PlaySound(TEXT("C://workspace/chip-8-emulator/audio/Alarm01.wav"), NULL, SND_FILENAME | SND_LOOP | SND_ASYNC);
     PlaySound((LPCWSTR)this->buffer_, NULL, SND_MEMORY | SND_LOOP | SND_ASYNC);
 }
 
