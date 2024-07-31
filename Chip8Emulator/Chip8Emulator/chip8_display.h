@@ -34,19 +34,19 @@ public:
 public:
 	void Render();
 	void Render(unsigned char* cache);
-	bool IsKeyPressed(unsigned char keyHex);  // TODO: Move to corresponding entity
-	bool GetKeyPressed(unsigned char* keyHex);  // TODO: Move to corresponding entity
+	bool IsKeyPressed(unsigned char keyHex);  // TODO: move to corresponding entity
+	bool GetKeyPressed(unsigned char* keyHex);  // TODO: move to corresponding entity
 
 private:
-	int Initialize();
-	void InitializeStuff();
+	int InitializeGL();
+	void TerminateGL();
+	void Initialize();
 	void InitializeProgram();
 	void InitializeTexture();
 	void SetTextureData(unsigned char* cache);
 	void SetFilteredTextureData(unsigned char* cache);
 	void FilterTextureData(unsigned char* rawData, unsigned char** filteredData);
-	int Terminate();
-	void ReleaseStuff();
+	void Terminate();
 	int MapKeyToken(unsigned char keyHex);
 };
 

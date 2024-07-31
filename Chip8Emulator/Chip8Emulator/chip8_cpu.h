@@ -2,9 +2,9 @@
 
 #include <iostream>
 #include <string>
-#include <chrono> // TODO: Remove when removing sleep.
-#include <thread> // TODO: Remove when removing sleep.
 #include <random>
+#include <chrono>  // Basic cycle time implementation
+#include <thread>  // Basic cycle time implementation
 
 #include "chip8_memory.h"
 #include "chip8_rom.h"
@@ -49,8 +49,8 @@ enum Instruction : unsigned char {
 	IFX65
 };
 
-typedef std::mt19937 MyRNG;
-
+// Mersenne Twister random number generator
+typedef std::mt19937 MersenneRNG;
 
 class Chip8Cpu
 {
@@ -74,31 +74,25 @@ private:
 		0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
 		0xF0, 0x80, 0xF0, 0x80, 0x80  // F
 	};
-
 	const unsigned short kRomAddress = 0x200;
-
-	uint32_t kSeed = 0x31;  // TODO: RElocate about rndom nuber genration
-
-	char kBeepFilename[80] = "C://workspace/chip-8-emulator/audio/censor-beep-1s.wav";  // TODO: Move this to another location
+	unsigned int kRngSeed = 0x31;
+	char kBeepFilename[80] = "C://workspace/chip-8-emulator/audio/censor-beep-1s.wav";
 
 private:
 	unsigned short program_counter_;
 	unsigned short index_register_;
 	unsigned char gp_register_[16];
-
 	unsigned char delay_timer_;
 	unsigned char sound_timer_;
 
 	Chip8Memory memory_;
 	Chip8Display display_;
-
-	MyRNG rng_;  // TODO: RElocate about rndom nuber genration
-
 	Chip8Beep beep_;
 
-private:
 	unsigned short opcode_;
 	unsigned char instruction_;
+
+	MersenneRNG rng_;
 
 public:
 	Chip8Cpu();

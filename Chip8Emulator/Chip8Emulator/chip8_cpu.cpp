@@ -11,7 +11,7 @@ Chip8Cpu::Chip8Cpu()
 	, beep_(kBeepFilename)
 {
 	LoadFont();
-	rng_.seed(kSeed);
+	rng_.seed(kRngSeed);
 }
 
 void Chip8Cpu::Start(std::string filename)
@@ -22,14 +22,9 @@ void Chip8Cpu::Start(std::string filename)
 	while (true)
 	{
 		HandleTimers();
-
 		Cycle();
 
-		// TODO this is called everytime to re-draw last issued data. Pero el motivo es para ejecutar el polliwg de los eventos. No me gusta, lo tendre que cambiar.
-		this->display_.Render();
-
-		//std::this_thread::sleep_for(std::chrono::milliseconds(10));
-		//std::this_thread::sleep_for(std::chrono::microseconds(1000));
+		// Warning! Actual cycle time is defined by the sum of this (fixed minimum) time lapse and the execution time of the corresponding cycle instruction
 		std::this_thread::sleep_for(std::chrono::nanoseconds(400));
 	}
 }
@@ -58,7 +53,7 @@ void Chip8Cpu::Cycle()
 	Execute();
 }
 
-// TODO: Control not to go out of memory on fetching (i.e. try to fetch an opcode from a non-valid address)
+// TODO: avoid trying to fetch an opcode from a non-valid out-of-memory address
 void Chip8Cpu::Fetch()
 {
 	unsigned char high_byte = this->memory_.Read(this->program_counter_);
@@ -80,7 +75,7 @@ void Chip8Cpu::PreviousInstruction()
 	this->program_counter_ -= 2;
 }
 
-// TODO: Throw (and handle) error in case decoding fails; refactor (get rid of nested switch statements) so do not to repeat error handle in each switch statement
+// TODO: avoid repeating error handling (e.g. find an alternative to nested switch statements)
 void Chip8Cpu::Decode()
 {
 	switch (this->opcode_ & 0xF000)
@@ -358,7 +353,6 @@ void Chip8Cpu::Decode()
 	}
 }
 
-// TODO: Ensure an instruction was actually decoded before try executing anything.
 void Chip8Cpu::Execute()
 {
 	switch (this->instruction_)
@@ -535,7 +529,7 @@ void Chip8Cpu::Execute()
 		{
 			unsigned char gp_register_index_x = DecodeX();
 			unsigned char value = DecodeNN();
-			std::uniform_int_distribution<uint32_t> uint_dist256(0x0, 0xFF);  // TODO: relocate (this should inly be generated once)
+			std::uniform_int_distribution<uint32_t> uint_dist256(0x0, 0xFF);  // TODO: relocate (the distribution should only be generated once)
 			unsigned char randomNumber = uint_dist256(rng_); // 8 bit random number
 			this->gp_register_[gp_register_index_x] = randomNumber & value;
 			break;
@@ -681,6 +675,7 @@ unsigned short Chip8Cpu::DecodeNNN()
 	return this->opcode_ & (unsigned short)0x0FFF;
 }
 
+// TODO: get display number of pixels (i.e. value 2048 == 64*32) from display entity DisplayResolution constant
 void Chip8Cpu::ClearDisplay()
 {
 	unsigned char* p = this->memory_.GetFramebuffer();
@@ -692,58 +687,54 @@ void Chip8Cpu::ClearDisplay()
 	this->display_.Render(p);
 }
 
+// TODO: implement variation (wrap sprite around display)
+// TODO: get display bounds (i.e. values 32 and 64) from display entity DisplayResolution constant
 void Chip8Cpu::DrawSprite(unsigned char at_x, unsigned char at_y, unsigned char sprite_height)
 {
 	// Reset collision flag
 	this->gp_register_[0xF] = 0x00;
 
-	// Wrap display coordinate
+	// Wrap sprite coordinate
 	at_x %= 64;
 	at_y %= 32;
 
 	unsigned char* p = this->memory_.GetFramebuffer();
 
-	for (unsigned char i = 0; i < sprite_height; i++)
+	for (unsigned char i = 0; i < sprite_height; i++)  // "i": level of the sprite 
 	{
-		// Iterate by sprite level - i.e. byte - from bottom to top
+		// Iterate by sprite level (i.e. byte) - from top to bottom
 		unsigned char sprite_level = this->memory_.Read(this->index_register_ + i);
-
-		// Determinar cual es el indice del array de la memoria que corresponde a la coordenada "at" teniendo en cuenta:
-		// - el nivel de sprite en curso (iterador "i)
-		// - el bit dentro del byte (nivel de sprite; iterador "j")
-		// Warning! En una implementacion si nos salimos de coordenadas, entonces no se calcula nada; en la otra, se hace un wraping en el eje correspondiente.
 
 		unsigned char offset_at_y = at_y + i;
 		if (!(offset_at_y < 32)) {
-			// TODO: En el modo alternativo (en que tambien se aplica wraping al dibujado), aqui bastaria con aplicar el modulo 64. En este caso terminamos la ejecion del bucle.
-			break;  // offset_at_y %= 64;
+			// Stop iterating levels (i.e. end sprite drawing) when bottom limit is reached
+			// TODO: implement variation (wrap sprite bottom-up): offset_at_y %= 64;
+			break;
 		}
 
-		for (unsigned char j = 0; j < 8; j++)
+		for (unsigned char j = 0; j < 8; j++)  // "j": bit of the level
 		{
 			// Iterate by level bit
 			unsigned char offset_at_x = at_x + j;
 			if (!(offset_at_x < 64)) {
-				// TODO: Lo mismo de arriba sobre el modo alternativo
-				break;  // offset_at_x %= 32;
+				// Stop iterating bits (i.e. end level drawing) when right limit is reached
+				// TODO: implement variation (wrap sprite right-left): offset_at_x %= 32;
+				break;
 			}
 
 			if (!(sprite_level & (0b10000000 >> j)))
 			{
-				// No es necesario hacer ninguna comprobacion ni cambios si es que el nuevo pixel a escribir es un 0
+				// End processing of the current bit if it is not active (no change would be made)
 				continue;
 			}
 
-			// TODO: no tengo claro si la coordenada at esta zero-based o no. En caso de que NO lo fuera tendriamos que restar 1 a cada componente al hacer esta operacion.
-			// TODO: Ojo! A la hora de calcular la posicion en el array invertimos el eje Y, ya que el sentido del eje +Y en los sitema de coordenadas del display chip8 y de la textura 2d de opengl son opuestos.
-			// Esta inversion se podria haber hecho despues en el Render, pero seria algo mas complicado (realmente tendria que darle una vuelta para saber de quien deberia ser realmente la responsabilidad de esta tarea)
-			// Tambien la podriamos haber hecho antes a la hora de definier la variable offset_at_y, pero me interesa dejar eso sin tocar - limpio- y hacer el cambio solo aqui a la hora de hacer el calculo de la posicion en el array de la memorya del display.
+			// Calculate the index of the display buffer for the axis convention +X from left to right and +Y from top to bottom
 			unsigned short framebuffer_index = 64 * (31 - offset_at_y) + offset_at_x;
-			this->gp_register_[0xF] |= p[framebuffer_index] ? 0x1 : 0x0;  // Llegados a este punto, vamos a tener que modificar el pixel correspondiente. Si en cache hay algo, indicar colision (al usar el OR, si ya se hubiera puesta el flag antes no se borraria en los casos en que bo hubiera)
+
+			// At this point it is certain that the current bit will modify the display buffer; indicate collision if the corresponding pixel is active
+			this->gp_register_[0xF] |= p[framebuffer_index] ? 0x1 : 0x0;
 			
-			// Me huele que esto puede no estar comportandose siempre como espero. pruebo a hacerlo hardcoded.
-			// Effectivamente, el problema esta aqui, pero no entiendo por que??? Revisarlo.
-			// ??FIN! EL problema era el puto operador NOT !, que lo que hacia era devolverme un 0x01 en lugar de 0xFF. Ahora con el operador ~ ya funciona.
+			// Invert corresponding pixel status
 			p[framebuffer_index] = ~p[framebuffer_index];
 		}		
 	}

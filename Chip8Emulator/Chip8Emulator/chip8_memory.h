@@ -9,7 +9,7 @@ private:
 	unsigned char main_[4096];
 	unsigned short stack_[kStackSize];
 	unsigned char stack_pointer_;
-	unsigned char framebuffer_[64*32]; // TODO: Initialize from display entity size (using a const or similar if required)
+	unsigned char framebuffer_[64*32];  // TODO: get display number of pixels (i.e. value 2048 == 64*32) from display entity DisplayResolution constant
 
 public:
 	Chip8Memory();
