@@ -150,6 +150,7 @@
   <ItemGroup>
     <ClInclude Include="chip8_beep.h" />
     <ClInclude Include="chip8_cpu.h" />
+    <ClInclude Include="chip8_defs.h" />
     <ClInclude Include="chip8_display.h" />
     <ClInclude Include="chip8_emulator.h" />
     <ClInclude Include="chip8_memory.h" />

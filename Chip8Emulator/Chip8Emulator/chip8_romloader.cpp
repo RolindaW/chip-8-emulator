@@ -2,7 +2,6 @@
 #include <stdexcept>
 
 #include "chip8_romloader.h"
-
 #include "chip8_rom.h"
 
 Chip8Rom Chip8RomLoader::LoadFromFile(const std::string& filename)

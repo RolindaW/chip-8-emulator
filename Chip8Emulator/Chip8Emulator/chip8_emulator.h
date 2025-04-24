@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include "chip8_defs.h"
 //#include "chip8_cpu.h"
 #include "chip8_memory.h"
 //#include "chip8_display.h"
@@ -10,9 +11,6 @@
 
 class Chip8Emulator
 {
-private:
-	const unsigned short kRomAddress = 0x200;
-
 private:
 	//Chip8Cpu cpu_;
 	Chip8Memory memory_;
@@ -24,4 +22,7 @@ public:
 
 public:
 	void LoadRom(const Chip8Rom& rom);
+
+private:
+	void LoadFont();
 };

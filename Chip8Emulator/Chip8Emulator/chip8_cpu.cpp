@@ -1,4 +1,5 @@
 #include "chip8_cpu.h"
+#include "chip8_defs.h"
 
 Chip8Cpu::Chip8Cpu()
 	: program_counter_(0)
@@ -10,14 +11,12 @@ Chip8Cpu::Chip8Cpu()
 	, opcode_(0)
 	, beep_(kBeepFilename)
 {
-	LoadFont();
 	rng_.seed(kRngSeed);
 }
 
 void Chip8Cpu::Start(std::string filename)
 {
-	LoadRom(filename);
-	this->program_counter_ = kRomAddress;
+	this->program_counter_ = CHIP8_ROM_ADDRESS;  // TODO: move initialization into reset function
 
 	while (true)
 	{
@@ -26,23 +25,6 @@ void Chip8Cpu::Start(std::string filename)
 
 		// Warning! Actual cycle time is defined by the sum of this (fixed minimum) time lapse and the execution time of the corresponding cycle instruction
 		std::this_thread::sleep_for(std::chrono::nanoseconds(400));
-	}
-}
-
-void Chip8Cpu::LoadRom(std::string filename)
-{
-	Chip8Rom rom_(filename);
-	for (unsigned short i = 0; i < rom_.size_; i++)
-	{
-		this->memory_.Write(kRomAddress + i, rom_.content_[i]);
-	}
-}
-
-void Chip8Cpu::LoadFont()
-{
-	for (unsigned char i = 0; i < sizeof(kFont); i++)
-	{
-		this->memory_.Write(kFontAddress + i, kFont[i]);
 	}
 }
 
@@ -612,7 +594,7 @@ void Chip8Cpu::Execute()
 		{
 			unsigned char gp_register_index_x = DecodeX();
 			unsigned char value = this->gp_register_[gp_register_index_x];
-			this->index_register_ = kFontAddress + (value * 5); // Each font sprite is made of 5 B
+			this->index_register_ = CHIP8_FONT_ADDRESS + (value * CHIP8_FONT_SPRITE_SIZE); // Each font sprite is made of 5 B
 			break;
 		}
 		case Instruction::IFX33:
