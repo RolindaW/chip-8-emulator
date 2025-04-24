@@ -36,6 +36,12 @@
     <ClCompile Include="chip8_beep.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chip8_romloader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="chip8_cpu.h">
@@ -51,6 +57,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="chip8_beep.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="chip8_emulator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="chip8_romloader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

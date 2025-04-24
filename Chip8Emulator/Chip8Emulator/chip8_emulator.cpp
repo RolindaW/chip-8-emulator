@@ -1,11 +1,18 @@
-#include <iostream>
+#include "chip8_emulator.h"
 
-#include "chip8_cpu.h"
+#include "chip8_rom.h"
 
-int main()
+Chip8Emulator::Chip8Emulator()
+	//: beep_(0)
 {
-    std::cout << "CHIP-8 Interpreter\n";
+	// TODO: load font sprites in memory
+	// TODO: initialize RNG seed
+}
 
-    Chip8Cpu chip8_cpu;
-    chip8_cpu.Start("C://workspace/chip-8-emulator/roms/test/IBM Logo.ch8");
+void Chip8Emulator::LoadRom(const Chip8Rom& rom)
+{
+	for (unsigned short i = 0; i < rom.size_; i++)
+	{
+		this->memory_.Write(kRomAddress + i, rom.content_[i]);
+	}
 }
