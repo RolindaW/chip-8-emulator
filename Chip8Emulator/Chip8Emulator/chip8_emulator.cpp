@@ -1,9 +1,10 @@
 #include "chip8_emulator.h"
 #include "chip8_defs.h"
 #include "chip8_rom.h"
+#include "chip8_beep.h"
 
 Chip8Emulator::Chip8Emulator()
-	//: beep_(0)
+	: beep_(kBeepFilename)
 {
 	LoadFont();
 }
@@ -13,6 +14,23 @@ void Chip8Emulator::LoadRom(const Chip8Rom& rom)
 	for (unsigned short i = 0; i < rom.size_; i++)
 	{
 		this->memory_.Write(CHIP8_ROM_ADDRESS + i, rom.content_[i]);
+	}
+}
+
+void Chip8Emulator::HandleTimers()
+{
+	this->cpu_.HandleTimers();
+}
+
+void Chip8Emulator::HandleSound()
+{
+	if (this->cpu_.IsBeeping())
+	{
+		this->beep_.Play();
+	}
+	else
+	{
+		this->beep_.Stop();
 	}
 }
 

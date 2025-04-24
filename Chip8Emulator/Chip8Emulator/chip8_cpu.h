@@ -10,7 +10,6 @@
 
 #include "chip8_memory.h"
 #include "chip8_display.h"
-#include "chip8_beep.h"
 
 enum Instruction : unsigned char {
 	I0NNN = 1,
@@ -57,7 +56,6 @@ class Chip8Cpu
 {
 private:
 	unsigned int kRngSeed = 0x31;
-	char kBeepFilename[80] = "C://workspace/chip-8-emulator/audio/censor-beep-1s.wav";
 
 private:
 	unsigned short program_counter_;
@@ -68,7 +66,6 @@ private:
 
 	Chip8Memory memory_;
 	Chip8Display display_;
-	Chip8Beep beep_;
 
 	unsigned short opcode_;
 	unsigned char instruction_;
@@ -81,6 +78,8 @@ public:
 public:
 	void Start(std::string filename);
 	// TODO: Reset function - initialize PC, I, registers, timers, etc.
+	void HandleTimers();
+	bool IsBeeping();
 
 private:
 	void Cycle();
@@ -96,7 +95,6 @@ private:
 	unsigned short DecodeNNN();
 	void ClearDisplay();
 	void DrawSprite(unsigned char at_x, unsigned char at_y, unsigned char sprite_height);
-	void HandleTimers();
 	void LogFetchedOpcode();
 	void LogDecodedInstruction(std::string instruction);
 };

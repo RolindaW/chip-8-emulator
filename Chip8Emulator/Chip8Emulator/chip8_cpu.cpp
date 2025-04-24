@@ -9,7 +9,6 @@ Chip8Cpu::Chip8Cpu()
 	, sound_timer_(0)
 	, memory_()
 	, opcode_(0)
-	, beep_(kBeepFilename)
 {
 	rng_.seed(kRngSeed);
 }
@@ -20,12 +19,29 @@ void Chip8Cpu::Start(std::string filename)
 
 	while (true)
 	{
-		HandleTimers();
 		Cycle();
 
 		// Warning! Actual cycle time is defined by the sum of this (fixed minimum) time lapse and the execution time of the corresponding cycle instruction
 		std::this_thread::sleep_for(std::chrono::nanoseconds(400));
 	}
+}
+
+void Chip8Cpu::HandleTimers()
+{
+	if (this->delay_timer_)
+	{
+		this->delay_timer_--;
+	}
+
+	if (this->sound_timer_)
+	{
+		this->sound_timer_--;
+	}
+}
+
+bool Chip8Cpu::IsBeeping()
+{
+	return this->sound_timer_;
 }
 
 void Chip8Cpu::Cycle()
@@ -572,13 +588,6 @@ void Chip8Cpu::Execute()
 		case Instruction::IFX18:
 		{
 			unsigned char gp_register_index_x = DecodeX();
-
-			if (!this->sound_timer_)
-			{
-				// Play (async) sound (in loop)
-				this->beep_.Play();
-			}
-
 			this->sound_timer_ = this->gp_register_[gp_register_index_x];
 			break;
 		}
@@ -722,24 +731,6 @@ void Chip8Cpu::DrawSprite(unsigned char at_x, unsigned char at_y, unsigned char 
 	}
 
 	this->display_.Render(p);
-}
-
-void Chip8Cpu::HandleTimers()
-{
-	if (this->delay_timer_)
-	{
-		this->delay_timer_--;
-	}
-
-	if (this->sound_timer_)
-	{
-		this->sound_timer_--;
-
-		if (!this->sound_timer_)
-		{
-			this->beep_.Stop();
-		}
-	}
 }
 
 void Chip8Cpu::LogFetchedOpcode()

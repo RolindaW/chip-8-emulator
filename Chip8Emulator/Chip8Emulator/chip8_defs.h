@@ -1,5 +1,11 @@
 #pragma once
 
+// Timing
+// TODO: Move or should be here? Maybe move into a timing class????
+constexpr unsigned short CHIP8_CPU_HZ = 500;  // 500-1000 Hz
+constexpr unsigned short CHIP8_TIMER_HZ = 60;
+constexpr unsigned short CHIP8_FRAME_HZ = 60;
+
 // ROM
 constexpr unsigned short CHIP8_ROM_ADDRESS = 0x200;
 
