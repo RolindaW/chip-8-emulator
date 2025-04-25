@@ -1,14 +1,15 @@
 #include "chip8_cpu.h"
 #include "chip8_defs.h"
+#include "chip8_memory.h"
 
-Chip8Cpu::Chip8Cpu()
+Chip8Cpu::Chip8Cpu(Chip8Memory& memory)
 	: program_counter_(0)
 	, index_register_(0)
 	, gp_register_{0}
 	, delay_timer_(0)
 	, sound_timer_(0)
-	, memory_()
 	, opcode_(0)
+	, memory_(memory)
 {
 	rng_.seed(kRngSeed);
 }

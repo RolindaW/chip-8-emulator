@@ -4,7 +4,9 @@
 #include "chip8_beep.h"
 
 Chip8Emulator::Chip8Emulator()
-	: beep_(kBeepFilename)
+	: memory_()
+	, cpu_(memory_)
+	, beep_(kBeepFilename)
 {
 	LoadFont();
 }

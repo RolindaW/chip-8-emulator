@@ -64,16 +64,17 @@ private:
 	unsigned char delay_timer_;
 	unsigned char sound_timer_;
 
-	Chip8Memory memory_;
-	Chip8Display display_;
-
 	unsigned short opcode_;
 	unsigned char instruction_;
 
 	MersenneRNG rng_;
 
+private:
+	Chip8Memory& memory_;  // Memory is not owned by CPU; reference is a valid approach because not planing memory detaching or switching
+	Chip8Display display_;
+
 public:
-	Chip8Cpu();
+	Chip8Cpu(Chip8Memory& memory);
 
 public:
 	void Start(std::string filename);

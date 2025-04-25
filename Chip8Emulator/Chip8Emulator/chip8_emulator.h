@@ -12,12 +12,14 @@
 class Chip8Emulator
 {
 private:
-	char kBeepFilename[80] = "C://workspace/chip-8-emulator/audio/censor-beep-1s.wav";  // TODO: Move into soundloader class like a default sound or similar
+	// TODO: maybe is better using default sound and not allowing configuration. (or at least doing different way - insnide a sound loader class) think about this
+	// TODO: Move into soundloader class like a default sound or similar
+	char kBeepFilename[80] = "C://workspace/chip-8-emulator/audio/censor-beep-1s.wav";
 
 private:
-	Chip8Cpu cpu_;
 	Chip8Memory memory_;
-	//Chip8Display display_;
+	//Chip8Display display_; // TODO: cpu + display/video class + render class (refactor!!!)
+	Chip8Cpu cpu_;
 	Chip8Beep beep_;
 
 public:
