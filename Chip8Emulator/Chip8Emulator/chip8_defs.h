@@ -9,6 +9,10 @@ constexpr unsigned short CHIP8_FRAME_HZ = 60;
 // ROM
 constexpr unsigned short CHIP8_ROM_ADDRESS = 0x200;
 
+// Memory
+constexpr unsigned short CHIP8_RAM_SIZE = 4096;
+constexpr unsigned char CHIP8_STACK_SIZE = 16;
+
 // Font
 constexpr unsigned short CHIP8_FONT_ADDRESS = 0x50;
 constexpr unsigned char  CHIP8_FONT_SPRITE_SIZE = 5;

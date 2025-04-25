@@ -59,6 +59,7 @@ private:
 private:
 	unsigned short program_counter_;
 	unsigned short index_register_;
+	unsigned char stack_pointer_;
 	unsigned char gp_register_[16];
 	unsigned char delay_timer_;
 	unsigned char sound_timer_;

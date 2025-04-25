@@ -6,6 +6,7 @@
 Chip8Cpu::Chip8Cpu(Chip8Memory& memory, Chip8Display& display)
 	: program_counter_(0)
 	, index_register_(0)
+	, stack_pointer_(0)
 	, gp_register_{0}
 	, delay_timer_(0)
 	, sound_timer_(0)
@@ -371,7 +372,7 @@ void Chip8Cpu::Execute()
 		}
 		case Instruction::I00EE:
 		{
-			unsigned short address = this->memory_.Pop();
+			unsigned short address = this->memory_.Pop(--this->stack_pointer_);  // Warning! Pre-decrement stack pointer
 			this->program_counter_ = address;
 			break;
 		}
@@ -384,7 +385,7 @@ void Chip8Cpu::Execute()
 		case Instruction::I2NNN:
 		{
 			unsigned short address = DecodeNNN();
-			this->memory_.Push(this->program_counter_);
+			this->memory_.Push(this->stack_pointer_++, this->program_counter_);  // Warning! Post-increment stack pointer
 			this->program_counter_ = address;
 			break;
 		}
