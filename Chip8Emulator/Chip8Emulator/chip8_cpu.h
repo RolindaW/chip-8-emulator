@@ -7,7 +7,6 @@
 #include <thread>  // Basic cycle time implementation
 
 #include "chip8_defs.h"
-
 #include "chip8_memory.h"
 #include "chip8_display.h"
 
@@ -71,10 +70,10 @@ private:
 
 private:
 	Chip8Memory& memory_;  // Memory is not owned by CPU; reference is a valid approach because not planing memory detaching or switching
-	Chip8Display display_;
+	Chip8Display& display_;
 
 public:
-	Chip8Cpu(Chip8Memory& memory);
+	Chip8Cpu(Chip8Memory& memory, Chip8Display& display);
 
 public:
 	void Start(std::string filename);
@@ -94,8 +93,6 @@ private:
 	unsigned char DecodeN();
 	unsigned char DecodeNN();
 	unsigned short DecodeNNN();
-	void ClearDisplay();
-	void DrawSprite(unsigned char at_x, unsigned char at_y, unsigned char sprite_height);
 	void LogFetchedOpcode();
 	void LogDecodedInstruction(std::string instruction);
 };

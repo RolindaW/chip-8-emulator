@@ -4,8 +4,12 @@ Chip8Memory::Chip8Memory()
 	: main_{0}
 	, stack_{0}
 	, stack_pointer_(0)
-	, framebuffer_{0}
 {
+}
+
+const unsigned char* Chip8Memory::GetPointer(unsigned short address)
+{
+	return &this->main_[address];
 }
 
 unsigned char Chip8Memory::Read(unsigned short address)
@@ -36,9 +40,4 @@ void Chip8Memory::Push(unsigned short value)
 		this->stack_[this->stack_pointer_] = value;
 		this->stack_pointer_++;
 	}
-}
-
-unsigned char* Chip8Memory::GetFramebuffer()
-{
-	return framebuffer_;
 }

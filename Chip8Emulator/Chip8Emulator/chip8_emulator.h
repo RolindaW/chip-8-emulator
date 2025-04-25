@@ -3,9 +3,9 @@
 #include <string>
 
 #include "chip8_defs.h"
-#include "chip8_cpu.h"
 #include "chip8_memory.h"
-//#include "chip8_display.h"
+#include "chip8_display.h"
+#include "chip8_cpu.h"
 #include "chip8_beep.h"
 #include "chip8_rom.h"
 
@@ -18,7 +18,7 @@ private:
 
 private:
 	Chip8Memory memory_;
-	//Chip8Display display_; // TODO: cpu + display/video class + render class (refactor!!!)
+	Chip8Display display_; // TODO: cpu + display/video class + render class (refactor!!!)
 	Chip8Cpu cpu_;
 	Chip8Beep beep_;
 
@@ -29,6 +29,7 @@ public:
 	void LoadRom(const Chip8Rom& rom);
 	void HandleTimers();
 	void HandleSound();
+	void Render();
 
 private:
 	void LoadFont();

@@ -47,10 +47,7 @@ int main()
 
 		// Rendering
 		if (now - last_frame >= frame_interval) {
-			//if (emulator.needsRedraw()) {
-			//	const uint8_t* framebuffer = emulator.getFramebuffer();
-			//	// TODO: render framebuffer to screen (SDL, OpenGL, etc.)
-			//}
+			emulator.Render();
 			last_frame = now;
 		}		
 

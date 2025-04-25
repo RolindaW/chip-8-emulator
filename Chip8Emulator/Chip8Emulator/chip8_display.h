@@ -21,6 +21,9 @@ private:
 	const DisplayResolution kDisplayResolution = { 64, 32 };
 
 private:
+	// TODO: get display number of pixels (i.e. value 2048 == 64*32) from display entity DisplayResolution constant
+	unsigned char framebuffer_[64 * 32];  // Warning! Different from video memory (i.e. vram) - which would be owned by memory
+
 	GLFWwindow* window_;
 
 	GLuint program_;
@@ -32,13 +35,17 @@ public:
 	virtual ~Chip8Display();
 
 public:
-	void Render();
-	void Render(unsigned char* cache);
+	unsigned char* GetFramebuffer();
+	void Clear();
+	bool DrawSprite(unsigned char at_x, unsigned char at_y, const unsigned char* sprite_level, unsigned char sprite_height);
+
+	void Render();  // TODO: move rendering into a renderer class
+	void Render(unsigned char* cache);  // TODO: move rendering into a renderer class
 	bool IsKeyPressed(unsigned char keyHex);  // TODO: move to corresponding entity
 	bool GetKeyPressed(unsigned char* keyHex);  // TODO: move to corresponding entity
 
 private:
-	int InitializeGL();
+	int InitializeGL();  // TODO: move rendering into a renderer class
 	void TerminateGL();
 	void Initialize();
 	void InitializeProgram();
@@ -47,6 +54,6 @@ private:
 	void SetFilteredTextureData(unsigned char* cache);
 	void FilterTextureData(unsigned char* rawData, unsigned char** filteredData);
 	void Terminate();
-	int MapKeyToken(unsigned char keyHex);
+	int MapKeyToken(unsigned char keyHex);  // TODO: move to corresponding entity
 };
 
