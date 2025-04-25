@@ -29,6 +29,7 @@ public:
 
 public:
 	void LoadRom(const Chip8Rom& rom);
+	void StepCPU();
 	void HandleTimers();
 	void HandleSound();
 	void Render();

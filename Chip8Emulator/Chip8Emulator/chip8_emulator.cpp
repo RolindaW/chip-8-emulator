@@ -21,6 +21,11 @@ void Chip8Emulator::LoadRom(const Chip8Rom& rom)
 	}
 }
 
+void Chip8Emulator::StepCPU()
+{
+	this->cpu_.Cycle();
+}
+
 void Chip8Emulator::HandleTimers()
 {
 	this->cpu_.HandleTimers();

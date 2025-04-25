@@ -55,20 +55,17 @@ typedef std::mt19937 MersenneRNG;
 class Chip8Cpu
 {
 private:
-	unsigned int kRngSeed = 0x31;
-
-private:
 	unsigned short program_counter_;
 	unsigned short index_register_;
 	unsigned char stack_pointer_;
-	unsigned char gp_register_[16];
+	unsigned char gp_register_[CHIP8_GP_REGISTER_COUNT];
 	unsigned char delay_timer_;
 	unsigned char sound_timer_;
 
+	MersenneRNG rng_;
+
 	unsigned short opcode_;
 	unsigned char instruction_;
-
-	MersenneRNG rng_;
 
 private:
 	Chip8Memory& memory_;  // Memory is not owned by CPU; reference is a valid approach because not planing memory detaching or switching
@@ -79,13 +76,11 @@ public:
 	Chip8Cpu(Chip8Memory& memory, Chip8Display& display, Chip8Renderer& renderer);
 
 public:
-	void Start(std::string filename);
-	// TODO: Reset function - initialize PC, I, registers, timers, etc.
+	void Cycle();
 	void HandleTimers();
 	bool IsBeeping();
 
 private:
-	void Cycle();
 	void Fetch();
 	void NextInstruction();
 	void PreviousInstruction();

@@ -5,32 +5,26 @@
 #include "chip8_renderer.h"
 
 Chip8Cpu::Chip8Cpu(Chip8Memory& memory, Chip8Display& display, Chip8Renderer& renderer)
-	: program_counter_(0)
+	: program_counter_(CHIP8_ROM_ADDRESS)
 	, index_register_(0)
 	, stack_pointer_(0)
 	, gp_register_{0}
 	, delay_timer_(0)
 	, sound_timer_(0)
 	, opcode_(0)
+	, instruction_(0)
 	, memory_(memory)
 	, display_(display)
 	, renderer_(renderer)
 {
-	rng_.seed(kRngSeed);
+	rng_.seed(CHIP8_RNG_SEED);
 }
 
-void Chip8Cpu::Start(std::string filename)
+void Chip8Cpu::Cycle()
 {
-	this->program_counter_ = CHIP8_ROM_ADDRESS;  // TODO: move initialization into reset function
-
-	// TODO: remove loop from here - now responsibliti off main.cppp (or emulator, depending where it is moved)
-	while (true)
-	{
-		Cycle();
-
-		// Warning! Actual cycle time is defined by the sum of this (fixed minimum) time lapse and the execution time of the corresponding cycle instruction
-		std::this_thread::sleep_for(std::chrono::nanoseconds(400));
-	}
+	Fetch();
+	Decode();
+	Execute();
 }
 
 void Chip8Cpu::HandleTimers()
@@ -49,13 +43,6 @@ void Chip8Cpu::HandleTimers()
 bool Chip8Cpu::IsBeeping()
 {
 	return this->sound_timer_;
-}
-
-void Chip8Cpu::Cycle()
-{
-	Fetch();
-	Decode();
-	Execute();
 }
 
 // TODO: avoid trying to fetch an opcode from a non-valid out-of-memory address

@@ -9,7 +9,7 @@
 
 int main()
 {
-	std::string rom_filename = "C://workspace/chip-8-emulator/roms/test/IBM Logo.ch8";  // TODO: Get from program args; make relative - environment
+	std::string rom_filename = "C://workspace/chip-8-emulator/roms/test/test_opcode_mod.ch8";  // TODO: Get from program args; make relative - environment
 
 	Chip8RomLoader rom_loader;
 	Chip8Rom rom = rom_loader.LoadFromFile(rom_filename);
@@ -33,8 +33,7 @@ int main()
 
 		// CPU
 		if (now - last_cpu >= cpu_interval) {
-			// TODO: Execute CPU
-			// emulator.stepCPU();
+			emulator.StepCPU();
 			last_cpu = now;
 		}
 
@@ -52,6 +51,7 @@ int main()
 		}		
 
 		// TODO: Handle input
+		// Warning! Input is - wrongly - being handled in renderer class for the moment
 
 		// Relieve CPU
 		// TODO: Make deterministic
