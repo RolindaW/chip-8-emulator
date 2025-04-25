@@ -28,7 +28,7 @@ void Chip8Memory::Write(unsigned short address, unsigned char value)
 unsigned short Chip8Memory::Pop(unsigned char index)
 {
 	// TODO: throw error if stack underflow
-	if (index > 0)
+	if (index >= 0)
 	{
 		return this->stack_[index];
 	}
