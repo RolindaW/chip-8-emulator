@@ -9,6 +9,7 @@
 #include "chip8_defs.h"
 #include "chip8_memory.h"
 #include "chip8_display.h"
+#include "chip8_renderer.h"
 
 enum Instruction : unsigned char {
 	I0NNN = 1,
@@ -72,9 +73,10 @@ private:
 private:
 	Chip8Memory& memory_;  // Memory is not owned by CPU; reference is a valid approach because not planing memory detaching or switching
 	Chip8Display& display_;
+	Chip8Renderer& renderer_;
 
 public:
-	Chip8Cpu(Chip8Memory& memory, Chip8Display& display);
+	Chip8Cpu(Chip8Memory& memory, Chip8Display& display, Chip8Renderer& renderer);
 
 public:
 	void Start(std::string filename);

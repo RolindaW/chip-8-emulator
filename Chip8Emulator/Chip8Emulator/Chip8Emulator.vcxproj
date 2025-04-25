@@ -143,6 +143,7 @@
     <ClCompile Include="chip8_display.cpp" />
     <ClCompile Include="chip8_emulator.cpp" />
     <ClCompile Include="chip8_memory.cpp" />
+    <ClCompile Include="chip8_renderer.cpp" />
     <ClCompile Include="chip8_rom.cpp" />
     <ClCompile Include="chip8_romloader.cpp" />
     <ClCompile Include="main.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="chip8_display.h" />
     <ClInclude Include="chip8_emulator.h" />
     <ClInclude Include="chip8_memory.h" />
+    <ClInclude Include="chip8_renderer.h" />
     <ClInclude Include="chip8_rom.h" />
     <ClInclude Include="chip8_romloader.h" />
   </ItemGroup>

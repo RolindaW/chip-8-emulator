@@ -6,7 +6,8 @@
 Chip8Emulator::Chip8Emulator()
 	: memory_()
 	, display_()
-	, cpu_(memory_, display_)
+	, renderer_()
+	, cpu_(memory_, display_, renderer_)
 	, beep_(kBeepFilename)
 {
 	LoadFont();
@@ -37,17 +38,12 @@ void Chip8Emulator::HandleSound()
 	}
 }
 
-// TODO: Move rendering to a seprate class from display to decouple rendering from display/video device emulation
-// This way rendering could be performed outside the emulator in a different way (console, web - canvas, webgl, sdl, etc.)
-// In this case display framebuffer should be made available for reading from outside the emulator
-// TODO: Draw only if required - check pixel blitting flag
+// Warning! Result (display framebuffer) of draw instructions issued between frames are missed (i.e. only result of last issued draw instruction is rendered)
 void Chip8Emulator::Render()
 {
-	//if (display.needsRedraw()) {
-	//	const uint8_t* framebuffer = display_.getFramebuffer();
-	//	// TODO: render framebuffer to screen (SDL, OpenGL, etc.)
-	//}
-	this->display_.Render();
+	// TODO: Draw only if required (check display pixel blitting flag) - Warning! Implementation may be required
+	const uint8_t* framebuffer = this->display_.GetFramebuffer();
+	this->renderer_.Render(framebuffer);
 }
 
 void Chip8Emulator::LoadFont()
