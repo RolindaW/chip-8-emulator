@@ -1,49 +1,23 @@
 #include "chip8_cpu.h"
+#include "chip8_defs.h"
+#include "chip8_memory.h"
+#include "chip8_display.h"
+#include "chip8_input.h"
 
-Chip8Cpu::Chip8Cpu()
-	: program_counter_(0)
+Chip8Cpu::Chip8Cpu(Chip8Memory& memory, Chip8Display& display, Chip8Input& input)
+	: program_counter_(CHIP8_ROM_ADDRESS)
 	, index_register_(0)
+	, stack_pointer_(0)
 	, gp_register_{0}
 	, delay_timer_(0)
 	, sound_timer_(0)
-	, memory_()
 	, opcode_(0)
-	, beep_(kBeepFilename)
+	, instruction_(0)
+	, memory_(memory)
+	, display_(display)
+	, input_(input)
 {
-	LoadFont();
-	rng_.seed(kRngSeed);
-}
-
-void Chip8Cpu::Start(std::string filename)
-{
-	LoadRom(filename);
-	this->program_counter_ = kRomAddress;
-
-	while (true)
-	{
-		HandleTimers();
-		Cycle();
-
-		// Warning! Actual cycle time is defined by the sum of this (fixed minimum) time lapse and the execution time of the corresponding cycle instruction
-		std::this_thread::sleep_for(std::chrono::nanoseconds(400));
-	}
-}
-
-void Chip8Cpu::LoadRom(std::string filename)
-{
-	Chip8Rom rom_(filename);
-	for (unsigned short i = 0; i < rom_.size_; i++)
-	{
-		this->memory_.Write(kRomAddress + i, rom_.content_[i]);
-	}
-}
-
-void Chip8Cpu::LoadFont()
-{
-	for (unsigned char i = 0; i < sizeof(kFont); i++)
-	{
-		this->memory_.Write(kFontAddress + i, kFont[i]);
-	}
+	rng_.seed(CHIP8_RNG_SEED);
 }
 
 void Chip8Cpu::Cycle()
@@ -51,6 +25,24 @@ void Chip8Cpu::Cycle()
 	Fetch();
 	Decode();
 	Execute();
+}
+
+void Chip8Cpu::HandleTimers()
+{
+	if (this->delay_timer_)
+	{
+		this->delay_timer_--;
+	}
+
+	if (this->sound_timer_)
+	{
+		this->sound_timer_--;
+	}
+}
+
+bool Chip8Cpu::IsBeeping()
+{
+	return this->sound_timer_;
 }
 
 // TODO: avoid trying to fetch an opcode from a non-valid out-of-memory address
@@ -364,12 +356,12 @@ void Chip8Cpu::Execute()
 		}
 		case Instruction::I00E0:
 		{
-			ClearDisplay();
+			this->display_.Clear();
 			break;
 		}
 		case Instruction::I00EE:
 		{
-			unsigned short address = this->memory_.Pop();
+			unsigned short address = this->memory_.Pop(--this->stack_pointer_);  // Warning! Pre-decrement stack pointer
 			this->program_counter_ = address;
 			break;
 		}
@@ -382,7 +374,7 @@ void Chip8Cpu::Execute()
 		case Instruction::I2NNN:
 		{
 			unsigned short address = DecodeNNN();
-			this->memory_.Push(this->program_counter_);
+			this->memory_.Push(this->stack_pointer_++, this->program_counter_);  // Warning! Post-increment stack pointer
 			this->program_counter_ = address;
 			break;
 		}
@@ -539,14 +531,17 @@ void Chip8Cpu::Execute()
 			unsigned char gp_register_index_x = DecodeX();
 			unsigned char gp_register_index_y = DecodeY();
 			unsigned char sprite_height = DecodeN();
-			DrawSprite(this->gp_register_[gp_register_index_x], this->gp_register_[gp_register_index_y], sprite_height);
+
+			const unsigned char* sprite = this->memory_.GetPointer(this->index_register_);
+			bool collision = this->display_.DrawSprite(this->gp_register_[gp_register_index_x], this->gp_register_[gp_register_index_y], sprite, sprite_height);
+			this->gp_register_[0xF] = collision ? 0x1 : 0x0;
 			break;
 		}
 		case Instruction::IEX9E:
 		{
 			unsigned char gp_register_index = DecodeX();
 			unsigned char value = this->gp_register_[gp_register_index];			
-			if (this->display_.IsKeyPressed(value))
+			if (this->input_.IsKeyPressed(value)) // TODO: move key pressing access into a disfferent class, not display class
 			{
 				NextInstruction();
 			}
@@ -556,7 +551,7 @@ void Chip8Cpu::Execute()
 		{
 			unsigned char gp_register_index = DecodeX();
 			unsigned char value = this->gp_register_[gp_register_index];
-			if (!this->display_.IsKeyPressed(value))
+			if (!this->input_.IsKeyPressed(value))
 			{
 				NextInstruction();
 			}
@@ -571,7 +566,7 @@ void Chip8Cpu::Execute()
 		case Instruction::IFX0A:
 		{
 			unsigned char value;
-			if (this->display_.GetKeyPressed(&value)) {
+			if (this->input_.GetKeyPressed(value)) {
 				unsigned char gp_register_index = DecodeX();
 				this->gp_register_[gp_register_index] = value;
 			}
@@ -590,13 +585,6 @@ void Chip8Cpu::Execute()
 		case Instruction::IFX18:
 		{
 			unsigned char gp_register_index_x = DecodeX();
-
-			if (!this->sound_timer_)
-			{
-				// Play (async) sound (in loop)
-				this->beep_.Play();
-			}
-
 			this->sound_timer_ = this->gp_register_[gp_register_index_x];
 			break;
 		}
@@ -612,7 +600,7 @@ void Chip8Cpu::Execute()
 		{
 			unsigned char gp_register_index_x = DecodeX();
 			unsigned char value = this->gp_register_[gp_register_index_x];
-			this->index_register_ = kFontAddress + (value * 5); // Each font sprite is made of 5 B
+			this->index_register_ = CHIP8_FONT_ADDRESS + (value * CHIP8_FONT_SPRITE_SIZE); // Each font sprite is made of 5 B
 			break;
 		}
 		case Instruction::IFX33:
@@ -673,91 +661,6 @@ unsigned char Chip8Cpu::DecodeNN()
 unsigned short Chip8Cpu::DecodeNNN()
 {
 	return this->opcode_ & (unsigned short)0x0FFF;
-}
-
-// TODO: get display number of pixels (i.e. value 2048 == 64*32) from display entity DisplayResolution constant
-void Chip8Cpu::ClearDisplay()
-{
-	unsigned char* p = this->memory_.GetFramebuffer();
-	for (unsigned short i = 0; i < 64*32; i++)
-	{
-		p[i] = 0x00;
-	}
-
-	this->display_.Render(p);
-}
-
-// TODO: implement variation (wrap sprite around display)
-// TODO: get display bounds (i.e. values 32 and 64) from display entity DisplayResolution constant
-void Chip8Cpu::DrawSprite(unsigned char at_x, unsigned char at_y, unsigned char sprite_height)
-{
-	// Reset collision flag
-	this->gp_register_[0xF] = 0x00;
-
-	// Wrap sprite coordinate
-	at_x %= 64;
-	at_y %= 32;
-
-	unsigned char* p = this->memory_.GetFramebuffer();
-
-	for (unsigned char i = 0; i < sprite_height; i++)  // "i": level of the sprite 
-	{
-		// Iterate by sprite level (i.e. byte) - from top to bottom
-		unsigned char sprite_level = this->memory_.Read(this->index_register_ + i);
-
-		unsigned char offset_at_y = at_y + i;
-		if (!(offset_at_y < 32)) {
-			// Stop iterating levels (i.e. end sprite drawing) when bottom limit is reached
-			// TODO: implement variation (wrap sprite bottom-up): offset_at_y %= 64;
-			break;
-		}
-
-		for (unsigned char j = 0; j < 8; j++)  // "j": bit of the level
-		{
-			// Iterate by level bit
-			unsigned char offset_at_x = at_x + j;
-			if (!(offset_at_x < 64)) {
-				// Stop iterating bits (i.e. end level drawing) when right limit is reached
-				// TODO: implement variation (wrap sprite right-left): offset_at_x %= 32;
-				break;
-			}
-
-			if (!(sprite_level & (0b10000000 >> j)))
-			{
-				// End processing of the current bit if it is not active (no change would be made)
-				continue;
-			}
-
-			// Calculate the index of the display buffer for the axis convention +X from left to right and +Y from top to bottom
-			unsigned short framebuffer_index = 64 * (31 - offset_at_y) + offset_at_x;
-
-			// At this point it is certain that the current bit will modify the display buffer; indicate collision if the corresponding pixel is active
-			this->gp_register_[0xF] |= p[framebuffer_index] ? 0x1 : 0x0;
-			
-			// Invert corresponding pixel status
-			p[framebuffer_index] = ~p[framebuffer_index];
-		}		
-	}
-
-	this->display_.Render(p);
-}
-
-void Chip8Cpu::HandleTimers()
-{
-	if (this->delay_timer_)
-	{
-		this->delay_timer_--;
-	}
-
-	if (this->sound_timer_)
-	{
-		this->sound_timer_--;
-
-		if (!this->sound_timer_)
-		{
-			this->beep_.Stop();
-		}
-	}
 }
 
 void Chip8Cpu::LogFetchedOpcode()

@@ -1,8 +1,10 @@
 #include "chip8_beep.h"
 
+// TODO: Refactor this class: move sound file loading into a soundloader class (analog to rom and romloader classes)
 Chip8Beep::Chip8Beep(char* filename)
     : error_ (true)
     , buffer_ (0)
+    , isPlaying_(false)
 {
     std::ifstream infile(filename, std::ios::binary);
 
@@ -34,13 +36,21 @@ void Chip8Beep::Play()
         return;
     }
 
-    // Warning! Plays only .WAV sound files
-    // It can be played by filename e.g. PlaySound(TEXT("C://workspace/chip-8-emulator/audio/Alarm01.wav"), NULL, SND_FILENAME | SND_LOOP | SND_ASYNC);
-    PlaySound((LPCWSTR)this->buffer_, NULL, SND_MEMORY | SND_LOOP | SND_ASYNC);
+    if (!this->isPlaying_)
+    {
+        // Play (async) sound (in loop) - Warning! Plays only .WAV sound files
+        // It can be played by filename e.g. PlaySound(TEXT("C://workspace/chip-8-emulator/audio/Alarm01.wav"), NULL, SND_FILENAME | SND_LOOP | SND_ASYNC);
+        PlaySound((LPCWSTR)this->buffer_, NULL, SND_MEMORY | SND_LOOP | SND_ASYNC);
+        this->isPlaying_ = true;
+    }
 }
 
 void Chip8Beep::Stop()
 {
-    PlaySound(NULL, 0, 0);
+    if (this->isPlaying_)
+    {
+        PlaySound(NULL, 0, 0);
+        this->isPlaying_ = false;
+    }
 }
 
