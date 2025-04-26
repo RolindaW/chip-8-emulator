@@ -20,35 +20,19 @@ void Chip8Renderer::Render(const unsigned char* data)
 	Render();
 }
 
-// TODO: use scandcode instead of key to support different keyboard layouts (e.g. QUERTY, QZERTY)
-bool Chip8Renderer::IsKeyPressed(unsigned char keyHex)
+void Chip8Renderer::PollEvents()
 {
-	bool keyPressed = false;
-
-	int keyToken = MapKeyToken(keyHex);
-	if (keyToken != GLFW_KEY_UNKNOWN)
-	{
-		glfwPollEvents();
-		int keyState = glfwGetKey(this->window_, keyToken);
-		keyPressed = (keyState == GLFW_PRESS);
-	}
-
-	return keyPressed;
+	glfwPollEvents();
 }
 
-bool Chip8Renderer::GetKeyPressed(unsigned char* keyHex)
+bool Chip8Renderer::IsKeyPressed(int key)
 {
-	const unsigned char keyHexs[16] = { 0x1, 0x2, 0x3, 0xC, 0x4, 0x5, 0x6, 0xD, 0x7, 0x8, 0x9, 0xE, 0xA, 0x0, 0xB, 0xF };
 	bool keyPressed = false;
 
-	for (unsigned char i = 0; i < 16; i++)
+	if (key != GLFW_KEY_UNKNOWN)
 	{
-		if (IsKeyPressed(keyHexs[i]))
-		{
-			*keyHex = keyHexs[i];
-			keyPressed = true;
-			break;
-		}
+		int keyState = glfwGetKey(this->window_, key);
+		keyPressed = (keyState == GLFW_PRESS);
 	}
 
 	return keyPressed;
@@ -275,45 +259,4 @@ void Chip8Renderer::Terminate()
 	glDeleteTextures(1, &texture2D_);
 	glDeleteVertexArrays(1, &vao_);
 	glDeleteProgram(program_);
-}
-
-int Chip8Renderer::MapKeyToken(unsigned char keyHex)
-{
-	switch (keyHex)
-	{
-	case 0x1:
-		return GLFW_KEY_1;
-	case 0x2:
-		return GLFW_KEY_2;
-	case 0x3:
-		return GLFW_KEY_3;
-	case 0xC:
-		return GLFW_KEY_4;
-	case 0x4:
-		return GLFW_KEY_Q;
-	case 0x5:
-		return GLFW_KEY_W;
-	case 0x6:
-		return GLFW_KEY_E;
-	case 0xD:
-		return GLFW_KEY_R;
-	case 0x7:
-		return GLFW_KEY_A;
-	case 0x8:
-		return GLFW_KEY_S;
-	case 0x9:
-		return GLFW_KEY_D;
-	case 0xE:
-		return GLFW_KEY_F;
-	case 0xA:
-		return GLFW_KEY_Z;
-	case 0x0:
-		return GLFW_KEY_X;
-	case 0xB:
-		return GLFW_KEY_C;
-	case 0xF:
-		return GLFW_KEY_V;
-	default:
-		return GLFW_KEY_UNKNOWN;
-	}
 }

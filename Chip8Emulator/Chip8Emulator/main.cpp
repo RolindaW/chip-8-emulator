@@ -1,17 +1,17 @@
 #include <string>
-#include <chrono>  // Timer
-//#include <thread>  // Sleep
 #include <iostream>
+#include <chrono>  // Clock
+//#include <thread>  // Sleep
 
 #include "chip8_defs.h"
 #include "chip8_romloader.h"
 #include "chip8_rom.h"
 #include "chip8_emulator.h"
 
-void LogRealCpuHz(int cpuHz)
+void LogRealHz(std::string msg, int hz)
 {
-	std::cout << "Real CPU Hz: ";
-	std::cout << std::dec << cpuHz;
+	std::cout << msg << ": ";
+	std::cout << std::dec << hz;
 	std::cout << "\n";
 }
 
@@ -26,6 +26,8 @@ int main()
 	Chip8Emulator emulator;
 	emulator.LoadRom(rom);
 
+	// Timing - CPU, timers (and sound) and rendering (and input)
+	// Warning! Basic timing technique not appropriate for more complex emulators
 	using clock = std::chrono::steady_clock;
 
 	auto last_cpu = clock::now();
@@ -36,10 +38,12 @@ int main()
 	const auto timer_interval = std::chrono::microseconds(1000000 / CHIP8_TIMER_HZ);
 	const auto frame_interval = std::chrono::microseconds(1000000 / CHIP8_FRAME_HZ);
 
-	// Profile real CPU Hz
-	int cpu_cycle_count = 0;
+	// Profiler
 	auto last_second = last_cpu;
 	const auto second_interval = std::chrono::microseconds(1000000);
+	int cpu_cycle_count = 0;
+	int timer_count = 0;
+	int frame_count = 0;
 
 	while (true)  // TODO: exit on console or window close event
 	{
@@ -49,35 +53,39 @@ int main()
 		if (now - last_cpu >= cpu_interval) {
 			emulator.StepCPU();
 			cpu_cycle_count++;
-			last_cpu = now;
+			last_cpu += cpu_interval;  // Warning! Ensure accurate number of cycles even if system is temporally halted/delayed
 		}
 
 		// Timers and sound
 		if (now - last_timer >= timer_interval) {
 			emulator.HandleTimers();
 			emulator.HandleSound();
-			last_timer = now;
+			timer_count++;
+			last_timer += timer_interval;
 		}
 
-		// Rendering
+		// Rendering and input
 		if (now - last_frame >= frame_interval) {
 			emulator.Render();
-			last_frame = now;
-		}		
-
-		// TODO: Handle input
-		// Warning! Input is - wrongly - being handled in renderer class for the moment
+			emulator.HandleInput();
+			frame_count++;
+			last_frame += frame_interval;
+		}
 
 		// Relieve CPU
-		// Warning! Emulator becomes very slow (50-75 Hz) whenever performing sleep (with almost any value - up to one nanosecond)
-		// TODO: Make deterministic
+		// Warning! Windows OS timer resolution is by default ~15.6 ms - it can be changed by affects the whole system
+		// Emulator becomes very slow (50-75 Hz) whenever sleep is performed
 		//std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
 		// Profiler
 		if (now - last_second >= second_interval) {
-			LogRealCpuHz(cpu_cycle_count);
+			LogRealHz("CPU Hz", cpu_cycle_count);
+			LogRealHz("Timers Hz", timer_count);
+			LogRealHz("FPS", frame_count);
 			cpu_cycle_count = 0;
-			last_second = now;
+			timer_count = 0;
+			frame_count = 0;
+			last_second += second_interval;
 		}
 	}
 

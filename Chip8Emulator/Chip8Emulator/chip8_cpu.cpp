@@ -2,9 +2,9 @@
 #include "chip8_defs.h"
 #include "chip8_memory.h"
 #include "chip8_display.h"
-#include "chip8_renderer.h"
+#include "chip8_input.h"
 
-Chip8Cpu::Chip8Cpu(Chip8Memory& memory, Chip8Display& display, Chip8Renderer& renderer)
+Chip8Cpu::Chip8Cpu(Chip8Memory& memory, Chip8Display& display, Chip8Input& input)
 	: program_counter_(CHIP8_ROM_ADDRESS)
 	, index_register_(0)
 	, stack_pointer_(0)
@@ -15,7 +15,7 @@ Chip8Cpu::Chip8Cpu(Chip8Memory& memory, Chip8Display& display, Chip8Renderer& re
 	, instruction_(0)
 	, memory_(memory)
 	, display_(display)
-	, renderer_(renderer)
+	, input_(input)
 {
 	rng_.seed(CHIP8_RNG_SEED);
 }
@@ -541,7 +541,7 @@ void Chip8Cpu::Execute()
 		{
 			unsigned char gp_register_index = DecodeX();
 			unsigned char value = this->gp_register_[gp_register_index];			
-			if (this->renderer_.IsKeyPressed(value)) // TODO: move key pressing access into a disfferent class, not display class
+			if (this->input_.IsKeyPressed(value)) // TODO: move key pressing access into a disfferent class, not display class
 			{
 				NextInstruction();
 			}
@@ -551,7 +551,7 @@ void Chip8Cpu::Execute()
 		{
 			unsigned char gp_register_index = DecodeX();
 			unsigned char value = this->gp_register_[gp_register_index];
-			if (!this->renderer_.IsKeyPressed(value))
+			if (!this->input_.IsKeyPressed(value))
 			{
 				NextInstruction();
 			}
@@ -566,7 +566,7 @@ void Chip8Cpu::Execute()
 		case Instruction::IFX0A:
 		{
 			unsigned char value;
-			if (this->renderer_.GetKeyPressed(&value)) {
+			if (this->input_.GetKeyPressed(value)) {
 				unsigned char gp_register_index = DecodeX();
 				this->gp_register_[gp_register_index] = value;
 			}

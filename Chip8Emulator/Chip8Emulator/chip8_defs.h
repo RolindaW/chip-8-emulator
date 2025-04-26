@@ -10,6 +10,9 @@ constexpr unsigned short CHIP8_FRAME_HZ = 60;
 constexpr unsigned char CHIP8_GP_REGISTER_COUNT = 16;
 constexpr unsigned char CHIP8_RNG_SEED = 0x31;
 
+// Input
+constexpr unsigned char CHIP8_KEY_COUNT = 16;
+
 // ROM
 constexpr unsigned short CHIP8_ROM_ADDRESS = 0x200;
 

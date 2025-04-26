@@ -6,6 +6,7 @@
 #include "chip8_memory.h"
 #include "chip8_display.h"
 #include "chip8_renderer.h"
+#include "chip8_input.h"
 #include "chip8_cpu.h"
 #include "chip8_beep.h"
 #include "chip8_rom.h"
@@ -21,6 +22,7 @@ private:
 	Chip8Memory memory_;
 	Chip8Display display_;
 	Chip8Renderer renderer_;
+	Chip8Input input_;
 	Chip8Cpu cpu_;
 	Chip8Beep beep_;
 
@@ -32,6 +34,7 @@ public:
 	void StepCPU();
 	void HandleTimers();
 	void HandleSound();
+	void HandleInput();
 	void Render();
 
 private:

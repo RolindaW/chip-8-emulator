@@ -32,8 +32,8 @@ public:
 
 public:
 	void Render(const unsigned char* cache);
-	bool IsKeyPressed(unsigned char keyHex);  // TODO: move to corresponding entity
-	bool GetKeyPressed(unsigned char* keyHex);  // TODO: move to corresponding entity
+	void PollEvents();
+	bool IsKeyPressed(int key);
 
 private:
 	int InitializeGL();
@@ -46,5 +46,4 @@ private:
 	void FilterTextureData(const unsigned char* rawData, unsigned char** filteredData);
 	void Render();
 	void Terminate();
-	int MapKeyToken(unsigned char keyHex);  // TODO: move to corresponding entity
 };

@@ -7,7 +7,8 @@ Chip8Emulator::Chip8Emulator()
 	: memory_()
 	, display_()
 	, renderer_()
-	, cpu_(memory_, display_, renderer_)
+	, input_(renderer_)
+	, cpu_(memory_, display_, input_)
 	, beep_(kBeepFilename)
 {
 	LoadFont();
@@ -41,6 +42,11 @@ void Chip8Emulator::HandleSound()
 	{
 		this->beep_.Stop();
 	}
+}
+
+void Chip8Emulator::HandleInput()
+{
+	this->input_.HandleInput();
 }
 
 // Warning! Result (display framebuffer) of draw instructions issued between frames are missed (i.e. only result of last issued draw instruction is rendered)
