@@ -4,6 +4,7 @@
 //#include <thread>  // Sleep
 
 #include "chip8_defs.h"
+#include "chip8_args.h"
 #include "chip8_romloader.h"
 #include "chip8_rom.h"
 #include "chip8_emulator.h"
@@ -15,13 +16,20 @@ void LogRealHz(std::string msg, int hz)
 	std::cout << "\n";
 }
 
-int main()
+int main(int argc, char* argv[])
 {
-	std::string rom_filename = "C://workspace/chip-8-emulator/roms/test/test_opcode_mod.ch8";  // TODO: Get from program args; make relative - environment
-	rom_filename = "C://workspace/chip-8-emulator/roms/invaders.rom";
+	// Warning! Mock using project DEBUG command line arguments
+	Chip8ArgumentParser parser;
+	Chip8Arguments args = parser.Parse(argc, argv);
+
+	if (args.parse_error || args.show_help)
+	{
+		parser.PrintHelp();
+		return 0;
+	}
 
 	Chip8RomLoader rom_loader;
-	Chip8Rom rom = rom_loader.LoadFromFile(rom_filename);
+	Chip8Rom rom = rom_loader.LoadFromFile(args.rom_filename);
 
 	Chip8Emulator emulator;
 	emulator.LoadRom(rom);
@@ -34,7 +42,7 @@ int main()
 	auto last_timer = last_cpu;
 	auto last_frame = last_cpu;
 
-	const auto cpu_interval = std::chrono::microseconds(1000000 / CHIP8_CPU_HZ);  // TODO: Get from program args
+	const auto cpu_interval = std::chrono::microseconds(1000000 / args.cpu_hz);
 	const auto timer_interval = std::chrono::microseconds(1000000 / CHIP8_TIMER_HZ);
 	const auto frame_interval = std::chrono::microseconds(1000000 / CHIP8_FRAME_HZ);
 
@@ -45,7 +53,7 @@ int main()
 	int timer_count = 0;
 	int frame_count = 0;
 
-	while (true)  // TODO: exit on console or window close event
+	while (!emulator.WindowShouldClose())
 	{
 		auto now = clock::now();
 
@@ -64,10 +72,10 @@ int main()
 			last_timer += timer_interval;
 		}
 
-		// Rendering and input
+		// Rendering and input polling
 		if (now - last_frame >= frame_interval) {
 			emulator.Render();
-			emulator.HandleInput();
+			emulator.PollInput();
 			frame_count++;
 			last_frame += frame_interval;
 		}

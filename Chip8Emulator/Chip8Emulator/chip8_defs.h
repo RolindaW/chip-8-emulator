@@ -2,7 +2,9 @@
 
 // Timing
 // TODO: Move or should be here? Maybe move into a timing class???? maybe move if changing emulator responsiblities and make a black box plus timing class
-constexpr unsigned short CHIP8_CPU_HZ = 500;  // 500-1000 Hz
+constexpr unsigned short CHIP8_CPU_HZ_DEFAULT = 500;
+constexpr unsigned short CHIP8_CPU_HZ_MIN = 500;
+constexpr unsigned short CHIP8_CPU_HZ_MAX = 1000;
 constexpr unsigned short CHIP8_TIMER_HZ = 60;
 constexpr unsigned short CHIP8_FRAME_HZ = 60;
 

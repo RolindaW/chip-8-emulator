@@ -112,6 +112,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,6 +139,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\gl3w.c" />
+    <ClCompile Include="chip8_args.cpp" />
     <ClCompile Include="chip8_beep.cpp" />
     <ClCompile Include="chip8_cpu.cpp" />
     <ClCompile Include="chip8_display.cpp" />
@@ -150,6 +152,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="chip8_args.h" />
     <ClInclude Include="chip8_beep.h" />
     <ClInclude Include="chip8_cpu.h" />
     <ClInclude Include="chip8_defs.h" />

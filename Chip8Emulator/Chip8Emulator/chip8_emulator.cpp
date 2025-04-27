@@ -44,9 +44,9 @@ void Chip8Emulator::HandleSound()
 	}
 }
 
-void Chip8Emulator::HandleInput()
+void Chip8Emulator::PollInput()
 {
-	this->input_.HandleInput();
+	this->input_.Poll();
 }
 
 // Warning! Result (display framebuffer) of draw instructions issued between frames are missed (i.e. only result of last issued draw instruction is rendered)
@@ -55,6 +55,11 @@ void Chip8Emulator::Render()
 	// TODO: Draw only if required (check display pixel blitting flag) - Warning! Implementation may be required
 	const uint8_t* framebuffer = this->display_.GetFramebuffer();
 	this->renderer_.Render(framebuffer);
+}
+
+bool Chip8Emulator::WindowShouldClose()
+{
+	return this->renderer_.WindowShouldClose();
 }
 
 void Chip8Emulator::LoadFont()

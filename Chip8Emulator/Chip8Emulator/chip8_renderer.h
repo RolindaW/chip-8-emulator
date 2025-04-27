@@ -32,18 +32,19 @@ public:
 
 public:
 	void Render(const unsigned char* cache);
+	bool WindowShouldClose();
 	void PollEvents();
 	bool IsKeyPressed(int key);
 
 private:
 	int InitializeGL();
 	void TerminateGL();
-	void Initialize();
+	void InitializeObject();
 	void InitializeProgram();
 	void InitializeTexture();
+	void TerminateObject();
 	void SetTextureData(unsigned char* cache);
 	void SetFilteredTextureData(const unsigned char* cache);
 	void FilterTextureData(const unsigned char* rawData, unsigned char** filteredData);
 	void Render();
-	void Terminate();
 };
