@@ -34,7 +34,7 @@ public:
 	void StepCPU();
 	void HandleTimers();
 	void HandleSound();
-	void HandleInput();
+	void PollInput();
 	void Render();
 
 private:

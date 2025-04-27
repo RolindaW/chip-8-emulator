@@ -541,7 +541,7 @@ void Chip8Cpu::Execute()
 		{
 			unsigned char gp_register_index = DecodeX();
 			unsigned char value = this->gp_register_[gp_register_index];			
-			if (this->input_.IsKeyPressed(value)) // TODO: move key pressing access into a disfferent class, not display class
+			if (this->input_.IsKeyPressed(value))
 			{
 				NextInstruction();
 			}

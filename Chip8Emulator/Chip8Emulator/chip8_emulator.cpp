@@ -44,9 +44,9 @@ void Chip8Emulator::HandleSound()
 	}
 }
 
-void Chip8Emulator::HandleInput()
+void Chip8Emulator::PollInput()
 {
-	this->input_.HandleInput();
+	this->input_.Poll();
 }
 
 // Warning! Result (display framebuffer) of draw instructions issued between frames are missed (i.e. only result of last issued draw instruction is rendered)

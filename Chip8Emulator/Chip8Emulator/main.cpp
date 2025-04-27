@@ -72,10 +72,10 @@ int main(int argc, char* argv[])
 			last_timer += timer_interval;
 		}
 
-		// Rendering and input
+		// Rendering and input polling
 		if (now - last_frame >= frame_interval) {
 			emulator.Render();
-			emulator.HandleInput();
+			emulator.PollInput();
 			frame_count++;
 			last_frame += frame_interval;
 		}

@@ -1,8 +1,9 @@
 #pragma once
 
 #include "chip8_renderer.h"
+#include "chip8_defs.h"
 
-enum Key : unsigned char {
+constexpr enum Chip8Key : unsigned char {
 	KEY_0 = 0,
 	KEY_1,
 	KEY_2,
@@ -21,20 +22,21 @@ enum Key : unsigned char {
 	KEY_F
 };
 
+// TODO: use scandcode instead of key value to support different keyboard layouts (e.g. QUERTY, QZERTY)
 class Chip8Input
 {
 private:
 	Chip8Renderer& renderer_;
+	bool key_state_[CHIP8_KEY_COUNT];
 
 public:
 	Chip8Input(Chip8Renderer& renderer);
 
 public:
-	void HandleInput();
+	void Poll();
 	bool IsKeyPressed(unsigned char key);
 	bool GetKeyPressed(unsigned char& key);
 
 private:
-	int MapKeyToken(Key key);
+	int MapKey(unsigned char key);
 };
-
