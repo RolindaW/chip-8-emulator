@@ -1,16 +1,16 @@
 #include "chip8_renderer.h"
 
-#include <stdio.h>
+#include <iostream>
 
 Chip8Renderer::Chip8Renderer()
 {
 	InitializeGL();
-	Initialize();
+	InitializeObject();
 }
 
 Chip8Renderer::~Chip8Renderer()
 {
-	Terminate();
+	TerminateObject();
 	TerminateGL();
 }
 
@@ -18,6 +18,11 @@ void Chip8Renderer::Render(const unsigned char* data)
 {
 	SetFilteredTextureData(data);
 	Render();
+}
+
+bool Chip8Renderer::WindowShouldClose()
+{
+	return glfwWindowShouldClose(this->window_);
 }
 
 void Chip8Renderer::PollEvents()
@@ -38,13 +43,26 @@ bool Chip8Renderer::IsKeyPressed(int key)
 	return keyPressed;
 }
 
-// TODO: initialize GLFW safely (e.g. glfwSetErrorCallback)
-// TODO: set callback on resize for updating the viewport (e.g. glfwSetFramebufferSizeCallback)
+void GlfwErrorCallback(int error, const char* description)
+{
+	std::cerr << "GLFW error: " << description << std::endl;
+}
+
+void FramebufferSizeCallback(GLFWwindow* window, int width, int height)
+{
+	glViewport(0, 0, width, height);
+}
+
 int Chip8Renderer::InitializeGL()
 {
+	// Warning! Set GLFW error callback before initialization (get errors notified both during and after initialization)
+	glfwSetErrorCallback(GlfwErrorCallback);
+
+	// Initialize GLFW library
 	if (!glfwInit())
 		return 0;  //exit(EXIT_FAILURE);
 
+	// Create a window and a rendering context
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, kOpenGLVersionMajor);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, kOpenGLVersionMinor);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -52,27 +70,30 @@ int Chip8Renderer::InitializeGL()
 	this->window_ = glfwCreateWindow(640, 480, "CHIP-8 Display", NULL, NULL);
 	if (!this->window_)
 	{
+		std::cerr << "Failed to create a window or its rendering context" << std::endl;
 		glfwTerminate();
 		return 0;  //exit(EXIT_FAILURE);
 	}
 
 	glfwMakeContextCurrent(this->window_);
 
-	// Warning! GL3W initialization returns 0 if success
+	// Set window framebuffer resize callback - Warning! Use to update viewport
+	glfwSetFramebufferSizeCallback(this->window_, FramebufferSizeCallback);
+
+	// Initialize GL3W library - Warning! GL3W initialization returns 0 if success
+	// Load OpenGL extensions
 	if (gl3wInit()) {
-		// TODO: make console logging consistent across the projec
-		fprintf(stderr, "failed to initialize OpenGL\n");
+		std::cerr << "Failed to initialize OpenGL" << std::endl;
 		return 0;
 	}
 
 	if (!gl3wIsSupported(kOpenGLVersionMajor, kOpenGLVersionMinor)) {
-		// TODO: make console logging consistent across the projec
-		fprintf(stderr, "OpenGL version %i.%i not supported\n", kOpenGLVersionMajor, kOpenGLVersionMinor);
+		std::cerr << "OpenGL version not supported" << std::endl;
 		return 0;
 	}
 
-	printf("OpenGL %s, GLSL %s\n", glGetString(GL_VERSION),
-		glGetString(GL_SHADING_LANGUAGE_VERSION));
+	std::cout << "OpenGL version: " << reinterpret_cast<const char*>(glGetString(GL_VERSION)) << std::endl;
+	std::cout << "GLSL version: " << reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)) << std::endl;
 
 	return 1;
 }
@@ -83,10 +104,14 @@ void Chip8Renderer::TerminateGL()
 	glfwTerminate();
 }
 
-void Chip8Renderer::Initialize()
+void Chip8Renderer::InitializeObject()
 {
 	InitializeProgram();
+	glUseProgram(this->program_);
+
 	InitializeTexture();
+	glBindVertexArray(this->vao_);
+	glBindTexture(GL_TEXTURE_2D, this->texture2D_);
 }
 
 void Chip8Renderer::InitializeProgram()
@@ -166,18 +191,18 @@ void Chip8Renderer::InitializeTexture()
 	// Define some data to upload into the texture
 	// Note: Data is laid out (this setup can be changed in OpenGL with a parameter) left to right, top to bottom.
 	// Ordering: first array element corresponds to lower row, first element; after a row is completed, jump to next row.
-	GLubyte data_bck[] =
-	{
-		0x00, 0x08, 0x10, 0x18, 0x20, 0x28, 0x30, 0x38,
-		0x40, 0x48, 0x50, 0x58, 0x60, 0x68, 0x70, 0x78,
-		0x80, 0x88, 0x90, 0x98, 0xA0, 0xA8, 0xB0, 0xB8,
-		0xC0, 0xC8, 0xD0, 0xD8, 0xE0, 0xE8, 0xF0, 0xF8
-	};
+	//GLubyte data_bck[] =
+	//{
+	//	0x00, 0x08, 0x10, 0x18, 0x20, 0x28, 0x30, 0x38,
+	//	0x40, 0x48, 0x50, 0x58, 0x60, 0x68, 0x70, 0x78,
+	//	0x80, 0x88, 0x90, 0x98, 0xA0, 0xA8, 0xB0, 0xB8,
+	//	0xC0, 0xC8, 0xD0, 0xD8, 0xE0, 0xE8, 0xF0, 0xF8
+	//};
 
 	GLubyte* data = new GLubyte[kDisplayResolution.total];
 	for (int i = 0; i < kDisplayResolution.total; i++)
 	{
-		data[i] = unsigned char(0xFF * i / kDisplayResolution.total); //(i % 2 == 0) ? 0xFF : 0x00;
+		data[i] = unsigned char(0xFF * i / kDisplayResolution.total);  // Alternative: (i % 2 == 0) ? 0xFF : 0x00;
 	}
 	SetTextureData(data);
 	delete[] data;
@@ -186,10 +211,6 @@ void Chip8Renderer::InitializeTexture()
 	glTextureParameteri(this->texture2D_, GL_TEXTURE_WRAP_S, GL_REPEAT);  // GL_REPEAT - GL_MIRRORED_REPEAT - GL_CLAMP_TO_EDGE - GL_CLAMP_TO_BORDER
 	glTextureParameteri(this->texture2D_, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	// Border color
-	const GLfloat borderColor[] = { 1.0f, 0.0f, 0.0f, 1.0f };
-	glTextureParameterfv(this->texture2D_, GL_TEXTURE_BORDER_COLOR, borderColor);
-
 	// Filtering
 	glTextureParameteri(this->texture2D_, GL_TEXTURE_MAG_FILTER, GL_NEAREST);  // GL_NEAREST - GL_LINEAR
 	glTextureParameteri(this->texture2D_, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -197,6 +218,13 @@ void Chip8Renderer::InitializeTexture()
 	// Swizzle
 	glTextureParameteri(this->texture2D_, GL_TEXTURE_SWIZZLE_G, GL_RED);
 	glTextureParameteri(this->texture2D_, GL_TEXTURE_SWIZZLE_B, GL_RED);
+}
+
+void Chip8Renderer::TerminateObject()
+{
+	glDeleteTextures(1, &texture2D_);
+	glDeleteVertexArrays(1, &vao_);
+	glDeleteProgram(program_);
 }
 
 void Chip8Renderer::SetFilteredTextureData(const unsigned char* data)
@@ -236,27 +264,10 @@ void Chip8Renderer::FilterTextureData(const unsigned char* rawData, unsigned cha
 
 void Chip8Renderer::Render()
 {
-	static const GLfloat color[] = { 1.0f, 1.0f, 0.0f, 1.0f };
+	static const GLfloat color[] = { 0.0f, 1.0f, 0.7f, 1.0f };
 	glClearBufferfv(GL_COLOR, 0, color);
-
-	glUseProgram(this->program_);
-
-	glBindVertexArray(this->vao_);
-
-	// Bind it to the context using the GL_TEXTURE_2D binding point
-	glBindTexture(GL_TEXTURE_2D, this->texture2D_);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	glfwSwapBuffers(this->window_);
-
-	// Warning! Event polling is required to update state, but we are not actually using it for the moment
-	glfwPollEvents();
-}
-
-void Chip8Renderer::Terminate()
-{
-	glDeleteTextures(1, &texture2D_);
-	glDeleteVertexArrays(1, &vao_);
-	glDeleteProgram(program_);
 }

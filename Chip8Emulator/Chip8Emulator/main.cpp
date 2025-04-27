@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
 	int timer_count = 0;
 	int frame_count = 0;
 
-	while (true)  // TODO: exit on console or window close event
+	while (!emulator.WindowShouldClose())
 	{
 		auto now = clock::now();
 

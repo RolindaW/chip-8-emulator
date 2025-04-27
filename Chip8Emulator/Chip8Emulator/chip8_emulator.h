@@ -36,6 +36,7 @@ public:
 	void HandleSound();
 	void PollInput();
 	void Render();
+	bool WindowShouldClose();
 
 private:
 	void LoadFont();

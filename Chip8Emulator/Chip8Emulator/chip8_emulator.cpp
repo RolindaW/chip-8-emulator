@@ -57,6 +57,11 @@ void Chip8Emulator::Render()
 	this->renderer_.Render(framebuffer);
 }
 
+bool Chip8Emulator::WindowShouldClose()
+{
+	return this->renderer_.WindowShouldClose();
+}
+
 void Chip8Emulator::LoadFont()
 {
 	for (unsigned char i = 0; i < sizeof(CHIP8_FONTSET); i++)
