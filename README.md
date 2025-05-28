@@ -76,17 +76,19 @@ $0000 (0)    - $0FFF (4095) : 4096 ($1000) B : Total
 $0000 (0)    - $01FF (511)  : 512 ($0200) B  : Interpreter (+ Fonts)
 $0200 (512)  - $0E9F (3743) : 3232 ($0CA0) B : Program
 $0EA0 (3744) - $0EFF (3839) : 96 ($0060) B   : Call stack, internal use.
-$0F00 (3840) - $0FFF (4095) : 256 ($00FF) B  : Framebuffer
+$0F00 (3840) - $0FFF (4095) : 256 ($0100) B  : Framebuffer
 ```
 
 #### Interpreter
 
 First 512 ($0200) B are reserved for the CHIP-8 interpreter program.
 
+Font data is commonly stored here in the range $0050 (80) - $009F (159) i.e. 80 ($0050) B - x16 sprites, each 5 B
+
 Memory range: $0000 (0) - $01FF (511)
 
 [!NOTE]
-In the original microcomputers the CHIP-8 interpreter was loaded into this memory range. In modern high-level implementations (i.e. any implementation that is not going to be stored and executed on a miniaturized computer) this is not necessary and this space is left free. Font data is commonly stored here in the range $0050 (80) - $009F (159) i.e. 80 ($0050) B
+In the original microcomputers the CHIP-8 interpreter was loaded into this memory range. In modern high-level implementations (i.e. any implementation that is not going to be stored and executed on a miniaturized computer) this is not necessary and this space is left free.
 
 #### Program
 
@@ -212,8 +214,8 @@ In the implementation it would be more convenient to limit the display update to
 
 Sprite
 
--   Width: 8 px (i.e. each of the bits of corresponding level byte).
--   Height: 1-15 px (i.e. each of the levels - bytes - of the sprite).
+-   Width: 8 px (i.e. each of the bits of corresponding level ).
+-   Height: 1-15 px (i.e. each of the levels - s - of the sprite).
 
 Drawing
 
@@ -268,8 +270,8 @@ Opcode
 -   Endianness: big-endian
 
 ```
-Memory arrangement: ..., B-n ($AB), B-n+1 ($CD), ...
-Decode (2 B): N1N2N3N4 == ABCD (where $B-nB-n+1 == $ABCD)
+Memory arrangement: ..., B-n ($AB), B-n+1 ($CD), ... (where $AB and $CD correspond to high-low nibble pairs of bytes B-n and Bn+1, respectivelly)
+Decode (2 B): $N1N2N3N4 == $ABCD (where $ABCD corresponds to the 2 B word decoded - big-endian - from bytes B-n and Bn+1)
 ```
 
 [!NOTE]
@@ -341,8 +343,8 @@ Timing: 700 CHIP-8 instructions per second works well for most old programs.
 
 Determine the order in which a set of bytes is to be processed (e.g. write to/read from memory, transmit/receive data).
 
--   Big-endian (BE): high (or most significant) byte first.
--   Little-endian (LE): low (or less significant) byte first.
+-   Big-endian (BE): higher (or more significant) bytes first (i.e. in lower memory location).
+-   Little-endian (LE): lower (or less significant) bytes first.
 
 [!WARNING]
 Incorrect interpretation of a set of bytes can lead to malfunctioning of the application.
